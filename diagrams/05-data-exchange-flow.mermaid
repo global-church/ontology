@@ -1,0 +1,58 @@
+---
+title: "GCData Exchange Flow — End to End"
+---
+flowchart LR
+    subgraph Field["Field Operations"]
+        FW["Person\n(Field Worker)"]
+        MA["Ministry\nActivity"]
+        FW -- "performs" --> MA
+    end
+
+    subgraph Recording["Data Recording"]
+        DS_A["DataSource A\n(MissionToolX)"]
+        DRA["DataRecording\nActivity"]
+        ER["Engagement\nRecord"]
+        MA -- "observed by" --> DRA
+        DRA -- "prov:generated" --> ER
+        ER -- "prov:wasAttributedTo" --> DS_A
+    end
+
+    subgraph Packaging["Payload Assembly"]
+        EEP["EntityExchange\nPayload (EEP)"]
+        SEP["ScaleExchange\nPayload (SEP)"]
+        ER -- "prov:hadMember" --> EEP
+    end
+
+    subgraph Bridge["GCBridge"]
+        KC["KeyCloak\nFederated Auth"]
+        GCB["GCBridge\nProxy"]
+        KC -- "authorizes" --> GCB
+    end
+
+    subgraph Consuming["Consuming Systems"]
+        DS_B["DataSource B\n(MissionToolY)"]
+        GP["Global\nPlatform"]
+    end
+
+    subgraph Assessment["Engagement Assessment (3D Insight)"]
+        EA["Engagement\nAssessment"]
+        ES["Engagement\nState"]
+        PG["PeopleGroup"]
+        EA -- "prov:generated" --> ES
+        ES -- "stateForPeopleGroup" --> PG
+    end
+
+    EEP -- "GCData\nformatted" --> GCB
+    SEP -- "GCData\nformatted" --> GCB
+    GCB -- "routes to" --> DS_B
+    GCB -- "routes to" --> GP
+    EEP -. "assessmentUsedPayload" .-> EA
+    DS_B -. "feeds into" .-> EA
+    GP -. "feeds into" .-> EA
+
+    style Field fill:#e8f5e9,stroke:#388e3c
+    style Recording fill:#e3f2fd,stroke:#1565c0
+    style Packaging fill:#fff3e0,stroke:#ef6c00
+    style Bridge fill:#fce4ec,stroke:#c62828
+    style Consuming fill:#f3e5f5,stroke:#7b1fa2
+    style Assessment fill:#e0f2f1,stroke:#00695c

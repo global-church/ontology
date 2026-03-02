@@ -1,0 +1,233 @@
+---
+title: "GC-Core Ontology — Class Hierarchy"
+---
+classDiagram
+    direction TB
+
+    %% ═══════════════════════════════════════════
+    %% PROV-O Foundation
+    %% ═══════════════════════════════════════════
+
+    class `prov:Agent` {
+        <<W3C PROV-O>>
+    }
+    class `prov:Activity` {
+        <<W3C PROV-O>>
+    }
+    class `prov:Entity` {
+        <<W3C PROV-O>>
+    }
+    class `prov:Collection` {
+        <<W3C PROV-O>>
+    }
+    class `prov:SoftwareAgent` {
+        <<W3C PROV-O>>
+    }
+    class `prov:Organization` {
+        <<W3C PROV-O>>
+    }
+    class `prov:Role` {
+        <<W3C PROV-O>>
+    }
+    class `prov:Association` {
+        <<W3C PROV-O>>
+    }
+    class `skos:Concept` {
+        <<SKOS>>
+    }
+
+    `prov:Entity` <|-- `prov:Collection`
+    `prov:Agent` <|-- `prov:SoftwareAgent`
+    `prov:Agent` <|-- `prov:Organization`
+
+    %% ═══════════════════════════════════════════
+    %% AGENTS
+    %% ═══════════════════════════════════════════
+
+    class Person {
+        userId : string
+        personName : string
+        personEmail : string
+        personPhone : string
+    }
+    class Organization {
+        <<gca>>
+    }
+    class Team {
+        groupId : string
+    }
+    class DataSource {
+        <<SoftwareAgent>>
+    }
+    class GCBridge {
+        <<SoftwareAgent>>
+    }
+
+    `prov:Agent` <|-- Person
+    `prov:Agent` <|-- Organization
+    `prov:Organization` <|-- Organization
+    Organization <|-- Team
+    `prov:SoftwareAgent` <|-- DataSource
+    `prov:SoftwareAgent` <|-- GCBridge
+
+    %% ═══════════════════════════════════════════
+    %% ROLES & PARTICIPATION
+    %% ═══════════════════════════════════════════
+
+    class MinistryRole {
+        <<prov:Role>>
+    }
+    class MinistryParticipation {
+        <<prov:Association>>
+    }
+
+    `prov:Role` <|-- MinistryRole
+    `prov:Association` <|-- MinistryParticipation
+
+    %% ═══════════════════════════════════════════
+    %% ACTIVITIES
+    %% ═══════════════════════════════════════════
+
+    class MinistryActivity {
+        dateTimeOfActivity : dateTime
+    }
+    class ChurchFormation
+    class GospelConversation {
+        totalHeard : int
+        positiveResponse : int
+        interestedResponse : int
+        negativeResponse : int
+    }
+    class PrayerWalk
+    class DiscipleshipActivity
+    class BaptismActivity
+    class LeadershipDevelopment
+    class MediaDistribution
+    class TrainingActivity
+    class Practice {
+        practiceIsActive : boolean
+        isPerformedInternally : boolean
+        practiceFrequency : string
+        practiceDateAdopted : date
+    }
+    class DataRecordingActivity {
+        recordDateTime : dateTime
+    }
+    class DataExchangeActivity
+    class EngagementAssessment {
+        assessmentDate : dateTime
+        assessmentMethodology : string
+    }
+
+    `prov:Activity` <|-- MinistryActivity
+    `prov:Activity` <|-- DataRecordingActivity
+    `prov:Activity` <|-- DataExchangeActivity
+    `prov:Activity` <|-- EngagementAssessment
+    MinistryActivity <|-- ChurchFormation
+    MinistryActivity <|-- GospelConversation
+    MinistryActivity <|-- PrayerWalk
+    MinistryActivity <|-- DiscipleshipActivity
+    MinistryActivity <|-- BaptismActivity
+    MinistryActivity <|-- LeadershipDevelopment
+    MinistryActivity <|-- MediaDistribution
+    MinistryActivity <|-- TrainingActivity
+    MinistryActivity <|-- Practice
+
+    %% ═══════════════════════════════════════════
+    %% ENTITIES
+    %% ═══════════════════════════════════════════
+
+    class Church {
+        isActive : boolean
+        dateStarted : date
+        dateEnded : date
+        identifiesAsChurch : boolean
+        hasAppointedLeaders : boolean
+        numberOfPeopleAttending : int
+        numberOfBelievers : int
+        numberOfBaptizedBelievers : int
+    }
+    class ChurchWebsiteText {
+        websiteUrl : anyURI
+        websiteTextContent : string
+    }
+    class Overture {
+        <<Overture Maps>>
+        overtureId : string
+        overtureCategory : string
+        overtureConfidence : double
+        overtureSourceDataset : string
+    }
+    class PeopleGroup {
+        hasPeopleClassification : skos_Concept
+        evangelicalPercentage : double
+        populationInCountry : int
+        peopleGroupName : string
+    }
+    class Location {
+        countryCode : string
+        latitude : double
+        longitude : double
+    }
+    class EngagementRecord {
+        entityType : string
+    }
+    class PeopleGroupEngagement {
+        engagementCount : int
+    }
+    class EngagementState {
+        phaseValue : int 0..7
+        phaseSubIndicator : string
+    }
+    class STSCAssessment {
+        statusOfTheTask : int 0..6
+        stateOfTheChurch : int 0..5
+    }
+    class AcceleratorScore {
+        acceleratorLevel : string
+    }
+    class PracticeType {
+        <<skos:Concept>>
+    }
+    class EngagementStrengthLevel {
+        <<skos:Concept>>
+    }
+    class EngagementAccelerator {
+        <<skos:Concept>>
+    }
+
+    `prov:Entity` <|-- Church
+    `prov:Entity` <|-- ChurchWebsiteText
+    `prov:Entity` <|-- Overture
+    `prov:Entity` <|-- PeopleGroup
+    %% Location is geographic reference data (no PROV-O parentage)
+    `prov:Entity` <|-- EngagementRecord
+    `prov:Entity` <|-- PeopleGroupEngagement
+    `prov:Entity` <|-- EngagementState
+    `prov:Entity` <|-- STSCAssessment
+    `prov:Entity` <|-- AcceleratorScore
+    `skos:Concept` <|-- PracticeType
+    `skos:Concept` <|-- EngagementStrengthLevel
+    `skos:Concept` <|-- EngagementAccelerator
+
+    %% ═══════════════════════════════════════════
+    %% COLLECTIONS
+    %% ═══════════════════════════════════════════
+
+    class ExchangePayload {
+        payloadFormat : string
+        payloadVersion : string
+        payloadPermissions : string
+    }
+    class EntityExchangePayload
+    class ScaleExchangePayload
+    class DataSet {
+        dataSetId : string
+        dataSetName : string
+        lastUpdatedDate : dateTime
+    }
+
+    `prov:Collection` <|-- ExchangePayload
+    `prov:Collection` <|-- DataSet
+    ExchangePayload <|-- EntityExchangePayload
+    ExchangePayload <|-- ScaleExchangePayload

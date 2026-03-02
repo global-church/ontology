@@ -1,0 +1,2417 @@
+##############################################################################
+# HIS Registry of Geography (ROG) — Seed Data
+#
+# Geography classification with 3-level hierarchy:
+#   Region (5) → Subregion (22) → Country (242)
+#
+# Source:  gc-core/reference/data/peoplegroups.org/people_groups.csv
+#          (IMB Comprehensive People Group List)
+#
+# Named graph: <https://data.global.church/his-registries/>
+# URI pattern:
+#   Scheme:    his:rog
+#   Region:    rog:region-{slug}
+#   Subregion: rog:subregion-{slug}
+#   Country:   rog:{ROG-code}
+#
+# Version:    0.1.0
+# Date:       2026-02-17
+##############################################################################
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix his:     <https://data.global.church/his/> .
+@prefix rog:     <https://data.global.church/his/rog/> .
+
+
+##############################################################################
+#  CONCEPT SCHEME
+##############################################################################
+
+his:rog a skos:ConceptScheme ;
+  skos:prefLabel "HIS Registry of Geography"@en ;
+  dcterms:publisher "HIS Registries (hisregistries.org)" ;
+  dcterms:description "Geography classification used across the missions data ecosystem. Three-level hierarchy: Region (5) → Subregion (22) → Country (242). Country codes are HIS ROG codes (2-letter), cross-referenced to ISO 3166-1 alpha-3."@en ;
+  skos:hasTopConcept rog:region-africa ,
+                     rog:region-americas ,
+                     rog:region-asia ,
+                     rog:region-europe ,
+                     rog:region-oceania .
+
+
+##############################################################################
+#  REGIONS (5 top-level concepts)
+##############################################################################
+
+rog:region-africa a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Africa"@en ;
+  skos:topConceptOf his:rog ;
+  skos:notation "Africa" ;
+  skos:narrower rog:subregion-eastern-africa ,
+                rog:subregion-middle-africa ,
+                rog:subregion-northern-africa ,
+                rog:subregion-southern-africa ,
+                rog:subregion-western-africa .
+
+rog:region-americas a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Americas"@en ;
+  skos:topConceptOf his:rog ;
+  skos:notation "Americas" ;
+  skos:narrower rog:subregion-caribbean ,
+                rog:subregion-central-america ,
+                rog:subregion-northern-america ,
+                rog:subregion-south-america .
+
+rog:region-asia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Asia"@en ;
+  skos:topConceptOf his:rog ;
+  skos:notation "Asia" ;
+  skos:narrower rog:subregion-central-asia ,
+                rog:subregion-eastern-asia ,
+                rog:subregion-south-eastern-asia ,
+                rog:subregion-southern-asia ,
+                rog:subregion-western-asia .
+
+rog:region-europe a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Europe"@en ;
+  skos:topConceptOf his:rog ;
+  skos:notation "Europe" ;
+  skos:narrower rog:subregion-eastern-europe ,
+                rog:subregion-northern-europe ,
+                rog:subregion-southern-europe ,
+                rog:subregion-western-europe .
+
+rog:region-oceania a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Oceania"@en ;
+  skos:topConceptOf his:rog ;
+  skos:notation "Oceania" ;
+  skos:narrower rog:subregion-australia-and-new-zealand ,
+                rog:subregion-melanesia ,
+                rog:subregion-micronesia ,
+                rog:subregion-polynesia .
+
+##############################################################################
+#  SUBREGIONS (22 mid-level concepts)
+##############################################################################
+
+rog:subregion-australia-and-new-zealand a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Australia and New Zealand"@en ;
+  skos:broader rog:region-oceania ;
+  skos:notation "Australia and New Zealand" ;
+  skos:narrower rog:AS ,
+                rog:KT ,
+                rog:CK ,
+                rog:NZ ,
+                rog:NF .
+
+rog:subregion-caribbean a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Caribbean"@en ;
+  skos:broader rog:region-americas ;
+  skos:notation "Caribbean" ;
+  skos:narrower rog:AV ,
+                rog:AC ,
+                rog:AA ,
+                rog:BF ,
+                rog:BB ,
+                rog:XB ,
+                rog:VI ,
+                rog:CJ ,
+                rog:CU ,
+                rog:UC ,
+                rog:DO ,
+                rog:DR ,
+                rog:GJ ,
+                rog:GP ,
+                rog:HA ,
+                rog:JM ,
+                rog:MB ,
+                rog:MH ,
+                rog:RQ ,
+                rog:TB ,
+                rog:SC ,
+                rog:ST ,
+                rog:RN ,
+                rog:VC ,
+                rog:NN ,
+                rog:TD ,
+                rog:TK ,
+                rog:VQ .
+
+rog:subregion-central-america a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Central America"@en ;
+  skos:broader rog:region-americas ;
+  skos:notation "Central America" ;
+  skos:narrower rog:BH ,
+                rog:CS ,
+                rog:ES ,
+                rog:GT ,
+                rog:HO ,
+                rog:MX ,
+                rog:NU ,
+                rog:PM .
+
+rog:subregion-central-asia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Central Asia"@en ;
+  skos:broader rog:region-asia ;
+  skos:notation "Central Asia" ;
+  skos:narrower rog:KZ ,
+                rog:KG ,
+                rog:TI ,
+                rog:TX ,
+                rog:UZ .
+
+rog:subregion-eastern-africa a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Eastern Africa"@en ;
+  skos:broader rog:region-africa ;
+  skos:notation "Eastern Africa" ;
+  skos:narrower rog:BY ,
+                rog:CN ,
+                rog:DJ ,
+                rog:ER ,
+                rog:ET ,
+                rog:KE ,
+                rog:MA ,
+                rog:MI ,
+                rog:MP ,
+                rog:MF ,
+                rog:MZ ,
+                rog:RE ,
+                rog:RW ,
+                rog:SE ,
+                rog:SO ,
+                rog:TZ ,
+                rog:UG ,
+                rog:ZA ,
+                rog:ZI .
+
+rog:subregion-eastern-asia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Eastern Asia"@en ;
+  skos:broader rog:region-asia ;
+  skos:notation "Eastern Asia" ;
+  skos:narrower rog:CH ,
+                rog:HK ,
+                rog:JA ,
+                rog:MC ,
+                rog:MG ,
+                rog:KN ,
+                rog:KS ,
+                rog:TW .
+
+rog:subregion-eastern-europe a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Eastern Europe"@en ;
+  skos:broader rog:region-europe ;
+  skos:notation "Eastern Europe" ;
+  skos:narrower rog:BO ,
+                rog:BU ,
+                rog:EZ ,
+                rog:HU ,
+                rog:MD ,
+                rog:PL ,
+                rog:RO ,
+                rog:RS ,
+                rog:LO ,
+                rog:UP .
+
+rog:subregion-melanesia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Melanesia"@en ;
+  skos:broader rog:region-oceania ;
+  skos:notation "Melanesia" ;
+  skos:narrower rog:FJ ,
+                rog:NC ,
+                rog:PP ,
+                rog:BP ,
+                rog:NH .
+
+rog:subregion-micronesia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Micronesia"@en ;
+  skos:broader rog:region-oceania ;
+  skos:notation "Micronesia" ;
+  skos:narrower rog:GQ ,
+                rog:KR ,
+                rog:RM ,
+                rog:FM ,
+                rog:NR ,
+                rog:CQ ,
+                rog:PS .
+
+rog:subregion-middle-africa a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Middle Africa"@en ;
+  skos:broader rog:region-africa ;
+  skos:notation "Middle Africa" ;
+  skos:narrower rog:AO ,
+                rog:CM ,
+                rog:CT ,
+                rog:CD ,
+                rog:CF ,
+                rog:CG ,
+                rog:EK ,
+                rog:GB ,
+                rog:TP .
+
+rog:subregion-northern-africa a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Northern Africa"@en ;
+  skos:broader rog:region-africa ;
+  skos:notation "Northern Africa" ;
+  skos:narrower rog:AG ,
+                rog:EG ,
+                rog:LY ,
+                rog:MO ,
+                rog:OD ,
+                rog:SU ,
+                rog:TS ,
+                rog:WI .
+
+rog:subregion-northern-america a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Northern America"@en ;
+  skos:broader rog:region-americas ;
+  skos:notation "Northern America" ;
+  skos:narrower rog:BD ,
+                rog:CA ,
+                rog:GL ,
+                rog:SB ,
+                rog:US .
+
+rog:subregion-northern-europe a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Northern Europe"@en ;
+  skos:broader rog:region-europe ;
+  skos:notation "Northern Europe" ;
+  skos:narrower rog:DA ,
+                rog:EN ,
+                rog:FO ,
+                rog:FI ,
+                rog:GK ,
+                rog:IC ,
+                rog:EI ,
+                rog:IM ,
+                rog:JE ,
+                rog:LG ,
+                rog:LH ,
+                rog:NO ,
+                rog:SV ,
+                rog:SW ,
+                rog:UK .
+
+rog:subregion-polynesia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Polynesia"@en ;
+  skos:broader rog:region-oceania ;
+  skos:notation "Polynesia" ;
+  skos:narrower rog:AQ ,
+                rog:CW ,
+                rog:FP ,
+                rog:NE ,
+                rog:PC ,
+                rog:WS ,
+                rog:TL ,
+                rog:TN ,
+                rog:TV ,
+                rog:WF .
+
+rog:subregion-south-america a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "South America"@en ;
+  skos:broader rog:region-americas ;
+  skos:notation "South America" ;
+  skos:narrower rog:AR ,
+                rog:BL ,
+                rog:BR ,
+                rog:CI ,
+                rog:CO ,
+                rog:EC ,
+                rog:FK ,
+                rog:FG ,
+                rog:GY ,
+                rog:PA ,
+                rog:PE ,
+                rog:NS ,
+                rog:UY ,
+                rog:VE .
+
+rog:subregion-south-eastern-asia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "South-Eastern Asia"@en ;
+  skos:broader rog:region-asia ;
+  skos:notation "South-Eastern Asia" ;
+  skos:narrower rog:BX ,
+                rog:CB ,
+                rog:ID ,
+                rog:LA ,
+                rog:MY ,
+                rog:BM ,
+                rog:RP ,
+                rog:SN ,
+                rog:TH ,
+                rog:TT ,
+                rog:VM .
+
+rog:subregion-southern-africa a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Southern Africa"@en ;
+  skos:broader rog:region-africa ;
+  skos:notation "Southern Africa" ;
+  skos:narrower rog:BC ,
+                rog:WZ ,
+                rog:LT ,
+                rog:WA ,
+                rog:SF .
+
+rog:subregion-southern-asia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Southern Asia"@en ;
+  skos:broader rog:region-asia ;
+  skos:notation "Southern Asia" ;
+  skos:narrower rog:AF ,
+                rog:BG ,
+                rog:BT ,
+                rog:IN ,
+                rog:IR ,
+                rog:MV ,
+                rog:NP ,
+                rog:PK ,
+                rog:CE .
+
+rog:subregion-southern-europe a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Southern Europe"@en ;
+  skos:broader rog:region-europe ;
+  skos:notation "Southern Europe" ;
+  skos:narrower rog:AL ,
+                rog:AN ,
+                rog:BK ,
+                rog:HR ,
+                rog:GI ,
+                rog:GR ,
+                rog:IT ,
+                rog:KV ,
+                rog:MT ,
+                rog:MJ ,
+                rog:MK ,
+                rog:PO ,
+                rog:SM ,
+                rog:RI ,
+                rog:SI ,
+                rog:SP ,
+                rog:VT .
+
+rog:subregion-western-africa a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Western Africa"@en ;
+  skos:broader rog:region-africa ;
+  skos:notation "Western Africa" ;
+  skos:narrower rog:BN ,
+                rog:UV ,
+                rog:CV ,
+                rog:IV ,
+                rog:GA ,
+                rog:GH ,
+                rog:GV ,
+                rog:PU ,
+                rog:LI ,
+                rog:ML ,
+                rog:MR ,
+                rog:NG ,
+                rog:NI ,
+                rog:SH ,
+                rog:SG ,
+                rog:SL ,
+                rog:TO .
+
+rog:subregion-western-asia a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Western Asia"@en ;
+  skos:broader rog:region-asia ;
+  skos:notation "Western Asia" ;
+  skos:narrower rog:AM ,
+                rog:AJ ,
+                rog:BA ,
+                rog:CY ,
+                rog:GG ,
+                rog:IZ ,
+                rog:IS ,
+                rog:JO ,
+                rog:KU ,
+                rog:LE ,
+                rog:MU ,
+                rog:XP ,
+                rog:QA ,
+                rog:SA ,
+                rog:SY ,
+                rog:TU ,
+                rog:AE ,
+                rog:YM .
+
+rog:subregion-western-europe a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Western Europe"@en ;
+  skos:broader rog:region-europe ;
+  skos:notation "Western Europe" ;
+  skos:narrower rog:AU ,
+                rog:BE ,
+                rog:FR ,
+                rog:GM ,
+                rog:LS ,
+                rog:LU ,
+                rog:MN ,
+                rog:NL ,
+                rog:SZ .
+
+##############################################################################
+#  COUNTRIES (242 leaf-level concepts)
+##############################################################################
+
+rog:AF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Afghanistan"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "AF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/afg> ;
+  skos:altLabel "AFG"@en .
+
+rog:AL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Albania"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "AL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/alb> ;
+  skos:altLabel "ALB"@en .
+
+rog:AG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Algeria"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "AG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/dza> ;
+  skos:altLabel "DZA"@en .
+
+rog:AQ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "American Samoa"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "AQ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/asm> ;
+  skos:altLabel "ASM"@en .
+
+rog:AN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Andorra"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "AN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/and> ;
+  skos:altLabel "AND"@en .
+
+rog:AO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Angola"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "AO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ago> ;
+  skos:altLabel "AGO"@en .
+
+rog:AV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Anguilla"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "AV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/aia> ;
+  skos:altLabel "AIA"@en .
+
+rog:AC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Antigua and Barbuda"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "AC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/atg> ;
+  skos:altLabel "ATG"@en .
+
+rog:AR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Argentina"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "AR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/arg> ;
+  skos:altLabel "ARG"@en .
+
+rog:AM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Armenia"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "AM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/arm> ;
+  skos:altLabel "ARM"@en .
+
+rog:AA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Aruba"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "AA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/abw> ;
+  skos:altLabel "ABW"@en .
+
+rog:AS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Australia"@en ;
+  skos:broader rog:subregion-australia-and-new-zealand ;
+  skos:notation "AS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/aus> ;
+  skos:altLabel "AUS"@en .
+
+rog:AU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Austria"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "AU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/aut> ;
+  skos:altLabel "AUT"@en .
+
+rog:AJ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Azerbaijan"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "AJ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/aze> ;
+  skos:altLabel "AZE"@en .
+
+rog:BF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bahamas"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "BF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bhs> ;
+  skos:altLabel "BHS"@en .
+
+rog:BA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bahrain"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "BA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bhr> ;
+  skos:altLabel "BHR"@en .
+
+rog:BG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bangladesh"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "BG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bgd> ;
+  skos:altLabel "BGD"@en .
+
+rog:BB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Barbados"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "BB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/brb> ;
+  skos:altLabel "BRB"@en .
+
+rog:BO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Belarus"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "BO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/blr> ;
+  skos:altLabel "BLR"@en .
+
+rog:BE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Belgium"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "BE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bel> ;
+  skos:altLabel "BEL"@en .
+
+rog:BH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Belize"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "BH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/blz> ;
+  skos:altLabel "BLZ"@en .
+
+rog:BN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Benin"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "BN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ben> ;
+  skos:altLabel "BEN"@en .
+
+rog:BD a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bermuda"@en ;
+  skos:broader rog:subregion-northern-america ;
+  skos:notation "BD" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bmu> ;
+  skos:altLabel "BMU"@en .
+
+rog:BT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bhutan"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "BT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/btn> ;
+  skos:altLabel "BTN"@en .
+
+rog:BL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bolivia"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "BL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bol> ;
+  skos:altLabel "BOL"@en .
+
+rog:XB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bonaire, Sint Eustatius, and Saba"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "XB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bes> ;
+  skos:altLabel "BES"@en .
+
+rog:BK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bosnia and Herzegovina"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "BK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bih> ;
+  skos:altLabel "BIH"@en .
+
+rog:BC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Botswana"@en ;
+  skos:broader rog:subregion-southern-africa ;
+  skos:notation "BC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bwa> ;
+  skos:altLabel "BWA"@en .
+
+rog:BR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Brazil"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "BR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bra> ;
+  skos:altLabel "BRA"@en .
+
+rog:VI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "British Virgin Islands"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "VI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/vgb> ;
+  skos:altLabel "VGB"@en .
+
+rog:BX a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Brunei"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "BX" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/brn> ;
+  skos:altLabel "BRN"@en .
+
+rog:BU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Bulgaria"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "BU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bgr> ;
+  skos:altLabel "BGR"@en .
+
+rog:UV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Burkina Faso"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "UV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bfa> ;
+  skos:altLabel "BFA"@en .
+
+rog:BY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Burundi"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "BY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/bdi> ;
+  skos:altLabel "BDI"@en .
+
+rog:CV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cabo Verde"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "CV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cpv> ;
+  skos:altLabel "CPV"@en .
+
+rog:CB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cambodia"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "CB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/khm> ;
+  skos:altLabel "KHM"@en .
+
+rog:CM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cameroon"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "CM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cmr> ;
+  skos:altLabel "CMR"@en .
+
+rog:CA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Canada"@en ;
+  skos:broader rog:subregion-northern-america ;
+  skos:notation "CA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/can> ;
+  skos:altLabel "CAN"@en .
+
+rog:CJ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cayman Islands"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "CJ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cym> ;
+  skos:altLabel "CYM"@en .
+
+rog:CT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Central African Republic"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "CT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/caf> ;
+  skos:altLabel "CAF"@en .
+
+rog:CD a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Chad"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "CD" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tcd> ;
+  skos:altLabel "TCD"@en .
+
+rog:CI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Chile"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "CI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/chl> ;
+  skos:altLabel "CHL"@en .
+
+rog:CH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "China"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "CH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/chn> ;
+  skos:altLabel "CHN"@en .
+
+rog:KT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Christmas Island"@en ;
+  skos:broader rog:subregion-australia-and-new-zealand ;
+  skos:notation "KT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cxr> ;
+  skos:altLabel "CXR"@en .
+
+rog:CK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cocos (Keeling) Islands"@en ;
+  skos:broader rog:subregion-australia-and-new-zealand ;
+  skos:notation "CK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cck> ;
+  skos:altLabel "CCK"@en .
+
+rog:CO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Colombia"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "CO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/col> ;
+  skos:altLabel "COL"@en .
+
+rog:CN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Comoros"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "CN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/com> ;
+  skos:altLabel "COM"@en .
+
+rog:CF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Congo"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "CF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cog> ;
+  skos:altLabel "COG"@en .
+
+rog:CG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Congo, Democratic Republic of the"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "CG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cod> ;
+  skos:altLabel "COD"@en .
+
+rog:CW a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cook Islands"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "CW" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cok> ;
+  skos:altLabel "COK"@en .
+
+rog:CS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Costa Rica"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "CS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cri> ;
+  skos:altLabel "CRI"@en .
+
+rog:IV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cote d’Ivoire"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "IV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/civ> ;
+  skos:altLabel "CIV"@en .
+
+rog:HR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Croatia"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "HR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/hrv> ;
+  skos:altLabel "HRV"@en .
+
+rog:CU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cuba"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "CU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cub> ;
+  skos:altLabel "CUB"@en .
+
+rog:UC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Curacao"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "UC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cuw> ;
+  skos:altLabel "CUW"@en .
+
+rog:CY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Cyprus"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "CY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cyp> ;
+  skos:altLabel "CYP"@en .
+
+rog:EZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Czech Republic"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "EZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/cze> ;
+  skos:altLabel "CZE"@en .
+
+rog:DA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Denmark"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "DA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/dnk> ;
+  skos:altLabel "DNK"@en .
+
+rog:DJ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Djibouti"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "DJ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/dji> ;
+  skos:altLabel "DJI"@en .
+
+rog:DO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Dominica"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "DO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/dma> ;
+  skos:altLabel "DMA"@en .
+
+rog:DR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Dominican Republic"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "DR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/dom> ;
+  skos:altLabel "DOM"@en .
+
+rog:EC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Ecuador"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "EC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ecu> ;
+  skos:altLabel "ECU"@en .
+
+rog:EG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Egypt"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "EG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/egy> ;
+  skos:altLabel "EGY"@en .
+
+rog:ES a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "El Salvador"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "ES" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/slv> ;
+  skos:altLabel "SLV"@en .
+
+rog:EK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Equatorial Guinea"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "EK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gnq> ;
+  skos:altLabel "GNQ"@en .
+
+rog:ER a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Eritrea"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "ER" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/eri> ;
+  skos:altLabel "ERI"@en .
+
+rog:EN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Estonia"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "EN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/est> ;
+  skos:altLabel "EST"@en .
+
+rog:WZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Eswatini"@en ;
+  skos:broader rog:subregion-southern-africa ;
+  skos:notation "WZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/swz> ;
+  skos:altLabel "SWZ"@en .
+
+rog:ET a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Ethiopia"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "ET" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/eth> ;
+  skos:altLabel "ETH"@en .
+
+rog:FK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Falkland Islands"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "FK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/flk> ;
+  skos:altLabel "FLK"@en .
+
+rog:FO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Faroe Islands"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "FO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/fro> ;
+  skos:altLabel "FRO"@en .
+
+rog:FJ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Fiji"@en ;
+  skos:broader rog:subregion-melanesia ;
+  skos:notation "FJ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/fji> ;
+  skos:altLabel "FJI"@en .
+
+rog:FI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Finland"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "FI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/fin> ;
+  skos:altLabel "FIN"@en .
+
+rog:FR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "France"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "FR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/fra> ;
+  skos:altLabel "FRA"@en .
+
+rog:FG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "French Guiana"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "FG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/guf> ;
+  skos:altLabel "GUF"@en .
+
+rog:FP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "French Polynesia"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "FP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pyf> ;
+  skos:altLabel "PYF"@en .
+
+rog:GB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Gabon"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "GB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gab> ;
+  skos:altLabel "GAB"@en .
+
+rog:GA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Gambia"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "GA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gmb> ;
+  skos:altLabel "GMB"@en .
+
+rog:GG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Georgia"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "GG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/geo> ;
+  skos:altLabel "GEO"@en .
+
+rog:GM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Germany"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "GM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/deu> ;
+  skos:altLabel "DEU"@en .
+
+rog:GH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Ghana"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "GH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gha> ;
+  skos:altLabel "GHA"@en .
+
+rog:GI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Gibraltar"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "GI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gib> ;
+  skos:altLabel "GIB"@en .
+
+rog:GR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Greece"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "GR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/grc> ;
+  skos:altLabel "GRC"@en .
+
+rog:GL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Greenland"@en ;
+  skos:broader rog:subregion-northern-america ;
+  skos:notation "GL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/grl> ;
+  skos:altLabel "GRL"@en .
+
+rog:GJ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Grenada"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "GJ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/grd> ;
+  skos:altLabel "GRD"@en .
+
+rog:GP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guadeloupe"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "GP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/glp> ;
+  skos:altLabel "GLP"@en .
+
+rog:GQ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guam"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "GQ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gum> ;
+  skos:altLabel "GUM"@en .
+
+rog:GT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guatemala"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "GT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gtm> ;
+  skos:altLabel "GTM"@en .
+
+rog:GK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guernsey"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "GK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ggy> ;
+  skos:altLabel "GGY"@en .
+
+rog:GV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guinea"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "GV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gin> ;
+  skos:altLabel "GIN"@en .
+
+rog:PU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guinea-Bissau"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "PU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gnb> ;
+  skos:altLabel "GNB"@en .
+
+rog:GY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Guyana"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "GY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/guy> ;
+  skos:altLabel "GUY"@en .
+
+rog:HA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Haiti"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "HA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/hti> ;
+  skos:altLabel "HTI"@en .
+
+rog:HO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Honduras"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "HO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/hnd> ;
+  skos:altLabel "HND"@en .
+
+rog:HK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Hong Kong"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "HK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/hkg> ;
+  skos:altLabel "HKG"@en .
+
+rog:HU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Hungary"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "HU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/hun> ;
+  skos:altLabel "HUN"@en .
+
+rog:IC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Iceland"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "IC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/isl> ;
+  skos:altLabel "ISL"@en .
+
+rog:IN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "India"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "IN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ind> ;
+  skos:altLabel "IND"@en .
+
+rog:ID a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Indonesia"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "ID" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/idn> ;
+  skos:altLabel "IDN"@en .
+
+rog:IR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Iran"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "IR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/irn> ;
+  skos:altLabel "IRN"@en .
+
+rog:IZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Iraq"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "IZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/irq> ;
+  skos:altLabel "IRQ"@en .
+
+rog:EI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Ireland"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "EI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/irl> ;
+  skos:altLabel "IRL"@en .
+
+rog:IM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Isle of Man"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "IM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/imn> ;
+  skos:altLabel "IMN"@en .
+
+rog:IS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Israel"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "IS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/isr> ;
+  skos:altLabel "ISR"@en .
+
+rog:IT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Italy"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "IT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ita> ;
+  skos:altLabel "ITA"@en .
+
+rog:JM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Jamaica"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "JM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/jam> ;
+  skos:altLabel "JAM"@en .
+
+rog:JA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Japan"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "JA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/jpn> ;
+  skos:altLabel "JPN"@en .
+
+rog:JE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Jersey"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "JE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/jey> ;
+  skos:altLabel "JEY"@en .
+
+rog:JO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Jordan"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "JO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/jor> ;
+  skos:altLabel "JOR"@en .
+
+rog:KZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Kazakhstan"@en ;
+  skos:broader rog:subregion-central-asia ;
+  skos:notation "KZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kaz> ;
+  skos:altLabel "KAZ"@en .
+
+rog:KE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Kenya"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "KE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ken> ;
+  skos:altLabel "KEN"@en .
+
+rog:KR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Kiribati"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "KR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kir> ;
+  skos:altLabel "KIR"@en .
+
+rog:KV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Kosovo"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "KV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kos> ;
+  skos:altLabel "KOS"@en .
+
+rog:KU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Kuwait"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "KU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kwt> ;
+  skos:altLabel "KWT"@en .
+
+rog:KG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Kyrgyzstan"@en ;
+  skos:broader rog:subregion-central-asia ;
+  skos:notation "KG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kgz> ;
+  skos:altLabel "KGZ"@en .
+
+rog:LA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Laos"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "LA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lao> ;
+  skos:altLabel "LAO"@en .
+
+rog:LG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Latvia"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "LG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lva> ;
+  skos:altLabel "LVA"@en .
+
+rog:LE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Lebanon"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "LE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lbn> ;
+  skos:altLabel "LBN"@en .
+
+rog:LT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Lesotho"@en ;
+  skos:broader rog:subregion-southern-africa ;
+  skos:notation "LT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lso> ;
+  skos:altLabel "LSO"@en .
+
+rog:LI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Liberia"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "LI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lbr> ;
+  skos:altLabel "LBR"@en .
+
+rog:LY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Libya"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "LY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lby> ;
+  skos:altLabel "LBY"@en .
+
+rog:LS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Liechtenstein"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "LS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lie> ;
+  skos:altLabel "LIE"@en .
+
+rog:LH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Lithuania"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "LH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ltu> ;
+  skos:altLabel "LTU"@en .
+
+rog:LU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Luxembourg"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "LU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lux> ;
+  skos:altLabel "LUX"@en .
+
+rog:MC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Macao"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "MC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mac> ;
+  skos:altLabel "MAC"@en .
+
+rog:MA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Madagascar"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "MA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mdg> ;
+  skos:altLabel "MDG"@en .
+
+rog:MI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Malawi"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "MI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mwi> ;
+  skos:altLabel "MWI"@en .
+
+rog:MY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Malaysia"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "MY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mys> ;
+  skos:altLabel "MYS"@en .
+
+rog:MV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Maldives"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "MV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mdv> ;
+  skos:altLabel "MDV"@en .
+
+rog:ML a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mali"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "ML" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mli> ;
+  skos:altLabel "MLI"@en .
+
+rog:MT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Malta"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "MT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mlt> ;
+  skos:altLabel "MLT"@en .
+
+rog:RM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Marshall Islands"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "RM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mhl> ;
+  skos:altLabel "MHL"@en .
+
+rog:MB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Martinique"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "MB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mtq> ;
+  skos:altLabel "MTQ"@en .
+
+rog:MR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mauritania"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "MR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mrt> ;
+  skos:altLabel "MRT"@en .
+
+rog:MP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mauritius"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "MP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mus> ;
+  skos:altLabel "MUS"@en .
+
+rog:MF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mayotte"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "MF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/myt> ;
+  skos:altLabel "MYT"@en .
+
+rog:MX a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mexico"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "MX" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mex> ;
+  skos:altLabel "MEX"@en .
+
+rog:FM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Micronesia"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "FM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/fsm> ;
+  skos:altLabel "FSM"@en .
+
+rog:MD a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Moldova"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "MD" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mda> ;
+  skos:altLabel "MDA"@en .
+
+rog:MN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Monaco"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "MN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mco> ;
+  skos:altLabel "MCO"@en .
+
+rog:MG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mongolia"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "MG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mng> ;
+  skos:altLabel "MNG"@en .
+
+rog:MJ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Montenegro"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "MJ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mne> ;
+  skos:altLabel "MNE"@en .
+
+rog:MH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Montserrat"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "MH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/msr> ;
+  skos:altLabel "MSR"@en .
+
+rog:MO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Morocco"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "MO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mar> ;
+  skos:altLabel "MAR"@en .
+
+rog:MZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Mozambique"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "MZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/moz> ;
+  skos:altLabel "MOZ"@en .
+
+rog:BM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Myanmar"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "BM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mmr> ;
+  skos:altLabel "MMR"@en .
+
+rog:WA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Namibia"@en ;
+  skos:broader rog:subregion-southern-africa ;
+  skos:notation "WA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nam> ;
+  skos:altLabel "NAM"@en .
+
+rog:NR a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Nauru"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "NR" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nru> ;
+  skos:altLabel "NRU"@en .
+
+rog:NP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Nepal"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "NP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/npl> ;
+  skos:altLabel "NPL"@en .
+
+rog:NL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Netherlands"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "NL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nld> ;
+  skos:altLabel "NLD"@en .
+
+rog:NC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "New Caledonia"@en ;
+  skos:broader rog:subregion-melanesia ;
+  skos:notation "NC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ncl> ;
+  skos:altLabel "NCL"@en .
+
+rog:NZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "New Zealand"@en ;
+  skos:broader rog:subregion-australia-and-new-zealand ;
+  skos:notation "NZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nzl> ;
+  skos:altLabel "NZL"@en .
+
+rog:NU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Nicaragua"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "NU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nic> ;
+  skos:altLabel "NIC"@en .
+
+rog:NG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Niger"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "NG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ner> ;
+  skos:altLabel "NER"@en .
+
+rog:NI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Nigeria"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "NI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nga> ;
+  skos:altLabel "NGA"@en .
+
+rog:NE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Niue"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "NE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/niu> ;
+  skos:altLabel "NIU"@en .
+
+rog:NF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Norfolk Island"@en ;
+  skos:broader rog:subregion-australia-and-new-zealand ;
+  skos:notation "NF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nfk> ;
+  skos:altLabel "NFK"@en .
+
+rog:KN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "North Korea"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "KN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/prk> ;
+  skos:altLabel "PRK"@en .
+
+rog:MK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "North Macedonia"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "MK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mkd> ;
+  skos:altLabel "MKD"@en .
+
+rog:CQ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Northern Mariana Islands"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "CQ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/mnp> ;
+  skos:altLabel "MNP"@en .
+
+rog:NO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Norway"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "NO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/nor> ;
+  skos:altLabel "NOR"@en .
+
+rog:MU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Oman"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "MU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/omn> ;
+  skos:altLabel "OMN"@en .
+
+rog:PK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Pakistan"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "PK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pak> ;
+  skos:altLabel "PAK"@en .
+
+rog:PS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Palau"@en ;
+  skos:broader rog:subregion-micronesia ;
+  skos:notation "PS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/plw> ;
+  skos:altLabel "PLW"@en .
+
+rog:XP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Palestine"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "XP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pse> ;
+  skos:altLabel "PSE"@en .
+
+rog:PM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Panama"@en ;
+  skos:broader rog:subregion-central-america ;
+  skos:notation "PM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pan> ;
+  skos:altLabel "PAN"@en .
+
+rog:PP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Papua New Guinea"@en ;
+  skos:broader rog:subregion-melanesia ;
+  skos:notation "PP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/png> ;
+  skos:altLabel "PNG"@en .
+
+rog:PA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Paraguay"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "PA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pry> ;
+  skos:altLabel "PRY"@en .
+
+rog:PE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Peru"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "PE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/per> ;
+  skos:altLabel "PER"@en .
+
+rog:RP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Philippines"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "RP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/phl> ;
+  skos:altLabel "PHL"@en .
+
+rog:PC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Pitcairn Islands"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "PC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pcn> ;
+  skos:altLabel "PCN"@en .
+
+rog:PL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Poland"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "PL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pol> ;
+  skos:altLabel "POL"@en .
+
+rog:PO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Portugal"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "PO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/prt> ;
+  skos:altLabel "PRT"@en .
+
+rog:RQ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Puerto Rico"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "RQ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/pri> ;
+  skos:altLabel "PRI"@en .
+
+rog:QA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Qatar"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "QA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/qat> ;
+  skos:altLabel "QAT"@en .
+
+rog:RE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Reunion"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "RE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/reu> ;
+  skos:altLabel "REU"@en .
+
+rog:RO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Romania"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "RO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/rou> ;
+  skos:altLabel "ROU"@en .
+
+rog:RS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Russian Federation"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "RS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/rus> ;
+  skos:altLabel "RUS"@en .
+
+rog:RW a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Rwanda"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "RW" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/rwa> ;
+  skos:altLabel "RWA"@en .
+
+rog:TB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Barthelemy"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "TB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/blm> ;
+  skos:altLabel "BLM"@en .
+
+rog:SH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Helena, Ascension, and Tristan da Cunha"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "SH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/shn> ;
+  skos:altLabel "SHN"@en .
+
+rog:SC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Kitts and Nevis"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "SC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kna> ;
+  skos:altLabel "KNA"@en .
+
+rog:ST a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Lucia"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "ST" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lca> ;
+  skos:altLabel "LCA"@en .
+
+rog:RN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Martin"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "RN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/maf> ;
+  skos:altLabel "MAF"@en .
+
+rog:SB a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Pierre and Miquelon"@en ;
+  skos:broader rog:subregion-northern-america ;
+  skos:notation "SB" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/spm> ;
+  skos:altLabel "SPM"@en .
+
+rog:VC a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saint Vincent and the Grenadines"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "VC" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/vct> ;
+  skos:altLabel "VCT"@en .
+
+rog:WS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Samoa"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "WS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/wsm> ;
+  skos:altLabel "WSM"@en .
+
+rog:SM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "San Marino"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "SM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/smr> ;
+  skos:altLabel "SMR"@en .
+
+rog:TP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Sao Tome and Principe"@en ;
+  skos:broader rog:subregion-middle-africa ;
+  skos:notation "TP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/stp> ;
+  skos:altLabel "STP"@en .
+
+rog:SA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Saudi Arabia"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "SA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sau> ;
+  skos:altLabel "SAU"@en .
+
+rog:SG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Senegal"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "SG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sen> ;
+  skos:altLabel "SEN"@en .
+
+rog:RI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Serbia"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "RI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/srb> ;
+  skos:altLabel "SRB"@en .
+
+rog:SE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Seychelles"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "SE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/syc> ;
+  skos:altLabel "SYC"@en .
+
+rog:SL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Sierra Leone"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "SL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sle> ;
+  skos:altLabel "SLE"@en .
+
+rog:SN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Singapore"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "SN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sgp> ;
+  skos:altLabel "SGP"@en .
+
+rog:NN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Sint Maarten"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "NN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sxm> ;
+  skos:altLabel "SXM"@en .
+
+rog:LO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Slovakia"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "LO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/svk> ;
+  skos:altLabel "SVK"@en .
+
+rog:SI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Slovenia"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "SI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/svn> ;
+  skos:altLabel "SVN"@en .
+
+rog:BP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Solomon Islands"@en ;
+  skos:broader rog:subregion-melanesia ;
+  skos:notation "BP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/slb> ;
+  skos:altLabel "SLB"@en .
+
+rog:SO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Somalia"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "SO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/som> ;
+  skos:altLabel "SOM"@en .
+
+rog:SF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "South Africa"@en ;
+  skos:broader rog:subregion-southern-africa ;
+  skos:notation "SF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/zaf> ;
+  skos:altLabel "ZAF"@en .
+
+rog:KS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "South Korea"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "KS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/kor> ;
+  skos:altLabel "KOR"@en .
+
+rog:OD a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "South Sudan"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "OD" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ssd> ;
+  skos:altLabel "SSD"@en .
+
+rog:SP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Spain"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "SP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/esp> ;
+  skos:altLabel "ESP"@en .
+
+rog:CE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Sri Lanka"@en ;
+  skos:broader rog:subregion-southern-asia ;
+  skos:notation "CE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/lka> ;
+  skos:altLabel "LKA"@en .
+
+rog:SU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Sudan"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "SU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sdn> ;
+  skos:altLabel "SDN"@en .
+
+rog:NS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Suriname"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "NS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sur> ;
+  skos:altLabel "SUR"@en .
+
+rog:SV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Svalbard"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "SV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/sjm> ;
+  skos:altLabel "SJM"@en .
+
+rog:SW a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Sweden"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "SW" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/swe> ;
+  skos:altLabel "SWE"@en .
+
+rog:SZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Switzerland"@en ;
+  skos:broader rog:subregion-western-europe ;
+  skos:notation "SZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/che> ;
+  skos:altLabel "CHE"@en .
+
+rog:SY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Syria"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "SY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/syr> ;
+  skos:altLabel "SYR"@en .
+
+rog:TW a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Taiwan"@en ;
+  skos:broader rog:subregion-eastern-asia ;
+  skos:notation "TW" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/twn> ;
+  skos:altLabel "TWN"@en .
+
+rog:TI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Tajikistan"@en ;
+  skos:broader rog:subregion-central-asia ;
+  skos:notation "TI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tjk> ;
+  skos:altLabel "TJK"@en .
+
+rog:TZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Tanzania"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "TZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tza> ;
+  skos:altLabel "TZA"@en .
+
+rog:TH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Thailand"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "TH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tha> ;
+  skos:altLabel "THA"@en .
+
+rog:TT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Timor-Leste"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "TT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tls> ;
+  skos:altLabel "TLS"@en .
+
+rog:TO a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Togo"@en ;
+  skos:broader rog:subregion-western-africa ;
+  skos:notation "TO" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tgo> ;
+  skos:altLabel "TGO"@en .
+
+rog:TL a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Tokelau"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "TL" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tkl> ;
+  skos:altLabel "TKL"@en .
+
+rog:TN a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Tonga"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "TN" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ton> ;
+  skos:altLabel "TON"@en .
+
+rog:TD a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Trinidad and Tobago"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "TD" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tto> ;
+  skos:altLabel "TTO"@en .
+
+rog:TS a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Tunisia"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "TS" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tun> ;
+  skos:altLabel "TUN"@en .
+
+rog:TX a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Turkmenistan"@en ;
+  skos:broader rog:subregion-central-asia ;
+  skos:notation "TX" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tkm> ;
+  skos:altLabel "TKM"@en .
+
+rog:TK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Turks and Caicos Islands"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "TK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tca> ;
+  skos:altLabel "TCA"@en .
+
+rog:TV a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Tuvalu"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "TV" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tuv> ;
+  skos:altLabel "TUV"@en .
+
+rog:TU a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Türkiye"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "TU" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/tur> ;
+  skos:altLabel "TUR"@en .
+
+rog:UG a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Uganda"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "UG" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/uga> ;
+  skos:altLabel "UGA"@en .
+
+rog:UP a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Ukraine"@en ;
+  skos:broader rog:subregion-eastern-europe ;
+  skos:notation "UP" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ukr> ;
+  skos:altLabel "UKR"@en .
+
+rog:AE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "United Arab Emirates"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "AE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/are> ;
+  skos:altLabel "ARE"@en .
+
+rog:UK a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "United Kingdom"@en ;
+  skos:broader rog:subregion-northern-europe ;
+  skos:notation "UK" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/gbr> ;
+  skos:altLabel "GBR"@en .
+
+rog:US a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "United States"@en ;
+  skos:broader rog:subregion-northern-america ;
+  skos:notation "US" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/usa> ;
+  skos:altLabel "USA"@en .
+
+rog:UY a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Uruguay"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "UY" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ury> ;
+  skos:altLabel "URY"@en .
+
+rog:UZ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Uzbekistan"@en ;
+  skos:broader rog:subregion-central-asia ;
+  skos:notation "UZ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/uzb> ;
+  skos:altLabel "UZB"@en .
+
+rog:NH a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Vanuatu"@en ;
+  skos:broader rog:subregion-melanesia ;
+  skos:notation "NH" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/vut> ;
+  skos:altLabel "VUT"@en .
+
+rog:VT a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Vatican City"@en ;
+  skos:broader rog:subregion-southern-europe ;
+  skos:notation "VT" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/vat> ;
+  skos:altLabel "VAT"@en .
+
+rog:VE a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Venezuela"@en ;
+  skos:broader rog:subregion-south-america ;
+  skos:notation "VE" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/ven> ;
+  skos:altLabel "VEN"@en .
+
+rog:VM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Vietnam"@en ;
+  skos:broader rog:subregion-south-eastern-asia ;
+  skos:notation "VM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/vnm> ;
+  skos:altLabel "VNM"@en .
+
+rog:VQ a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Virgin Islands"@en ;
+  skos:broader rog:subregion-caribbean ;
+  skos:notation "VQ" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/vir> ;
+  skos:altLabel "VIR"@en .
+
+rog:WF a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Wallis and Futuna"@en ;
+  skos:broader rog:subregion-polynesia ;
+  skos:notation "WF" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/wlf> ;
+  skos:altLabel "WLF"@en .
+
+rog:WI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Western Sahara"@en ;
+  skos:broader rog:subregion-northern-africa ;
+  skos:notation "WI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/esh> ;
+  skos:altLabel "ESH"@en .
+
+rog:YM a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Yemen"@en ;
+  skos:broader rog:subregion-western-asia ;
+  skos:notation "YM" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/yem> ;
+  skos:altLabel "YEM"@en .
+
+rog:ZA a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Zambia"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "ZA" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/zmb> ;
+  skos:altLabel "ZMB"@en .
+
+rog:ZI a skos:Concept ;
+  skos:inScheme his:rog ;
+  skos:prefLabel "Zimbabwe"@en ;
+  skos:broader rog:subregion-eastern-africa ;
+  skos:notation "ZI" ;
+  skos:exactMatch <http://id.loc.gov/vocabulary/countries/zwe> ;
+  skos:altLabel "ZWE"@en .
+

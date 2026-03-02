@@ -1,0 +1,416 @@
+##############################################################################
+# IMB Assessment Vocabularies — SKOS Concept Schemes
+#
+# Four controlled vocabularies used by IMB for people group assessment:
+#   1. GSEC — Global Status of Evangelical Christianity (7 levels, 0–6)
+#   2. SPI  — Strategic Priority Index (3 categories, 0–2)
+#   3. Church Planting Status (3 levels)
+#   4. Evangelical Level — categorical evangelical % bands (11 levels, 0–10)
+#
+# Source:  gc-core/reference/data/peoplegroups.org/people_groups.csv
+#          (IMB Comprehensive People Group List)
+#
+# Named graph: <https://data.global.church/imb/>
+# Namespace:   https://ontology.global.church/imb#
+#
+# Version:    0.1.0
+# Date:       2026-02-17
+##############################################################################
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix imb:     <https://ontology.global.church/imb#> .
+
+
+##############################################################################
+#  1. GSEC — Global Status of Evangelical Christianity
+#
+#  Seven-level scale (0–6) assessing the status of evangelical Christianity
+#  among a people group.  Lower values = less reached.
+##############################################################################
+
+imb:GSECScheme a skos:ConceptScheme ;
+  skos:prefLabel "Global Status of Evangelical Christianity"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "Seven-level classification (0–6) of the global status of evangelical Christianity among a people group. Used by IMB to assess engagement and church planting progress."@en ;
+  skos:hasTopConcept imb:GSEC0 ,
+                     imb:GSEC1 ,
+                     imb:GSEC2 ,
+                     imb:GSEC3 ,
+                     imb:GSEC4 ,
+                     imb:GSEC5 ,
+                     imb:GSEC6 .
+
+imb:GSEC0 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "No Evangelicals, Churches or Resources"@en ;
+  skos:notation "0" ;
+  skos:definition "No evangelical Christians or churches. No access to evangelical print, audio, visual, or human resources."@en .
+
+imb:GSEC1 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "Less than 2% Evangelical, No Active CP Activity"@en ;
+  skos:notation "1" ;
+  skos:definition "This people group is less than 2% evangelical. Some evangelical resources are available, but there has been no active church planting among them within the past two years."@en .
+
+imb:GSEC2 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "Less than 2% Evangelical, Concentrated CP Activity"@en ;
+  skos:notation "2" ;
+  skos:definition "This people group is less than 2% evangelical but there is initial or concentrated church planting within the past two years."@en .
+
+imb:GSEC3 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "Less than 2% Evangelical, Dispersed CP Activity"@en ;
+  skos:notation "3" ;
+  skos:definition "This people group is less than 2% evangelical but there is dispersed church planting within the past two years."@en .
+
+imb:GSEC4 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "2% or Greater but Less than 5% Evangelical"@en ;
+  skos:notation "4" ;
+  skos:definition "Greater than or equal to 2% evangelical."@en .
+
+imb:GSEC5 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "5% or Greater but Less than 10% Evangelical"@en ;
+  skos:notation "5" ;
+  skos:definition "Greater than or equal to 5% evangelical."@en .
+
+imb:GSEC6 a skos:Concept ;
+  skos:inScheme imb:GSECScheme ;
+  skos:topConceptOf imb:GSECScheme ;
+  skos:prefLabel "10% or Greater Evangelical"@en ;
+  skos:notation "6" ;
+  skos:definition "Greater than or equal to 10% evangelical."@en .
+
+
+##############################################################################
+#  2. SPI — Strategic Priority Index
+#
+#  Three-category classification (0–2) used by IMB to prioritize people
+#  groups for strategic engagement.
+##############################################################################
+
+imb:SPIScheme a skos:ConceptScheme ;
+  skos:prefLabel "Strategic Priority Index"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "Three-category classification (0–2) used by IMB to prioritize people groups for strategic engagement. Combines engagement status and unreached status."@en ;
+  skos:hasTopConcept imb:SPI0 ,
+                     imb:SPI1 ,
+                     imb:SPI2 .
+
+imb:SPI0 a skos:Concept ;
+  skos:inScheme imb:SPIScheme ;
+  skos:topConceptOf imb:SPIScheme ;
+  skos:prefLabel "Unengaged and Unreached"@en ;
+  skos:notation "0" ;
+  skos:definition "The people group is both unengaged (no known active church planting strategy) and unreached (less than 2% evangelical, less than 5% Christian adherent)."@en .
+
+imb:SPI1 a skos:Concept ;
+  skos:inScheme imb:SPIScheme ;
+  skos:topConceptOf imb:SPIScheme ;
+  skos:prefLabel "Engaged yet Unreached"@en ;
+  skos:notation "1" ;
+  skos:definition "The people group is unreached but has active engagement — there is a known church planting strategy underway."@en .
+
+imb:SPI2 a skos:Concept ;
+  skos:inScheme imb:SPIScheme ;
+  skos:topConceptOf imb:SPIScheme ;
+  skos:prefLabel "No Longer Unreached"@en ;
+  skos:notation "2" ;
+  skos:definition "The people group is no longer considered unreached — it has surpassed the 2% evangelical or 5% Christian adherent threshold."@en .
+
+
+##############################################################################
+#  3. Church Planting Status
+#
+#  Three-level classification of church planting activity among a people
+#  group, as assessed by IMB.
+##############################################################################
+
+imb:ChurchPlantingStatusScheme a skos:ConceptScheme ;
+  skos:prefLabel "Church Planting Status"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "Three-level classification of church planting activity among a people group: no churches planted, dispersed church planting, or concentrated church planting."@en ;
+  skos:hasTopConcept imb:CPNone ,
+                     imb:CPDispersed ,
+                     imb:CPConcentrated .
+
+imb:CPNone a skos:Concept ;
+  skos:inScheme imb:ChurchPlantingStatusScheme ;
+  skos:topConceptOf imb:ChurchPlantingStatusScheme ;
+  skos:prefLabel "No Churches Planted"@en ;
+  skos:notation "NCP" ;
+  skos:definition "No known church planting activity among this people group."@en .
+
+imb:CPDispersed a skos:Concept ;
+  skos:inScheme imb:ChurchPlantingStatusScheme ;
+  skos:topConceptOf imb:ChurchPlantingStatusScheme ;
+  skos:prefLabel "Dispersed Church Planting"@en ;
+  skos:notation "DCP" ;
+  skos:definition "Church planting activity is dispersed — multiple church planting efforts are underway across different locations within the people group."@en .
+
+imb:CPConcentrated a skos:Concept ;
+  skos:inScheme imb:ChurchPlantingStatusScheme ;
+  skos:topConceptOf imb:ChurchPlantingStatusScheme ;
+  skos:prefLabel "Concentrated Church Planting"@en ;
+  skos:notation "CCP" ;
+  skos:definition "Church planting activity is concentrated — initial or focused church planting in a specific area within the people group."@en .
+
+
+##############################################################################
+#  4. Evangelical Level — Categorical Evangelical Percentage Bands
+#
+#  Eleven-level ordinal scale (0–10) classifying the estimated evangelical
+#  percentage of a people group into categorical bands.  Complements JP's
+#  numeric jp:evangelicalPercentage with a classified band from IMB.
+#  Ordered from lowest (No Known Evangelicals) to highest (75%+).
+##############################################################################
+
+imb:EvangelicalLevelScheme a skos:ConceptScheme ;
+  skos:prefLabel "Evangelical Level"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "Eleven-level ordinal classification of the estimated evangelical percentage of a people group into categorical bands. Lower notation values indicate fewer evangelicals."@en ;
+  skos:hasTopConcept imb:EvLvl0 ,
+                     imb:EvLvl1 ,
+                     imb:EvLvl2 ,
+                     imb:EvLvl3 ,
+                     imb:EvLvl4 ,
+                     imb:EvLvl5 ,
+                     imb:EvLvl6 ,
+                     imb:EvLvl7 ,
+                     imb:EvLvl8 ,
+                     imb:EvLvl9 ,
+                     imb:EvLvl10 .
+
+imb:EvLvl0 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "No Known Evangelicals"@en ;
+  skos:notation "0" ;
+  skos:definition "No known evangelical Christians among this people group."@en .
+
+imb:EvLvl1 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "Less than 2%"@en ;
+  skos:notation "1" ;
+  skos:definition "Estimated evangelical percentage is greater than 0% but less than 2%."@en .
+
+imb:EvLvl2 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "2% or Greater but Less than 5%"@en ;
+  skos:notation "2" ;
+  skos:definition "Estimated evangelical percentage is at least 2% but less than 5%."@en .
+
+imb:EvLvl3 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "5% or Greater but Less than 10%"@en ;
+  skos:notation "3" ;
+  skos:definition "Estimated evangelical percentage is at least 5% but less than 10%."@en .
+
+imb:EvLvl4 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "10% or Greater but Less than 15%"@en ;
+  skos:notation "4" ;
+  skos:definition "Estimated evangelical percentage is at least 10% but less than 15%."@en .
+
+imb:EvLvl5 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "15% or Greater but Less than 20%"@en ;
+  skos:notation "5" ;
+  skos:definition "Estimated evangelical percentage is at least 15% but less than 20%."@en .
+
+imb:EvLvl6 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "20% or Greater but Less than 30%"@en ;
+  skos:notation "6" ;
+  skos:definition "Estimated evangelical percentage is at least 20% but less than 30%."@en .
+
+imb:EvLvl7 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "30% or Greater but Less than 40%"@en ;
+  skos:notation "7" ;
+  skos:definition "Estimated evangelical percentage is at least 30% but less than 40%."@en .
+
+imb:EvLvl8 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "40% or Greater but Less than 50%"@en ;
+  skos:notation "8" ;
+  skos:definition "Estimated evangelical percentage is at least 40% but less than 50%."@en .
+
+imb:EvLvl9 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "50% or Greater but Less than 75%"@en ;
+  skos:notation "9" ;
+  skos:definition "Estimated evangelical percentage is at least 50% but less than 75%."@en .
+
+imb:EvLvl10 a skos:Concept ;
+  skos:inScheme imb:EvangelicalLevelScheme ;
+  skos:topConceptOf imb:EvangelicalLevelScheme ;
+  skos:prefLabel "75% or Greater"@en ;
+  skos:notation "10" ;
+  skos:definition "Estimated evangelical percentage is 75% or greater."@en .
+
+
+##############################################################################
+#  5. Target Audience — IMB Resource Audience Classification
+#
+#  Eight-concept scheme classifying the intended audience of IMB-curated
+#  media resources.
+##############################################################################
+
+imb:TargetAudienceScheme a skos:ConceptScheme ;
+  skos:prefLabel "IMB Target Audience Scheme"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "IMB's classification of intended resource audiences."@en ;
+  skos:hasTopConcept imb:AudienceMen ,
+                     imb:AudienceWomen ,
+                     imb:AudienceStudents ,
+                     imb:AudienceRefugees ,
+                     imb:AudienceChildren ,
+                     imb:AudienceNationals ,
+                     imb:AudienceDiaspora ,
+                     imb:AudienceOralLearners .
+
+imb:AudienceMen a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Men"@en .
+
+imb:AudienceWomen a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Women"@en .
+
+imb:AudienceStudents a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Students"@en .
+
+imb:AudienceRefugees a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Refugees"@en .
+
+imb:AudienceChildren a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Children"@en .
+
+imb:AudienceNationals a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Nationals"@en ;
+  skos:definition "Local/national believers in the target culture."@en .
+
+imb:AudienceDiaspora a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Diaspora"@en ;
+  skos:definition "People groups living outside their country of origin."@en .
+
+imb:AudienceOralLearners a skos:Concept ;
+  skos:inScheme imb:TargetAudienceScheme ;
+  skos:topConceptOf imb:TargetAudienceScheme ;
+  skos:prefLabel "Oral Learners"@en ;
+  skos:definition "People who learn best through oral communication rather than written text."@en .
+
+
+##############################################################################
+#  6. Affinity Region — IMB Regional Classification
+#
+#  Eleven-concept scheme classifying IMB's internal affinity-based regional
+#  groupings.  Not 1:1 with ISO geographic regions.
+##############################################################################
+
+imb:AffinityRegionScheme a skos:ConceptScheme ;
+  skos:prefLabel "IMB Affinity Region Scheme"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "IMB's internal affinity-based regional classification. Not 1:1 with ISO regions."@en ;
+  skos:hasTopConcept imb:AffinityGlobal ,
+                     imb:AffinityNAME ,
+                     imb:AffinitySouthAsia ,
+                     imb:AffinityAsianPacificRim ,
+                     imb:AffinitySouthEastAsia ,
+                     imb:AffinityEastAsia ,
+                     imb:AffinityCentralAsia ,
+                     imb:AffinitySubSaharanAfrica ,
+                     imb:AffinityAmericas ,
+                     imb:AffinityEurope ,
+                     imb:AffinityDeaf .
+
+imb:AffinityGlobal a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Global"@en ;
+  skos:definition "Not region-specific; applicable worldwide."@en .
+
+imb:AffinityNAME a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "North Africa / Middle East"@en ;
+  skos:notation "NAME" .
+
+imb:AffinitySouthAsia a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "South Asia"@en .
+
+imb:AffinityAsianPacificRim a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Asian Pacific Rim"@en .
+
+imb:AffinitySouthEastAsia a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "South East Asia"@en .
+
+imb:AffinityEastAsia a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "East Asia"@en .
+
+imb:AffinityCentralAsia a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Central Asia"@en .
+
+imb:AffinitySubSaharanAfrica a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Sub-Saharan Africa"@en .
+
+imb:AffinityAmericas a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Americas"@en .
+
+imb:AffinityEurope a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Europe"@en .
+
+imb:AffinityDeaf a skos:Concept ;
+  skos:inScheme imb:AffinityRegionScheme ;
+  skos:topConceptOf imb:AffinityRegionScheme ;
+  skos:prefLabel "Deaf Peoples"@en ;
+  skos:definition "Cross-regional affinity for deaf communities."@en .

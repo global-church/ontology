@@ -1,0 +1,2241 @@
+##############################################################################
+# Global.Church Core Ontology (GC-Core)
+#
+# A W3C PROV-O grounded ontology for the Global.Church data ecosystem.
+# Maps entities from the Global.Church Schema, GCData Protocol, and
+# GAPPSRVC activity taxonomy into the PROV-O framework (Entity, Activity,
+# Agent) with alignment hooks to the Agentic Trust Layer ontology.
+#
+# Namespace:  https://ontology.global.church/core#
+# Version:    0.15.1
+# License:    CC BY-SA 4.0
+# Date:       2026-02-24
+##############################################################################
+
+@base          <https://ontology.global.church/core#> .
+@prefix :      <https://ontology.global.church/core#> .
+@prefix gc:    <https://ontology.global.church/core#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix geo:   <http://www.opengis.net/ont/geosparql#> .
+@prefix at:    <https://agentictrust.io/ontology/core#> .
+@prefix jp:    <https://ontology.global.church/joshuaproject#> .
+@prefix his:   <https://data.global.church/his/> .
+@prefix rop1:  <https://data.global.church/his/rop1/> .
+@prefix rop2:  <https://data.global.church/his/rop2/> .
+@prefix rop25: <https://data.global.church/his/rop25/> .
+@prefix rop3:  <https://data.global.church/his/rop3/> .
+@prefix rol:   <https://data.global.church/his/rol/> .
+@prefix ror:   <https://data.global.church/his/ror/> .
+@prefix rog:   <https://data.global.church/his/rog/> .
+@prefix imb:   <https://ontology.global.church/imb#> .
+
+##############################################################################
+# Ontology Declaration
+##############################################################################
+
+<https://ontology.global.church/core> a owl:Ontology ;
+  rdfs:label "Global.Church Core Ontology"@en ;
+  rdfs:comment "PROV-O grounded ontology for the Global.Church data ecosystem. Models ministry activities, church entities, people groups, unified multi-org assessment (gc:Assessment/gc:AssessmentResult), and data exchange provenance."@en ;
+  owl:versionInfo "0.16.0" ;
+  dct:creator "Global Church Alliance" ;
+  dct:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
+  dct:created "2026-02-17"^^xsd:date ;
+  owl:imports <http://www.w3.org/ns/prov-o#> .
+
+
+##############################################################################
+#  I.  AGENTS  (prov:Agent hierarchy)
+#
+#  Agents are responsible entities: human users, organizations, and software
+#  systems that record, exchange, or act upon ministry data.
+##############################################################################
+
+# ── Human Agents ──────────────────────────────────────────────────────────
+
+gc:Person a owl:Class ;
+  rdfs:label "Person"@en ;
+  rdfs:comment "A human individual participating in ministry activities. Corresponds to the User class in the Global.Church schema and to field personnel in GCData. A person may play different roles (field worker, leader, trainer) in different activity contexts."@en ;
+  rdfs:subClassOf prov:Agent .
+
+# ── Ministry Roles ────────────────────────────────────────────────────────
+#  Roles are context-dependent: the same person can be a field worker in
+#  one activity and a leader in another.  Modeled following PROV-O
+#  qualified association and ChurchCore's relational pattern.
+
+gc:MinistryRole a owl:Class ;
+  rdfs:label "Ministry Role"@en ;
+  rdfs:comment "A role that a person plays in the context of a ministry activity. Not a type of person, but a function performed within a specific context. Aligns with prov:Role and the Agentic Trust Layer's Role class."@en ;
+  rdfs:subClassOf prov:Role .
+
+# Standard role instances
+gc:FieldWorkerRole a gc:MinistryRole ;
+  rdfs:label "Field Worker"@en ;
+  rdfs:comment "Role of a person actively engaged in field operations such as gospel conversations, prayer walks, discipleship, and church planting."@en .
+
+gc:LeaderRole a gc:MinistryRole ;
+  rdfs:label "Leader"@en ;
+  rdfs:comment "Role of a person with oversight responsibility for a group, team, region, or church."@en .
+
+gc:TrainerRole a gc:MinistryRole ;
+  rdfs:label "Trainer"@en ;
+  rdfs:comment "Role of a person equipping others through training activities."@en .
+
+gc:RecorderRole a gc:MinistryRole ;
+  rdfs:label "Recorder"@en ;
+  rdfs:comment "Role of a person who records ministry activity data into a system."@en .
+
+gc:ChurchPlanterRole a gc:MinistryRole ;
+  rdfs:label "Church Planter"@en ;
+  rdfs:comment "Role of a person planting churches among a people group."@en .
+
+gc:TranslatorRole a gc:MinistryRole ;
+  rdfs:label "Translator"@en ;
+  rdfs:comment "Role of a person translating Scripture, media, or training materials."@en .
+
+gc:StrategyCoordinatorRole a gc:MinistryRole ;
+  rdfs:label "Strategy Coordinator"@en ;
+  rdfs:comment "Role of a person coordinating strategy for engagement of a people group or region."@en .
+
+# Qualified association pattern: links agent + role + activity
+gc:MinistryParticipation a owl:Class ;
+  rdfs:label "Ministry Participation"@en ;
+  rdfs:comment "Reified link between a person, a ministry activity, and the role played. Used via prov:qualifiedAssociation on the activity."@en ;
+  rdfs:subClassOf prov:Association .
+
+gc:participationRole a owl:ObjectProperty ;
+  rdfs:label "participation role"@en ;
+  rdfs:comment "The ministry role played in this participation."@en ;
+  rdfs:subPropertyOf prov:hadRole ;
+  rdfs:domain gc:MinistryParticipation ;
+  rdfs:range gc:MinistryRole .
+
+# ── Organizational Agents ─────────────────────────────────────────────────
+
+gc:Organization a owl:Class ;
+  rdfs:label "Organization"@en ;
+  rdfs:comment "A ministry organization, church, alliance, network, denomination, or sending agency. Central organizational entity in the Global.Church schema. All organization subtypes (churches, agencies, networks, etc.) are instances of this class, classified via gc:hasOrganizationType → OrganizationTypeScheme SKOS concepts. Multi-valued: an org can have multiple types (e.g., a megachurch that also runs a mission agency). Modeled as an Agentive Social Object (DOLCE ASO) with collective intentionality — orgs can commit to serving people groups, endorse peers, deploy workers, and bear responsibility for ministry activities."@en ;
+  rdfs:subClassOf prov:Organization .
+
+gc:hasOrganizationType a owl:ObjectProperty ;
+  rdfs:label "has organization type"@en ;
+  rdfs:comment "Classifies an organization by type. Values are SKOS concepts from gc:OrganizationTypeScheme (Church, Mission Agency, Denomination, Network, Coalition, Seminary, Parachurch Ministry). Multi-valued: an org can have multiple types."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range skos:Concept .
+
+gc:orgDomain a owl:DatatypeProperty ;
+  rdfs:label "organization domain"@en ;
+  rdfs:comment "The verified email domain for this organization (e.g., 'lausanne.org'). Used for Web3Auth org claiming — when a user signs up with an email matching this domain, they can claim admin access to the org."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:website a owl:DatatypeProperty ;
+  rdfs:label "website"@en ;
+  rdfs:comment "Primary website URL for this organization."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:anyURI .
+
+gc:phone a owl:DatatypeProperty ;
+  rdfs:label "phone"@en ;
+  rdfs:comment "Primary phone number for this organization."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:email a owl:DatatypeProperty ;
+  rdfs:label "email"@en ;
+  rdfs:comment "Primary contact email for this organization."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:summary a owl:DatatypeProperty ;
+  rdfs:label "summary"@en ;
+  rdfs:comment "A brief description of the organization — LLM-generated or user-provided."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:logoUrl a owl:DatatypeProperty ;
+  rdfs:label "logo URL"@en ;
+  rdfs:comment "URL of the organization's logo image."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:anyURI .
+
+gc:bannerUrl a owl:DatatypeProperty ;
+  rdfs:label "banner URL"@en ;
+  rdfs:comment "URL of the organization's banner image."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:anyURI .
+
+gc:givingUrl a owl:DatatypeProperty ;
+  rdfs:label "giving URL"@en ;
+  rdfs:comment "URL for online donations or giving to this organization."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:anyURI .
+
+gc:socialMediaUrl a owl:DatatypeProperty ;
+  rdfs:label "social media URL"@en ;
+  rdfs:comment "A social media profile URL for this organization. Multi-valued — an organization can have multiple social media accounts."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:anyURI .
+
+gc:isMultiCampus a owl:DatatypeProperty ;
+  rdfs:label "is multi-campus"@en ;
+  rdfs:comment "Whether this church operates multiple campus locations."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:boolean .
+
+gc:campusName a owl:DatatypeProperty ;
+  rdfs:label "campus name"@en ;
+  rdfs:comment "Name of this specific campus (if the organization is multi-campus)."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:overarchingName a owl:DatatypeProperty ;
+  rdfs:label "overarching name"@en ;
+  rdfs:comment "Name of the parent organization or overarching church body (if this org is a campus or subsidiary)."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:servicesInfo a owl:DatatypeProperty ;
+  rdfs:label "services info"@en ;
+  rdfs:comment "Free-text description of service times and gathering schedule."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range xsd:string .
+
+gc:hasBeliefClassification a owl:ObjectProperty ;
+  rdfs:label "has belief classification"@en ;
+  rdfs:comment "Classifies an organization by belief tradition. Values are SKOS concepts from gc:BeliefTypeScheme (Christian, Catholic, Orthodox, LDS, JW, Other). Multi-valued."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range skos:Concept .
+
+gc:hasDenominationClassification a owl:ObjectProperty ;
+  rdfs:label "has denomination classification"@en ;
+  rdfs:comment "Classifies an organization by denomination. Values are SKOS concepts from gc:DenominationScheme (Baptist, Methodist, Presbyterian, etc.). Multi-valued."@en ;
+  rdfs:domain gc:Organization ;
+  rdfs:range skos:Concept .
+
+gc:Team a owl:Class ;
+  rdfs:label "Team"@en ;
+  rdfs:comment "A working group of persons collaborating on field activities within or across organizations."@en ;
+  rdfs:subClassOf gc:Organization .
+
+# ── Software Agents ───────────────────────────────────────────────────────
+
+gc:DataSource a owl:Class ;
+  rdfs:label "Data Source"@en ;
+  rdfs:comment "A software system or tool that produces, manages, or transmits GCData-formatted records (e.g., 'MissionToolX'). The 'source' field in EEP/SEP payloads."@en ;
+  rdfs:subClassOf prov:SoftwareAgent .
+
+gc:GCBridge a owl:Class ;
+  rdfs:label "GCData Bridge"@en ;
+  rdfs:comment "The Great Commission Data Bridge service that routes GCData payloads between systems and handles federated authentication via KeyCloak."@en ;
+  rdfs:subClassOf prov:SoftwareAgent .
+
+# ── Agent Properties ──────────────────────────────────────────────────────
+
+gc:userId a owl:DatatypeProperty ;
+  rdfs:label "user ID"@en ;
+  rdfs:comment "Unique identifier for a person within the originating system (maps to EntityEPBase.userId)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:groupId a owl:DatatypeProperty ;
+  rdfs:label "group ID"@en ;
+  rdfs:comment "Unique identifier for the team or group tied to an activity (maps to EntityEPBase.groupId)."@en ;
+  rdfs:domain gc:Team ;
+  rdfs:range xsd:string .
+
+gc:personName a owl:DatatypeProperty ;
+  rdfs:label "person name"@en ;
+  rdfs:comment "Display name of a person (subset: pii)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:personEmail a owl:DatatypeProperty ;
+  rdfs:label "person email"@en ;
+  rdfs:comment "Email address of a person (subset: pii)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:personPhone a owl:DatatypeProperty ;
+  rdfs:label "person phone"@en ;
+  rdfs:comment "Phone number in E.164 format (subset: pii)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:memberOf a owl:ObjectProperty ;
+  rdfs:label "member of"@en ;
+  rdfs:comment "Links a person to the organization or team they belong to."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range gc:Organization .
+
+gc:sendingOrganization a owl:ObjectProperty ;
+  rdfs:label "sending organization"@en ;
+  rdfs:comment "The organization that sent/deployed this worker to the field. Distinct from gc:memberOf (organizational membership) — a worker can be a member of one organization but sent by another."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range gc:Organization .
+
+gc:deploymentStatus a owl:ObjectProperty ;
+  rdfs:label "deployment status"@en ;
+  rdfs:comment "Links a person to their current deployment status. Values are SKOS concepts from gc:DeploymentStatusScheme (Active, Furlough, In Training, Retired)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range skos:Concept .
+
+gc:isCrossCultural a owl:DatatypeProperty ;
+  rdfs:label "is cross-cultural worker"@en ;
+  rdfs:comment "Whether this worker is cross-cultural to their field of service."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:boolean .
+
+gc:fieldEntryDate a owl:DatatypeProperty ;
+  rdfs:label "field entry date"@en ;
+  rdfs:comment "Date when the worker entered their current field of service."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:date .
+
+gc:hasSource a owl:ObjectProperty ;
+  rdfs:label "has source"@en ;
+  rdfs:comment "Associates any entity or activity with the software system that originated the data."@en ;
+  rdfs:subPropertyOf prov:wasAttributedTo ;
+  rdfs:range gc:DataSource .
+
+
+##############################################################################
+#  II.  ENTITIES  (prov:Entity hierarchy)
+#
+#  Entities are things with provenance: people groups, locations,
+#  data records, exchange payloads, and reference metadata.
+#  Note: gc:Church is a deprecated backward-compat alias for gc:Organization.
+#  All org types (churches, agencies, networks, denominations) are now
+#  gc:Organization instances classified via gc:hasOrganizationType SKOS.
+##############################################################################
+
+# ── Church (deprecated — use gc:Organization with gc:hasOrganizationType) ──
+
+gc:Church a owl:Class ;
+  rdfs:label "Church"@en ;
+  rdfs:comment "DEPRECATED — use gc:Organization with gc:hasOrganizationType instead. Retained as owl:equivalentClass gc:Organization for backward compatibility during migration. Previously a subclass of gc:Organization representing a gathering of believers. Now all org types (churches, agencies, networks, denominations) are gc:Organization instances classified via gc:hasOrganizationType → OrganizationTypeScheme SKOS concepts."@en ;
+  owl:equivalentClass gc:Organization ;
+  owl:deprecated true .
+
+# Church core properties
+gc:isActive a owl:DatatypeProperty ;
+  rdfs:label "is active"@en ;
+  rdfs:comment "Whether the organization is currently active (subset: church_core)."@en ;
+  rdfs:range xsd:boolean .
+
+gc:dateStarted a owl:DatatypeProperty ;
+  rdfs:label "date started"@en ;
+  rdfs:comment "Date the organization was established or began meeting (subset: church_core)."@en ;
+  rdfs:range xsd:date .
+
+gc:dateEnded a owl:DatatypeProperty ;
+  rdfs:label "date ended"@en ;
+  rdfs:comment "Date the organization ceased operations, if applicable (subset: church_core)."@en ;
+  rdfs:range xsd:date .
+
+gc:identifiesAsChurch a owl:DatatypeProperty ;
+  rdfs:label "identifies as church"@en ;
+  rdfs:comment "Whether the group self-identifies as a church (subset: church_core)."@en ;
+  rdfs:range xsd:boolean .
+
+gc:hasAppointedLeaders a owl:DatatypeProperty ;
+  rdfs:label "has appointed leaders"@en ;
+  rdfs:comment "Whether the organization has appointed its own leaders (subset: church_core)."@en ;
+  rdfs:range xsd:boolean .
+
+# NOTE: activelyMakingDisciples moved to Practice with type DiscipleMakingPractice.
+
+# ── Practice (core concept) ────────────────────────────────────────────────
+#
+#  Practices are recurring ministry activities that a church community
+#  performs.  Elevated from flat boolean properties to a first-class
+#  concept following ChurchCore's activity-centric model.
+#
+#  PROV-O pattern:
+#    Organization  -- gc:hasPractice -->  Practice  (subClassOf MinistryActivity)
+#    Practice -- prov:wasAssociatedWith -->  Person  (who performs it)
+#    Practice -- gc:practiceType -->  PracticeType  (what kind)
+#
+#  The "within" boolean pairs from the old schema become
+#  gc:isPerformedInternally on the Practice instance.
+
+gc:Practice a owl:Class ;
+  rdfs:label "Practice"@en ;
+  rdfs:comment "A recurring ministry activity that a church community performs, such as baptism, communion, prayer, teaching, worship, giving, accountability, or serving. Modeled as a subclass of MinistryActivity because practices are things that happen in context — they have participants, timing, and qualifiers — not static boolean attributes of a church. Aligns with ChurchCore's treatment of practices as Ministry Activities."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:hasPractice a owl:ObjectProperty ;
+  rdfs:label "has practice"@en ;
+  rdfs:comment "Links an organization to a practice activity it performs. Replaces the old flat boolean practice properties."@en ;
+  rdfs:range gc:Practice .
+
+gc:practiceType a owl:ObjectProperty ;
+  rdfs:label "practice type"@en ;
+  rdfs:comment "Classifies a practice by its type from the PracticeType vocabulary."@en ;
+  rdfs:domain gc:Practice ;
+  rdfs:range gc:PracticeType .
+
+gc:practiceIsActive a owl:DatatypeProperty ;
+  rdfs:label "practice is active"@en ;
+  rdfs:comment "Whether this practice is currently being performed by the church."@en ;
+  rdfs:domain gc:Practice ;
+  rdfs:range xsd:boolean .
+
+gc:isPerformedInternally a owl:DatatypeProperty ;
+  rdfs:label "is performed internally"@en ;
+  rdfs:comment "Whether this practice is performed by a member of the gathering itself (true) or by an external person (false). Replaces the paired 'practicesXxxWithin' boolean properties from the old schema."@en ;
+  rdfs:domain gc:Practice ;
+  rdfs:range xsd:boolean .
+
+gc:practiceFrequency a owl:DatatypeProperty ;
+  rdfs:label "practice frequency"@en ;
+  rdfs:comment "How often the practice occurs (e.g., 'weekly', 'monthly', 'as needed')."@en ;
+  rdfs:domain gc:Practice ;
+  rdfs:range xsd:string .
+
+gc:practiceDateAdopted a owl:DatatypeProperty ;
+  rdfs:label "practice date adopted"@en ;
+  rdfs:comment "Date when the church began performing this practice."@en ;
+  rdfs:domain gc:Practice ;
+  rdfs:range xsd:date .
+
+# ── Practice Type Vocabulary (SKOS) ───────────────────────────────────────
+#
+#  An extensible vocabulary of recognized practice types.  New organizations
+#  can add their own practice types without modifying the ontology structure.
+
+gc:PracticeType a owl:Class ;
+  rdfs:label "Practice Type"@en ;
+  rdfs:comment "A type of practice from the practice vocabulary. Modeled as a SKOS Concept so the vocabulary is extensible without schema changes."@en ;
+  rdfs:subClassOf skos:Concept .
+
+gc:PracticeTypeScheme a skos:ConceptScheme ;
+  rdfs:label "Practice Type Scheme"@en ;
+  rdfs:comment "SKOS concept scheme containing the recognized practice types."@en .
+
+# Standard practice type instances (from Global.Church schema)
+gc:BaptismPractice a gc:PracticeType ;
+  rdfs:label "Believer's Baptism"@en ;
+  skos:prefLabel "Believer's Baptism"@en ;
+  skos:definition "The practice of baptizing believers."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:LordsSupperPractice a gc:PracticeType ;
+  rdfs:label "Lord's Supper"@en ;
+  skos:prefLabel "Lord's Supper"@en ;
+  skos:definition "The practice of communion / the Lord's Supper."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:GivingPractice a gc:PracticeType ;
+  rdfs:label "Giving"@en ;
+  skos:prefLabel "Giving"@en ;
+  skos:definition "The practice of financial giving and generosity."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:TeachingTheWordPractice a gc:PracticeType ;
+  rdfs:label "Teaching the Word"@en ;
+  skos:prefLabel "Teaching the Word"@en ;
+  skos:definition "The practice of regular teaching from the Bible."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:ServingPractice a gc:PracticeType ;
+  rdfs:label "Serving"@en ;
+  skos:prefLabel "Serving"@en ;
+  skos:definition "The practice of loving and serving one another."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:AccountabilityPractice a gc:PracticeType ;
+  rdfs:label "Accountability"@en ;
+  skos:prefLabel "Accountability"@en ;
+  skos:definition "The practice of mutual accountability."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:PrayerPractice a gc:PracticeType ;
+  rdfs:label "Prayer"@en ;
+  skos:prefLabel "Prayer"@en ;
+  skos:definition "The practice of communal prayer."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:WorshipPractice a gc:PracticeType ;
+  rdfs:label "Worship"@en ;
+  skos:prefLabel "Worship"@en ;
+  skos:definition "The practice of singing and praising."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+gc:DiscipleMakingPractice a gc:PracticeType ;
+  rdfs:label "Disciple Making"@en ;
+  skos:prefLabel "Disciple Making"@en ;
+  skos:definition "The practice of actively making disciples."@en ;
+  skos:inScheme gc:PracticeTypeScheme .
+
+# Church numeric measures
+gc:numberOfPeopleAttending a owl:DatatypeProperty ;
+  rdfs:label "number of people attending"@en ;
+  rdfs:comment "Total number of people attending the gathering."@en ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:numberOfBelievers a owl:DatatypeProperty ;
+  rdfs:label "number of believers"@en ;
+  rdfs:comment "Number of believers in the gathering."@en ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:numberOfBaptizedBelievers a owl:DatatypeProperty ;
+  rdfs:label "number of baptized believers"@en ;
+  rdfs:comment "Number of baptized believers in the gathering."@en ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:languageUsedWhenGathering a owl:DatatypeProperty ;
+  rdfs:label "language used when gathering"@en ;
+  rdfs:comment "The language used during church gatherings."@en ;
+  rdfs:range xsd:string .
+
+gc:servesPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "serves people group"@en ;
+  rdfs:comment "Links an organization to a people group it primarily serves or ministers to. Multi-valued: an organization can serve multiple people groups. Distinct from gc:targetsPeopleGroup (geographic association on Overture records) — this property represents intentional ministry focus declared by the organization."@en ;
+  rdfs:range gc:PeopleGroup .
+
+# ── Church Website Text ───────────────────────────────────────────────────
+
+gc:ChurchWebsiteText a owl:Class ;
+  rdfs:label "Church Website Text"@en ;
+  rdfs:comment "Textual content extracted from a church's website, used for enrichment and analysis. An information entity in the Global.Church schema."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:websiteUrl a owl:DatatypeProperty ;
+  rdfs:label "website URL"@en ;
+  rdfs:comment "The URL from which the website text was scraped."@en ;
+  rdfs:domain gc:ChurchWebsiteText ;
+  rdfs:range xsd:anyURI .
+
+gc:websiteTextContent a owl:DatatypeProperty ;
+  rdfs:label "website text content"@en ;
+  rdfs:comment "The extracted textual content of the church website."@en ;
+  rdfs:domain gc:ChurchWebsiteText ;
+  rdfs:range xsd:string .
+
+gc:hasWebsiteText a owl:ObjectProperty ;
+  rdfs:label "has website text"@en ;
+  rdfs:comment "Links an organization to its extracted website text entity."@en ;
+  rdfs:range gc:ChurchWebsiteText .
+
+# ── Overture (Geospatial Data Source) ─────────────────────────────────────
+#
+#  Overture is a reference to the Overture Maps Foundation (overturemaps.org),
+#  an open-source collaborative map dataset.  In the Global.Church schema,
+#  Overture records represent geospatial place data (primarily church/place-
+#  of-worship locations) sourced from the Overture Maps "places" theme.
+#  Modeled as prov:Entity because each Overture record is a data artifact
+#  with provenance (sourced from Overture Maps, attributed to the Overture
+#  Maps Foundation).
+
+gc:Overture a owl:Class ;
+  rdfs:label "Overture"@en ;
+  rdfs:comment "A geospatial place record sourced from the Overture Maps Foundation (overturemaps.org) open-source map dataset. In the Global.Church schema, Overture records represent church or place-of-worship locations identified via the Overture Maps 'places' theme. Each record is an entity with spatial coordinates and metadata linking it to people groups and locations."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:overtureId a owl:DatatypeProperty ;
+  rdfs:label "Overture ID"@en ;
+  rdfs:comment "The unique identifier of a place record in the Overture Maps dataset."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range xsd:string .
+
+gc:overtureCategory a owl:DatatypeProperty ;
+  rdfs:label "Overture category"@en ;
+  rdfs:comment "The Overture Maps place category (e.g., 'place_of_worship', 'church')."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range xsd:string .
+
+gc:overtureConfidence a owl:DatatypeProperty ;
+  rdfs:label "Overture confidence"@en ;
+  rdfs:comment "The confidence score (0.0-1.0) of the Overture Maps place record."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range xsd:double .
+
+gc:overtureSourceDataset a owl:DatatypeProperty ;
+  rdfs:label "Overture source dataset"@en ;
+  rdfs:comment "The Overture Maps source dataset contributing this record (e.g., 'meta', 'msft', 'osm')."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range xsd:string .
+
+gc:matchedOrganization a owl:ObjectProperty ;
+  rdfs:label "matched organization"@en ;
+  rdfs:comment "Links an Overture place record to an Organization entity it has been matched to via geocoding or identity resolution."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range gc:Organization .
+
+gc:overtureLocation a owl:ObjectProperty ;
+  rdfs:label "Overture location"@en ;
+  rdfs:comment "Links an Overture place record to its geographic Location."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range gc:Location .
+
+gc:targetsPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "targets people group"@en ;
+  rdfs:comment "Links an Overture place record (or other entity) to a people group associated with its geographic area."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range gc:PeopleGroup .
+
+# ── People Group ──────────────────────────────────────────────────────────
+
+gc:PeopleGroup a owl:Class ;
+  rdfs:label "People Group"@en ;
+  rdfs:comment "An ethno-linguistic people group linked to the HIS Registry of Peoples via gc:hasPeopleClassification."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:hasPeopleClassification a owl:ObjectProperty ;
+  rdfs:label "has people classification"@en ;
+  rdfs:comment "Links a PeopleGroup to its classification in the HIS Registry of Peoples (ROP) SKOS concept scheme. The linked SKOS concept carries the raw code via skos:notation and the hierarchy via skos:broader."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range skos:Concept .
+
+gc:peopleGroupName a owl:DatatypeProperty ;
+  rdfs:label "people group name"@en ;
+  rdfs:comment "Human-readable name of the people group."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:evangelicalPercentage a owl:DatatypeProperty ;
+  rdfs:label "evangelical percentage"@en ;
+  rdfs:comment "Estimated percentage of the people group population that is evangelical Christian, as reported by Joshua Project using Operation World methodology. A theological (not political) measure counting all people affiliated with denominations evangelical in theology. A people group below 2% evangelical is considered unreached on the JP Progress Scale. Value between 0.0 and 100.0."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:double .
+
+gc:populationInCountry a owl:DatatypeProperty ;
+  rdfs:label "population in country"@en ;
+  rdfs:comment "Estimated population of the people group within the specific country."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:nonNegativeInteger .
+
+# ── Location ──────────────────────────────────────────────────────────────
+
+gc:Location a owl:Class ;
+  rdfs:label "Location"@en ;
+  rdfs:comment "A geographic location where ministry activities occur. Corresponds to locationOfActivity and area objects in GCData schemas."@en .
+
+gc:countryCode a owl:DatatypeProperty ;
+  rdfs:label "country code"@en ;
+  rdfs:comment "ISO 3166-1 alpha-3 country code (e.g., 'EGY', 'USA')."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:string .
+
+gc:latitude a owl:DatatypeProperty ;
+  rdfs:label "latitude"@en ;
+  rdfs:comment "Latitude of the location center."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:double .
+
+gc:longitude a owl:DatatypeProperty ;
+  rdfs:label "longitude"@en ;
+  rdfs:comment "Longitude of the location center."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:double .
+
+gc:address a owl:DatatypeProperty ;
+  rdfs:label "address"@en ;
+  rdfs:comment "Street address of the location."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:string .
+
+gc:locality a owl:DatatypeProperty ;
+  rdfs:label "locality"@en ;
+  rdfs:comment "City or locality name."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:string .
+
+gc:region a owl:DatatypeProperty ;
+  rdfs:label "region"@en ;
+  rdfs:comment "State, province, or administrative region."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:string .
+
+gc:postalCode a owl:DatatypeProperty ;
+  rdfs:label "postal code"@en ;
+  rdfs:comment "Postal or ZIP code."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:string .
+
+gc:coordinateReferenceSystem a owl:DatatypeProperty ;
+  rdfs:label "coordinate reference system"@en ;
+  rdfs:comment "EPSG code for the coordinate reference system (default 4326 = WGS84)."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:integer .
+
+gc:polygonGeoJson a owl:DatatypeProperty ;
+  rdfs:label "polygon GeoJSON"@en ;
+  rdfs:comment "GeoJSON RFC 7946 polygon defining the geographic boundary of an engagement area."@en ;
+  rdfs:domain gc:Location ;
+  rdfs:range xsd:string .
+
+# ── Language Classification ───────────────────────────────────────────────
+#
+#  Languages are reference/classification data owned by HIS Registry of
+#  Languages (ROL) and ISO 639-3.  They are NOT prov:Entity — languages
+#  don't have provenance histories.  Modeled as a SKOS ConceptScheme
+#  in <https://data.global.church/his-registries/> following the ROP pattern.
+#
+#  The gc:Language class, gc:languageCode, and gc:languageName properties
+#  have been removed (v0.5.0).  Use gc:hasLanguageClassification to link
+#  entities to ROL SKOS concepts, which carry the ISO 639-3 code via
+#  skos:notation and the name via skos:prefLabel.
+
+gc:hasLanguageClassification a owl:ObjectProperty ;
+  rdfs:label "has language classification"@en ;
+  rdfs:comment "Links an entity to its language classification in the HIS Registry of Languages (ROL) SKOS concept scheme. The linked SKOS concept carries the ISO 639-3 code via skos:notation and the language name via skos:prefLabel."@en ;
+  rdfs:range skos:Concept .
+
+# ── Religion ──────────────────────────────────────────────────────────────
+#
+#  The gc:Religion class, gc:religionCode, and gc:religionName properties
+#  have been removed (v0.7.0).  Use gc:hasReligionClassification to link
+#  entities to ROR SKOS concepts, which carry the IMB ROR code via
+#  skos:notation and the name via skos:prefLabel.
+
+gc:hasReligionClassification a owl:ObjectProperty ;
+  rdfs:label "has religion classification"@en ;
+  rdfs:comment "Links an entity to its religion classification in the HIS Registry of Religions (ROR) SKOS concept scheme. The linked SKOS concept carries the ROR code via skos:notation and the religion name via skos:prefLabel."@en ;
+  rdfs:range skos:Concept .
+
+# ── Geography ────────────────────────────────────────────────────────────────
+
+gc:hasGeographyClassification a owl:ObjectProperty ;
+  rdfs:label "has geography classification"@en ;
+  rdfs:comment "Links an entity to its geography classification in the HIS Registry of Geography (ROG) SKOS concept scheme. Three-level hierarchy: Region → Subregion → Country. The linked SKOS concept carries the ROG code via skos:notation and the place name via skos:prefLabel."@en ;
+  rdfs:range skos:Concept .
+
+# ── IMB Assessment Properties ───────────────────────────────────────────────
+#
+#  Properties from the IMB (International Mission Board) people group
+#  assessment system.  IMB owns these concepts — they live in the imb:
+#  namespace, following the same ownership pattern as jp: for Joshua Project.
+#
+#  Four SKOS vocabularies (GSEC, SPI, ChurchPlantingStatus, EvangelicalLevel)
+#  are defined in data/seed/imb-vocab-seed.ttl and loaded into
+#  <https://data.global.church/imb/>.
+
+imb:gsecLevel a owl:ObjectProperty ;
+  rdfs:label "GSEC level"@en ;
+  rdfs:comment "IMB Global Status of Evangelical Christianity (GSEC) level for a people group. Ranges from 0 (no known evangelical Christians) to 6 (significant, self-sustaining evangelical movement). Lower values indicate less reached."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range skos:Concept .
+
+imb:spiCategory a owl:ObjectProperty ;
+  rdfs:label "SPI category"@en ;
+  rdfs:comment "IMB Strategic Priority Index (SPI) category. Values are SKOS concepts from imb:SPIScheme (3 categories: Unengaged/Unreached, Engaged/Unreached, No Longer Unreached)."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range skos:Concept .
+
+imb:churchPlantingStatus a owl:ObjectProperty ;
+  rdfs:label "church planting status"@en ;
+  rdfs:comment "IMB church planting status. Values are SKOS concepts from imb:ChurchPlantingStatusScheme (No Churches Planted, Dispersed, Concentrated)."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range skos:Concept .
+
+imb:lpiScore a owl:DatatypeProperty ;
+  rdfs:label "LPI score"@en ;
+  rdfs:comment "Language Priority Index (0–6) assigned by IMB."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:integer .
+
+imb:isEngaged a owl:DatatypeProperty ;
+  rdfs:label "is engaged"@en ;
+  rdfs:comment "Whether the people group has active engagement according to IMB. Yes means at least one organization is actively working among this group; No means no known engagement."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+imb:congregationsExist a owl:DatatypeProperty ;
+  rdfs:label "congregations exist"@en ;
+  rdfs:comment "Whether any congregations exist among this people group according to IMB."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+imb:bibleAvailability a owl:DatatypeProperty ;
+  rdfs:label "Bible availability"@en ;
+  rdfs:comment "Availability of Bible resources as assessed by IMB. Values: 'Available', 'Not Available', 'None'."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:jesusFilmAvailability a owl:DatatypeProperty ;
+  rdfs:label "Jesus Film availability"@en ;
+  rdfs:comment "Availability of the Jesus Film as assessed by IMB. Values: 'Available', 'Not Available', 'None'."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:radioAvailability a owl:DatatypeProperty ;
+  rdfs:label "radio availability"@en ;
+  rdfs:comment "Availability of Christian radio broadcasts as assessed by IMB. Values: 'Available', 'Not Available', 'None'."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:gospelAvailability a owl:DatatypeProperty ;
+  rdfs:label "gospel availability"@en ;
+  rdfs:comment "Availability of gospel recordings as assessed by IMB. Values: 'Available', 'Not Available', 'None'."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:audioAvailability a owl:DatatypeProperty ;
+  rdfs:label "audio availability"@en ;
+  rdfs:comment "Availability of audio Scripture resources as assessed by IMB. Values: 'Available', 'Not Available', 'None'."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:storiesAvailability a owl:DatatypeProperty ;
+  rdfs:label "stories availability"@en ;
+  rdfs:comment "Availability of Bible story resources as assessed by IMB. Values: 'Available', 'Not Available', 'None'."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:resourceTotal a owl:DatatypeProperty ;
+  rdfs:label "resource total"@en ;
+  rdfs:comment "Total count of available resource types (0–6) as assessed by IMB."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:integer .
+
+imb:bibleCompletionLevel a owl:DatatypeProperty ;
+  rdfs:label "Bible completion level"@en ;
+  rdfs:comment "How much of the Bible has been translated into this people group's primary language. Levels range from no translation, to stories and selections, to New Testament only, to a complete Bible."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+imb:evangelicalLevel a owl:ObjectProperty ;
+  rdfs:label "evangelical level"@en ;
+  rdfs:comment "IMB categorical evangelical percentage band. Values are SKOS concepts from imb:EvangelicalLevelScheme (11 bands, from 'No Known Evangelicals' to '75% or Greater'). Complements JP's numeric jp:evangelicalPercentage with a classified band."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range skos:Concept .
+
+# ── IMB Media Resource Properties ────────────────────────────────────────
+#
+#  Properties for classifying IMB-curated media resources using IMB's own
+#  audience and affinity region taxonomies.  Two SKOS vocabularies
+#  (TargetAudienceScheme, AffinityRegionScheme) are defined in
+#  data/seed/imb-vocab-seed.ttl and loaded into
+#  <https://data.global.church/imb/>.
+
+imb:targetAudience a owl:ObjectProperty ;
+  rdfs:label "target audience"@en ;
+  rdfs:comment "IMB audience classification for a media resource. Values are SKOS concepts from imb:TargetAudienceScheme (8 categories: Men, Women, Students, Refugees, Children, Nationals, Diaspora, Oral Learners)."@en ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range skos:Concept .
+
+imb:affinityRegion a owl:ObjectProperty ;
+  rdfs:label "affinity region"@en ;
+  rdfs:comment "IMB affinity-based regional classification for a media resource. Values are SKOS concepts from imb:AffinityRegionScheme (11 regions). IMB's affinity regions are not 1:1 with ISO geographic regions."@en ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range skos:Concept .
+
+
+##############################################################################
+#  III.  ACTIVITIES  (prov:Activity hierarchy)
+#
+#  Activities are time-bounded events: ministry actions performed by agents
+#  that generate or use entities (churches, records, etc.).
+##############################################################################
+
+# ── Ministry Activity (abstract base) ─────────────────────────────────────
+
+gc:MinistryActivity a owl:Class ;
+  rdfs:label "Ministry Activity"@en ;
+  rdfs:comment "Abstract base class for all field ministry activities. Every ministry activity is a prov:Activity performed by agents at a location involving people groups."@en ;
+  rdfs:subClassOf prov:Activity .
+
+# ── Concrete Activity Types ───────────────────────────────────────────────
+
+gc:ChurchFormation a owl:Class ;
+  rdfs:label "Church Formation"@en ;
+  rdfs:comment "The activity of forming or planting a new church gathering. Generates a Church entity. Corresponds to entityType 'Church' in EEP."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:GospelConversation a owl:Class ;
+  rdfs:label "Gospel Conversation"@en ;
+  rdfs:comment "An evangelistic conversation where the gospel is shared with one or more people. Tracks response outcomes (positive, interested, negative, unknown, already following). Corresponds to entityType 'GospelConversation' in EEP."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:PrayerWalk a owl:Class ;
+  rdfs:label "Prayer Walk"@en ;
+  rdfs:comment "A prayer activity covering a geographic area. Corresponds to entityType 'PrayerWalk' in EEP."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:DiscipleshipActivity a owl:Class ;
+  rdfs:label "Discipleship Activity"@en ;
+  rdfs:comment "A discipleship session or program engaging believers in spiritual growth. Corresponds to entityType 'Discipleship' in EEP."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:BaptismActivity a owl:Class ;
+  rdfs:label "Baptism Activity"@en ;
+  rdfs:comment "The activity of baptizing one or more new believers (from GAPPSRVC taxonomy)."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:LeadershipDevelopment a owl:Class ;
+  rdfs:label "Leadership Development"@en ;
+  rdfs:comment "Training or mentoring activity for developing ministry leaders (from GAPPSRVC taxonomy)."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:MediaDistribution a owl:Class ;
+  rdfs:label "Media Distribution"@en ;
+  rdfs:comment "Distribution of gospel media materials such as films, audio, or literature (from GAPPSRVC taxonomy)."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+gc:TrainingActivity a owl:Class ;
+  rdfs:label "Training Activity"@en ;
+  rdfs:comment "A training event or program for equipping field workers (from GAPPSRVC taxonomy)."@en ;
+  rdfs:subClassOf gc:MinistryActivity .
+
+# ── Activity Properties ───────────────────────────────────────────────────
+
+gc:dateTimeOfActivity a owl:DatatypeProperty ;
+  rdfs:label "date-time of activity"@en ;
+  rdfs:comment "The date and time (or range) when the ministry activity occurred."@en ;
+  rdfs:subPropertyOf prov:startedAtTime ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range xsd:dateTime .
+
+gc:atLocation a owl:ObjectProperty ;
+  rdfs:label "at location"@en ;
+  rdfs:comment "Links a ministry activity to the geographic location where it occurred."@en ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range gc:Location .
+
+gc:engagesPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "engages people group"@en ;
+  rdfs:comment "Links a ministry activity to a people group it engaged."@en ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range gc:PeopleGroup .
+
+gc:inLanguage a owl:ObjectProperty ;
+  rdfs:label "in language"@en ;
+  rdfs:comment "Links a ministry activity to the language used during the activity. Points to a ROL SKOS concept."@en ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range skos:Concept .
+
+gc:concernsReligion a owl:ObjectProperty ;
+  rdfs:label "concerns religion"@en ;
+  rdfs:comment "Links a ministry activity to the religious background of the engaged people. Points to a ROR SKOS concept."@en ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range skos:Concept .
+
+gc:usesMethodology a owl:ObjectProperty ;
+  rdfs:label "uses methodology"@en ;
+  rdfs:comment "Links a ministry activity to the strategic methodology used. Values are SKOS concepts from gc:MethodologyScheme (CPM, DMM, Four Fields, T4T, Traditional Church Planting)."@en ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range skos:Concept .
+
+# ── Gospel Conversation Outcomes ──────────────────────────────────────────
+
+gc:totalHeard a owl:DatatypeProperty ;
+  rdfs:label "total heard"@en ;
+  rdfs:comment "Total number of people who heard the gospel in a conversation."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:positiveResponse a owl:DatatypeProperty ;
+  rdfs:label "positive response"@en ;
+  rdfs:comment "Number of people who responded positively / ready to make a decision (green light)."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:interestedResponse a owl:DatatypeProperty ;
+  rdfs:label "interested response"@en ;
+  rdfs:comment "Number of people interested but not yet ready (yellow light)."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:negativeResponse a owl:DatatypeProperty ;
+  rdfs:label "negative response"@en ;
+  rdfs:comment "Number of people who responded negatively (red light)."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:unknownResponse a owl:DatatypeProperty ;
+  rdfs:label "unknown response"@en ;
+  rdfs:comment "Number of people with unknown response."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:alreadyFollowingResponse a owl:DatatypeProperty ;
+  rdfs:label "already following response"@en ;
+  rdfs:comment "Number of people who were already following Christ."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:languageOfConversation a owl:DatatypeProperty ;
+  rdfs:label "language of conversation"@en ;
+  rdfs:comment "Language used during the gospel conversation."@en ;
+  rdfs:domain gc:GospelConversation ;
+  rdfs:range xsd:string .
+
+
+##############################################################################
+#  IV.  DATA RECORDING & EXCHANGE PROVENANCE
+#
+#  Models the act of recording ministry data, packaging it into GCData
+#  payloads, and exchanging it between systems. This is the provenance
+#  backbone connecting field activities to data platform consumption.
+##############################################################################
+
+# ── Data Recording ────────────────────────────────────────────────────────
+
+gc:DataRecordingActivity a owl:Class ;
+  rdfs:label "Data Recording Activity"@en ;
+  rdfs:comment "The act of a person recording a ministry activity into a data system. Produces an EngagementRecord. This is the PROV bridge: the field activity (prov:Activity) is observed, and a DataRecordingActivity generates a record (prov:Entity) attributed to the recorder."@en ;
+  rdfs:subClassOf prov:Activity .
+
+gc:recordDateTime a owl:DatatypeProperty ;
+  rdfs:label "record date-time"@en ;
+  rdfs:comment "Timestamp when the record was created (maps to EntityEPBase.recordDateTime)."@en ;
+  rdfs:domain gc:DataRecordingActivity ;
+  rdfs:range xsd:dateTime .
+
+gc:recordsActivity a owl:ObjectProperty ;
+  rdfs:label "records activity"@en ;
+  rdfs:comment "Links a data recording activity to the ministry activity it documents."@en ;
+  rdfs:subPropertyOf prov:used ;
+  rdfs:domain gc:DataRecordingActivity ;
+  rdfs:range gc:MinistryActivity .
+
+# ── Engagement Record ─────────────────────────────────────────────────────
+
+gc:EngagementRecord a owl:Class ;
+  rdfs:label "Engagement Record"@en ;
+  rdfs:comment "A data record documenting a ministry activity, generated by a DataRecordingActivity. Corresponds to a single record in an EEP payload. Carries the entityType discriminator."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:entityType a owl:DatatypeProperty ;
+  rdfs:label "entity type"@en ;
+  rdfs:comment "The EEP entity type discriminator (Church, GospelConversation, PrayerWalk, Discipleship)."@en ;
+  rdfs:domain gc:EngagementRecord ;
+  rdfs:range xsd:string .
+
+gc:documentsOrganization a owl:ObjectProperty ;
+  rdfs:label "documents organization"@en ;
+  rdfs:comment "Links an engagement record to the Organization entity it describes."@en ;
+  rdfs:domain gc:EngagementRecord ;
+  rdfs:range gc:Organization .
+
+# ── Exchange Payloads ─────────────────────────────────────────────────────
+
+gc:ExchangePayload a owl:Class ;
+  rdfs:label "Exchange Payload"@en ;
+  rdfs:comment "A GCData-formatted payload document containing one or more records. Modeled as prov:Collection."@en ;
+  rdfs:subClassOf prov:Collection .
+
+gc:EntityExchangePayload a owl:Class ;
+  rdfs:label "Entity Exchange Payload"@en ;
+  rdfs:comment "A GCData EEP (Entity Exchange Protocol) payload containing engagement records. Format field = 'EEP'."@en ;
+  rdfs:subClassOf gc:ExchangePayload .
+
+gc:ScaleExchangePayload a owl:Class ;
+  rdfs:label "Scale Exchange Payload"@en ;
+  rdfs:comment "A GCData SEP (Scale Exchange Protocol) payload containing scale-based aggregate data. Format field = 'SEP'."@en ;
+  rdfs:subClassOf gc:ExchangePayload .
+
+gc:payloadFormat a owl:DatatypeProperty ;
+  rdfs:label "payload format"@en ;
+  rdfs:comment "The format identifier of the payload ('EEP' or 'SEP')."@en ;
+  rdfs:domain gc:ExchangePayload ;
+  rdfs:range xsd:string .
+
+gc:payloadVersion a owl:DatatypeProperty ;
+  rdfs:label "payload version"@en ;
+  rdfs:comment "The version of the payload format (e.g., '1.0')."@en ;
+  rdfs:domain gc:ExchangePayload ;
+  rdfs:range xsd:string .
+
+gc:payloadPermissions a owl:DatatypeProperty ;
+  rdfs:label "payload permissions"@en ;
+  rdfs:comment "Access level for the payload: read-only, read-cache, or read-write."@en ;
+  rdfs:domain gc:ExchangePayload ;
+  rdfs:range xsd:string .
+
+# ── Data Exchange Activity ────────────────────────────────────────────────
+
+gc:DataExchangeActivity a owl:Class ;
+  rdfs:label "Data Exchange Activity"@en ;
+  rdfs:comment "The act of transmitting a GCData payload between systems, potentially routed through GCBridge. Models the provenance of inter-system data sharing."@en ;
+  rdfs:subClassOf prov:Activity .
+
+
+##############################################################################
+#  V.  ASSESSMENT & ENGAGEMENT MODEL
+#
+#  Unified multi-org assessment infrastructure (v0.13.0).
+#
+#  gc:Assessment (prov:Activity) — generic assessment activity. Any org
+#    can produce assessments.  gc:assessmentMethodology identifies the
+#    framework (JP Progress Scale, IMB Assessment, NPL 7 Phases, etc.).
+#
+#  gc:AssessmentResult (prov:Entity) — immutable snapshot of findings.
+#    Org-specific data points live as properties in org namespaces:
+#      JP: jp:jpScale, jp:evangelicalPercentage, jp:leastReached, jp:frontier, etc.
+#      IMB: imb:gsecLevel, imb:spiCategory, imb:evangelicalLevel, imb:isEngaged, etc.
+#
+#  Supporting vocabulary:
+#    - gc:AssessmentMethodologyScheme (SKOS) — assessment frameworks
+#    - gc:DataSet — named data collection with geographic scope
+#
+#  Migration note (v0.13.0): Four legacy JP assessment classes removed.
+#    Their functions are now served by gc:Assessment/gc:AssessmentResult.
+##############################################################################
+
+# ── DataSet ───────────────────────────────────────────────────────────────
+
+gc:DataSet a owl:Class ;
+  rdfs:label "Data Set"@en ;
+  rdfs:comment "A named collection of engagement data with geographic scope. Corresponds to a ScaleEP record with dataSetId, dataSetName, area, and source."@en ;
+  rdfs:subClassOf prov:Collection .
+
+gc:dataSetId a owl:DatatypeProperty ;
+  rdfs:label "data set ID"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:string .
+
+gc:dataSetName a owl:DatatypeProperty ;
+  rdfs:label "data set name"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:string .
+
+gc:dataSetAltName a owl:DatatypeProperty ;
+  rdfs:label "data set alternate name"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:string .
+
+gc:lastUpdatedDate a owl:DatatypeProperty ;
+  rdfs:label "last updated date"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:dateTime .
+
+gc:coversArea a owl:ObjectProperty ;
+  rdfs:label "covers area"@en ;
+  rdfs:comment "Links a data set to the geographic area it covers."@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range gc:Location .
+
+# ── Unified Assessment Infrastructure ──────────────────────────────────────
+#
+#  gc:Assessment (prov:Activity) — the generic activity of evaluating a
+#    people group using a specific methodology.  Any organization can
+#    produce assessments; the methodology discriminator identifies which
+#    framework was used.
+#
+#  gc:AssessmentResult (prov:Entity) — the immutable snapshot of findings
+#    produced by an assessment.  Org-specific data points (jp:jpScale,
+#    imb:gsecLevel, etc.) live as properties on the result, keeping
+#    org namespaces intact while sharing the structural pattern.
+#
+#  gc:AssessmentMethodologyScheme — SKOS ConceptScheme identifying the
+#    assessment framework used (JP Progress Scale, IMB Assessment, NPL
+#    7 Phases, etc.).
+
+gc:Assessment a owl:Class ;
+  rdfs:label "Assessment"@en ;
+  rdfs:comment "An evaluation of a people group by an organization using a specific methodology. Assessments answer questions like 'how reached is this group?', 'what resources are available?', or 'what phase of progress has been achieved?' Each assessment is performed at a specific point in time, by a specific organization, using a declared methodology. The methodology identifies what was measured and how. An assessment produces one or more result snapshots containing the actual data points."@en ;
+  rdfs:subClassOf prov:Activity .
+
+gc:AssessmentResult a owl:Class ;
+  rdfs:label "Assessment Result"@en ;
+  rdfs:comment "A snapshot of findings from an assessment. Contains the org-specific data points produced by the assessment activity. The result is immutable — when the organization reassesses, a new Assessment/Result pair is created. Old results persist in the graph for temporal tracking."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:assessmentDate a owl:DatatypeProperty ;
+  rdfs:label "assessment date"@en ;
+  rdfs:comment "The date and time when the assessment was performed."@en ;
+  rdfs:domain gc:Assessment ;
+  rdfs:range xsd:dateTime .
+
+gc:assessmentMethodology a owl:ObjectProperty ;
+  rdfs:label "assessment methodology"@en ;
+  rdfs:comment "The methodology or framework used for this assessment. Points to a SKOS concept in gc:AssessmentMethodologyScheme."@en ;
+  rdfs:domain gc:Assessment ;
+  rdfs:range skos:Concept .
+
+gc:assessedBy a owl:ObjectProperty ;
+  rdfs:label "assessed by"@en ;
+  rdfs:comment "The organization that performed this assessment."@en ;
+  rdfs:domain gc:Assessment ;
+  rdfs:range gc:Organization .
+
+gc:assessesPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "assesses people group"@en ;
+  rdfs:comment "Links an Assessment to the PeopleGroup being evaluated."@en ;
+  rdfs:domain gc:Assessment ;
+  rdfs:range gc:PeopleGroup .
+
+gc:resultForPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "result for people group"@en ;
+  rdfs:comment "Links an AssessmentResult to the PeopleGroup it describes."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range gc:PeopleGroup .
+
+gc:resultDate a owl:DatatypeProperty ;
+  rdfs:label "result date"@en ;
+  rdfs:comment "Timestamp when this result snapshot was captured."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:dateTime .
+
+# ── Assessment Methodology Vocabulary (SKOS) ─────────────────────────────
+
+gc:AssessmentMethodologyScheme a skos:ConceptScheme ;
+  rdfs:label "Assessment Methodology Scheme"@en ;
+  rdfs:comment "Identifies the framework or scale used for an assessment. Each concept represents a distinct assessment methodology owned by a specific organization."@en .
+
+gc:MethodologyJPProgressScale a skos:Concept ;
+  skos:prefLabel "JP Progress Scale"@en ;
+  skos:definition "Joshua Project Progress Scale (1a-5). Derived from evangelical % and Christian adherent %. Owned by Joshua Project."@en ;
+  skos:inScheme gc:AssessmentMethodologyScheme .
+
+gc:MethodologyIMBAssessment a skos:Concept ;
+  skos:prefLabel "IMB People Group Assessment"@en ;
+  skos:definition "IMB comprehensive people group assessment — GSEC (0-6), SPI, engagement status, church planting, LPI, and resource availability (Bible, Jesus Film, radio, gospel, audio, stories). All data points from a single field research process. Owned by IMB."@en ;
+  skos:inScheme gc:AssessmentMethodologyScheme .
+
+gc:MethodologyNPL7Phases a skos:Concept ;
+  skos:prefLabel "NPL 7 Phases of Progress"@en ;
+  skos:definition "No Place Left 7 Phases (0-7). Composite assessment computed from cross-organizational evidence across Workers, Gospel Access, Discipleship, Churches, Leadership, Financial categories. Owned by No Place Left."@en ;
+  skos:inScheme gc:AssessmentMethodologyScheme .
+
+# ── JP Assessment Input Provenance — Removed (v0.14.0) ────────────────────
+#  jp:assessmentUsedDataSet, jp:assessmentUsedPayload, jp:assessmentUsedRecord
+#  removed — never populated by any bridge.
+
+# ── JP Result Properties (on gc:AssessmentResult) ────────────────────────
+#
+#  JP-specific data points that appear on gc:AssessmentResult instances
+#  when gc:assessmentMethodology = gc:MethodologyJPProgressScale.
+#  Domains changed to gc:AssessmentResult in the v0.13.0 assessment redesign.
+
+# JP Progress Scale (1-5, derived from % Evangelical + % Christian Adherent)
+jp:jpScale a owl:DatatypeProperty ;
+  rdfs:label "JP Progress Scale"@en ;
+  rdfs:comment "Joshua Project Progress Scale (1-5), an estimate of the progress of church planting among a people group. Derived from percent evangelical and percent Christian adherent. 1 = Unreached (<=2% evangelical, <=5% adherent), 2 = Minimally Reached (<=2% evangelical, >5% adherent), 3 = Superficially Reached (<=2% evangelical, >50% adherent), 4 = Partially Reached (>2% and <=10% evangelical), 5 = Significantly Reached (>10% evangelical). Level 1 subdivides into 1a (Frontier, <=0.1% both) and 1b (non-Frontier)."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:integer .
+
+jp:jpScaleDescription a owl:DatatypeProperty ;
+  rdfs:label "JP Progress Scale description"@en ;
+  rdfs:comment "Human-readable label for the JP Progress Scale level of this people group in this country (e.g. 'Unreached', 'Significantly Reached'). Sourced from the Joshua Project API JPScalePC field."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+jp:jpScaleGlobal a owl:DatatypeProperty ;
+  rdfs:label "JP Progress Scale global"@en ;
+  rdfs:comment "Human-readable label for the JP Progress Scale level of this people group across all countries (e.g. 'Unreached', 'Partially Reached'). Sourced from the Joshua Project API JPScalePGAC field."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+# jp:phaseValue — Removed (v0.14.0). GCA 0-7 engagement phase, never populated.
+# jp:phaseSubIndicator — Removed (v0.14.0). Staleness flag for phaseValue.
+
+jp:stateForDataSet a owl:ObjectProperty ;
+  rdfs:label "state for data set"@en ;
+  rdfs:comment "Links an AssessmentResult to the DataSet context in which it was assessed."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range gc:DataSet .
+
+# ── JP PeopleGroup Identity & Descriptive Metadata ────────────────────────
+#
+#  JP-specific metadata on gc:PeopleGroup instances (Block 1 of JP bridge
+#  output). These properties describe the people group itself — demographics,
+#  geography, and ethnolinguistic classification.
+
+jp:population a owl:DatatypeProperty ;
+  rdfs:label "population"@en ;
+  rdfs:comment "In-country population of the people group as reported by Joshua Project. Updated annually using UN country population growth rates."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:integer .
+
+jp:globalPopulation a owl:DatatypeProperty ;
+  rdfs:label "global population"@en ;
+  rdfs:comment "Worldwide population of this people group across all countries, as reported by Joshua Project."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:integer .
+
+jp:nameAcrossCountries a owl:DatatypeProperty ;
+  rdfs:label "name across countries"@en ;
+  rdfs:comment "Ethnic or language identity name used for this people group across all countries. May differ from the country-specific name."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:countOfCountries a owl:DatatypeProperty ;
+  rdfs:label "count of countries"@en ;
+  rdfs:comment "Number of countries where this people group is found, as reported by Joshua Project."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:integer .
+
+jp:primaryLanguage a owl:DatatypeProperty ;
+  rdfs:label "primary language"@en ;
+  rdfs:comment "Primary spoken language name of the people group, as reported by Joshua Project."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:continent a owl:DatatypeProperty ;
+  rdfs:label "continent"@en ;
+  rdfs:comment "Continent where this people group is located (e.g. 'Asia', 'Africa'), as reported by Joshua Project."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:region a owl:DatatypeProperty ;
+  rdfs:label "region"@en ;
+  rdfs:comment "Geographic subregion within the continent where this people group is located, as reported by Joshua Project."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:countryName a owl:DatatypeProperty ;
+  rdfs:label "country name"@en ;
+  rdfs:comment "Country where this people group is found, as reported by Joshua Project."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:affinityBloc a owl:DatatypeProperty ;
+  rdfs:label "affinity bloc"@en ;
+  rdfs:comment "Joshua Project Affinity Bloc — a broad ethnolinguistic grouping of related people clusters (e.g. 'Arab World', 'South Asian Peoples')."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:peopleCluster a owl:DatatypeProperty ;
+  rdfs:label "people cluster"@en ;
+  rdfs:comment "Joshua Project People Cluster — a mid-level grouping of closely related people groups within an affinity bloc (e.g. 'Bengali', 'Berber-Saharan')."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:string .
+
+jp:photoUrl a owl:DatatypeProperty ;
+  rdfs:label "photo URL"@en ;
+  rdfs:comment "URL to a representative photo of the people group on joshuaproject.net."@en ;
+  rdfs:domain gc:PeopleGroup ;
+  rdfs:range xsd:anyURI .
+
+# ── JP AssessmentResult Metrics ───────────────────────────────────────────
+#
+#  Additional JP-specific data points on gc:AssessmentResult instances
+#  (Block 3 of JP bridge output). These properties report assessment
+#  findings — reachedness, religion, Bible availability, and ministry access.
+
+jp:leastReached a owl:DatatypeProperty ;
+  rdfs:label "least reached"@en ;
+  rdfs:comment "True if Joshua Project classifies this group as least-reached — Progress Scale 1 or 2, meaning less than 2% evangelical and less than 5% Christian adherent."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+jp:frontier a owl:DatatypeProperty ;
+  rdfs:label "frontier"@en ;
+  rdfs:comment "True if this is a Frontier People Group — less than 0.1% Christian of any kind, with no known active church planting."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+jp:in1040Window a owl:DatatypeProperty ;
+  rdfs:label "in 10/40 Window"@en ;
+  rdfs:comment "True if the people group is located in the 10/40 Window, the region between 10 and 40 degrees north latitude spanning North Africa, the Middle East, and Asia."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+jp:primaryReligion a owl:DatatypeProperty ;
+  rdfs:label "primary religion"@en ;
+  rdfs:comment "Primary religion of the people group (e.g. 'Islam', 'Hinduism', 'Buddhism', 'Christianity'), as reported by Joshua Project."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+jp:religionCode a owl:DatatypeProperty ;
+  rdfs:label "religion code"@en ;
+  rdfs:comment "Joshua Project RLG3 religion code — a numeric identifier for the primary religion of the people group."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:integer .
+
+jp:percentChristian a owl:DatatypeProperty ;
+  rdfs:label "percent Christian"@en ;
+  rdfs:comment "Percentage of all Christians (all traditions — Catholic, Protestant, Orthodox, etc.) in the people group population. Broader than evangelical percentage."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:decimal .
+
+jp:percentIslam a owl:DatatypeProperty ;
+  rdfs:label "percent Islam"@en ;
+  rdfs:comment "Percentage of Muslim population in the people group, as reported by Joshua Project."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:decimal .
+
+jp:bibleStatus a owl:DatatypeProperty ;
+  rdfs:label "Bible status"@en ;
+  rdfs:comment "Bible translation status for this people group. 0 = Unspecified, 1 = Translation Needed, 2 = Translation Started, 3 = Portions Available, 4 = New Testament Available, 5 = Complete Bible Available."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:integer .
+
+jp:bibleYear a owl:DatatypeProperty ;
+  rdfs:label "Bible year"@en ;
+  rdfs:comment "Year or year range of the most recent Bible translation for this people group (e.g. '2021', '1382-2020')."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+jp:ntYear a owl:DatatypeProperty ;
+  rdfs:label "New Testament year"@en ;
+  rdfs:comment "Year or year range of the most recent New Testament translation for this people group."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+jp:jesusFilmCode a owl:DatatypeProperty ;
+  rdfs:label "Jesus Film code"@en ;
+  rdfs:comment "Jesus Film Project language or dub identifier for this people group's primary language."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:string .
+
+jp:hasAudioRecordings a owl:DatatypeProperty ;
+  rdfs:label "has audio recordings"@en ;
+  rdfs:comment "True if gospel audio recordings exist in this people group's primary language."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+jp:hasGospelRadio a owl:DatatypeProperty ;
+  rdfs:label "has gospel radio"@en ;
+  rdfs:comment "True if gospel radio broadcasts are available in this people group's primary language."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:boolean .
+
+jp:securityLevel a owl:DatatypeProperty ;
+  rdfs:label "security level"@en ;
+  rdfs:comment "Security or sensitivity level for ministry work among this people group. 1 = low, 2 = medium, 3 = high."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range xsd:integer .
+
+# ── STSC Scale — Removed (v0.13.0) ──────────────────────────────────────
+#  STSC dual-axis assessment and related properties removed — no real data
+#  populated these concepts. Can be re-added on gc:AssessmentResult if needed.
+
+# ── Engagement Accelerators — Removed (v0.14.0) ─────────────────────────
+#  The 12 JP Engagement Accelerator concepts and Engagement Strength levels
+#  removed — speculative GCA concepts, never populated by any bridge.
+#  gc:relatedAccelerator property retained with skos:Concept range.
+
+
+##############################################################################
+#  VI.  PEOPLE GROUP ENGAGEMENT COUNTS
+#
+#  Reified participation counts linking people groups to activities,
+#  churches, or datasets with numeric measures.
+##############################################################################
+
+gc:PeopleGroupEngagement a owl:Class ;
+  rdfs:label "People Group Engagement"@en ;
+  rdfs:comment "A reified count of engagement with a specific people group in the context of an activity, church, or dataset. Corresponds to PGItem / EntityPeopleGroup / ChurchEntityPeopleGroup in GCData."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:engagementPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "engagement people group"@en ;
+  rdfs:domain gc:PeopleGroupEngagement ;
+  rdfs:range gc:PeopleGroup .
+
+gc:engagementCount a owl:DatatypeProperty ;
+  rdfs:label "engagement count"@en ;
+  rdfs:comment "The total number of people engaged within this people group."@en ;
+  rdfs:domain gc:PeopleGroupEngagement ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:hasPeopleGroupEngagement a owl:ObjectProperty ;
+  rdfs:label "has people group engagement"@en ;
+  rdfs:comment "Links a church, activity, or record to a people group engagement count."@en ;
+  rdfs:range gc:PeopleGroupEngagement .
+
+
+##############################################################################
+#  VII.  PROV-O RELATIONSHIP PATTERNS
+#
+#  Canonical provenance chains connecting agents, activities, and entities.
+#  These patterns encode how field work flows into data records.
+##############################################################################
+
+# Pattern 1: Ministry Activity with Qualified Roles
+#   gc:MinistryActivity  -- prov:wasAssociatedWith -->  gc:Person
+#   gc:MinistryActivity  -- prov:qualifiedAssociation -->  gc:MinistryParticipation
+#   gc:MinistryParticipation  -- prov:agent -->  gc:Person
+#   gc:MinistryParticipation  -- gc:participationRole -->  gc:FieldWorkerRole
+#   gc:MinistryActivity  -- gc:atLocation -->  gc:Location
+#   gc:MinistryActivity  -- gc:engagesPeopleGroup -->  gc:PeopleGroup
+#
+# Pattern 2: Church Formation Provenance
+#   gc:ChurchFormation  -- prov:generated -->  gc:Organization
+#   gc:Organization  -- prov:wasGeneratedBy -->  gc:ChurchFormation
+#   gc:Organization  -- prov:wasAttributedTo -->  gc:Person
+#
+# Pattern 3: Organization Practice (Practice as Activity)
+#   gc:Organization  -- gc:hasPractice -->  gc:Practice
+#   gc:Practice  -- gc:practiceType -->  gc:BaptismPractice  (PracticeType)
+#   gc:Practice  -- gc:isPerformedInternally -->  true/false
+#   gc:Practice  -- prov:wasAssociatedWith -->  gc:Person
+#   gc:Practice  -- gc:practiceIsActive -->  true/false
+#
+# Pattern 4: Data Recording Provenance
+#   gc:DataRecordingActivity  -- prov:wasAssociatedWith -->  gc:Person
+#   gc:DataRecordingActivity  -- gc:recordsActivity -->  gc:MinistryActivity
+#   gc:DataRecordingActivity  -- prov:generated -->  gc:EngagementRecord
+#   gc:EngagementRecord  -- prov:wasGeneratedBy -->  gc:DataRecordingActivity
+#   gc:EngagementRecord  -- prov:wasAttributedTo -->  gc:DataSource
+#
+# Pattern 5: Data Exchange Provenance
+#   gc:DataExchangeActivity  -- prov:used -->  gc:ExchangePayload
+#   gc:DataExchangeActivity  -- prov:wasAssociatedWith -->  gc:GCBridge
+#   gc:ExchangePayload  -- prov:hadMember -->  gc:EngagementRecord
+#
+# Pattern 6: Multi-Org Assessment (unified gc: pattern, v0.13.0)
+#   gc:Assessment  -- prov:wasAssociatedWith -->  gc:Person / gc:DataSource
+#   gc:Assessment  -- gc:assessesPeopleGroup -->  gc:PeopleGroup
+#   gc:Assessment  -- gc:assessedBy -->  gc:Organization
+#   gc:Assessment  -- gc:assessmentDate -->  xsd:dateTime
+#   gc:Assessment  -- gc:assessmentMethodology -->  gc:MethodologyJPProgressScale (etc.)
+#   gc:Assessment  -- prov:generated -->  gc:AssessmentResult
+#   gc:AssessmentResult  -- prov:wasGeneratedBy -->  gc:Assessment
+#   gc:AssessmentResult  -- gc:resultForPeopleGroup -->  gc:PeopleGroup
+#   gc:AssessmentResult  -- gc:resultDate -->  xsd:dateTime
+#   gc:AssessmentResult  -- jp:jpScale -->  2  (JP-specific)
+#   gc:AssessmentResult  -- imb:gsecLevel -->  imb:GSEC1  (IMB-specific)
+#
+# Pattern 7: Organization Endorsement (Endorsement as Entity)
+#   gc:Endorsement  -- gc:endorsingOrganization -->  gc:Organization
+#   gc:Endorsement  -- gc:endorsedOrganization -->  gc:Organization
+#   gc:Endorsement  -- gc:endorsedDate -->  xsd:date
+#   gc:Endorsement  -- gc:endorsementStatus -->  gc:EndorsementActive  (etc.)
+#   gc:Endorsement  -- gc:endorsementType -->  gc:CertificationEndorsement  (etc.)
+#   gc:Endorsement  -- prov:wasAttributedTo -->  gc:Organization
+#   gc:Organization  -- gc:hasEndorsement -->  gc:Endorsement
+
+
+##############################################################################
+#  VIII.  DATA PRIVACY SUBSETS
+#
+#  Annotation properties to tag properties and entities with their
+#  Global.Church schema privacy/visibility subsets.
+##############################################################################
+
+gc:dataSubset a owl:AnnotationProperty ;
+  rdfs:label "data subset"@en ;
+  rdfs:comment "Tags a property or class with its Global.Church schema privacy subset (public, private, pii, internal, church_core, user_core, enrichment)."@en .
+
+# Subset instances as annotation values
+gc:SubsetPublic a owl:NamedIndividual ;
+  rdfs:label "public" .
+gc:SubsetPrivate a owl:NamedIndividual ;
+  rdfs:label "private" .
+gc:SubsetPII a owl:NamedIndividual ;
+  rdfs:label "pii" .
+gc:SubsetInternal a owl:NamedIndividual ;
+  rdfs:label "internal" .
+gc:SubsetChurchCore a owl:NamedIndividual ;
+  rdfs:label "church_core" .
+gc:SubsetUserCore a owl:NamedIndividual ;
+  rdfs:label "user_core" .
+gc:SubsetEnrichment a owl:NamedIndividual ;
+  rdfs:label "enrichment" .
+
+# Apply subset annotations to key properties
+gc:isActive gc:dataSubset gc:SubsetChurchCore .
+gc:dateStarted gc:dataSubset gc:SubsetChurchCore .
+gc:identifiesAsChurch gc:dataSubset gc:SubsetChurchCore .
+gc:hasAppointedLeaders gc:dataSubset gc:SubsetChurchCore .
+gc:hasPractice gc:dataSubset gc:SubsetChurchCore .
+gc:personName gc:dataSubset gc:SubsetPII .
+gc:personEmail gc:dataSubset gc:SubsetPII .
+gc:personPhone gc:dataSubset gc:SubsetPII .
+gc:userId gc:dataSubset gc:SubsetUserCore .
+
+
+##############################################################################
+#  IX.  ALIGNMENT TO AGENTIC TRUST LAYER
+#
+#  Hooks for interoperability with the agent-explorer ontology.
+#  DataSource systems can be discovered as AIAgents; exchange payloads
+#  can be attested via the trust assertion framework.
+##############################################################################
+
+gc:DataSource rdfs:subClassOf at:Agent .
+
+gc:DataExchangeAttestation a owl:Class ;
+  rdfs:label "Data Exchange Attestation"@en ;
+  rdfs:comment "An attestation (in the Agentic Trust sense) that a data exchange payload is authentic and unmodified. Enables trust-layer integration for GCBridge-mediated exchanges."@en ;
+  rdfs:subClassOf at:Attestation .
+
+gc:attestsPayload a owl:ObjectProperty ;
+  rdfs:label "attests payload"@en ;
+  rdfs:comment "Links an attestation to the exchange payload it certifies."@en ;
+  rdfs:subPropertyOf prov:used ;
+  rdfs:domain gc:DataExchangeAttestation ;
+  rdfs:range gc:ExchangePayload .
+
+
+
+##############################################################################
+#  XI.  ORGANIZATION ENDORSEMENTS
+#
+#  Organizational endorsements — certifications, partnerships, affiliations,
+#  and accreditations from recognized bodies (e.g., BGEA, denominations,
+#  networks).  Applies to any gc:Organization (churches, agencies, etc.).
+#  Modeled as reified prov:Entity because each endorsement has its own
+#  properties (date granted, status, type, endorser).
+#
+#  PROV-O pattern:
+#    gc:Endorsement  -- gc:endorsingOrganization -->  gc:Organization
+#    gc:Endorsement  -- gc:endorsedOrganization -->  gc:Organization
+#    gc:Endorsement  -- gc:endorsedDate -->  xsd:date
+#    gc:Endorsement  -- gc:endorsementStatus -->  gc:EndorsementActive  (etc.)
+#    gc:Endorsement  -- gc:endorsementType -->  gc:CertificationEndorsement  (etc.)
+#    gc:Endorsement  -- prov:wasAttributedTo -->  gc:Organization
+#    gc:Organization  -- gc:hasEndorsement -->  gc:Endorsement
+##############################################################################
+
+gc:Endorsement a owl:Class ;
+  rdfs:label "Endorsement"@en ;
+  rdfs:comment "An organizational endorsement — a certification, partnership, affiliation, or accreditation from a recognized body. Applies to any gc:Organization (churches, agencies, networks, etc.). Reified as a first-class entity because endorsements have their own properties (date granted, expiration, status, type). Provides multi-source trust signals on organization records."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:endorsingOrganization a owl:ObjectProperty ;
+  rdfs:label "endorsing organization"@en ;
+  rdfs:comment "The organization that granted this endorsement."@en ;
+  rdfs:domain gc:Endorsement ;
+  rdfs:range gc:Organization .
+
+gc:endorsedOrganization a owl:ObjectProperty ;
+  rdfs:label "endorsed organization"@en ;
+  rdfs:comment "The organization that received this endorsement."@en ;
+  rdfs:domain gc:Endorsement ;
+  rdfs:range gc:Organization .
+
+gc:hasEndorsement a owl:ObjectProperty ;
+  rdfs:label "has endorsement"@en ;
+  rdfs:comment "Links an organization to an endorsement it has received. Convenience navigation property (inverse direction of gc:endorsedOrganization)."@en ;
+  rdfs:range gc:Endorsement .
+
+gc:endorsedDate a owl:DatatypeProperty ;
+  rdfs:label "endorsed date"@en ;
+  rdfs:comment "Date when the endorsement was granted."@en ;
+  rdfs:domain gc:Endorsement ;
+  rdfs:range xsd:date .
+
+gc:endorsementExpirationDate a owl:DatatypeProperty ;
+  rdfs:label "endorsement expiration date"@en ;
+  rdfs:comment "Date when the endorsement expires, if applicable. Absence means no expiration."@en ;
+  rdfs:domain gc:Endorsement ;
+  rdfs:range xsd:date .
+
+gc:endorsementStatus a owl:ObjectProperty ;
+  rdfs:label "endorsement status"@en ;
+  rdfs:comment "Current status of the endorsement."@en ;
+  rdfs:domain gc:Endorsement ;
+  rdfs:range gc:EndorsementStatusValue .
+
+gc:endorsementType a owl:ObjectProperty ;
+  rdfs:label "endorsement type"@en ;
+  rdfs:comment "Classifies the endorsement by type from the EndorsementType vocabulary."@en ;
+  rdfs:domain gc:Endorsement ;
+  rdfs:range gc:EndorsementType .
+
+# ── Endorsement Status Vocabulary (SKOS) ──────────────────────────────────
+
+gc:EndorsementStatusValue a owl:Class ;
+  rdfs:label "Endorsement Status Value"@en ;
+  rdfs:comment "A status value for an endorsement from the endorsement status vocabulary."@en ;
+  rdfs:subClassOf skos:Concept .
+
+gc:EndorsementStatusScheme a skos:ConceptScheme ;
+  rdfs:label "Endorsement Status Scheme"@en ;
+  rdfs:comment "SKOS concept scheme for endorsement status values."@en .
+
+gc:EndorsementActive a gc:EndorsementStatusValue ;
+  rdfs:label "Active"@en ;
+  skos:prefLabel "Active"@en ;
+  skos:definition "The endorsement is currently active and valid."@en ;
+  skos:inScheme gc:EndorsementStatusScheme .
+
+gc:EndorsementExpired a gc:EndorsementStatusValue ;
+  rdfs:label "Expired"@en ;
+  skos:prefLabel "Expired"@en ;
+  skos:definition "The endorsement has expired and is no longer valid."@en ;
+  skos:inScheme gc:EndorsementStatusScheme .
+
+gc:EndorsementRevoked a gc:EndorsementStatusValue ;
+  rdfs:label "Revoked"@en ;
+  skos:prefLabel "Revoked"@en ;
+  skos:definition "The endorsement has been revoked by the endorsing organization."@en ;
+  skos:inScheme gc:EndorsementStatusScheme .
+
+gc:EndorsementPending a gc:EndorsementStatusValue ;
+  rdfs:label "Pending"@en ;
+  skos:prefLabel "Pending"@en ;
+  skos:definition "The endorsement application is pending review."@en ;
+  skos:inScheme gc:EndorsementStatusScheme .
+
+# ── Endorsement Type Vocabulary (SKOS) ────────────────────────────────────
+
+gc:EndorsementType a owl:Class ;
+  rdfs:label "Endorsement Type"@en ;
+  rdfs:comment "A type of endorsement from the endorsement type vocabulary."@en ;
+  rdfs:subClassOf skos:Concept .
+
+gc:EndorsementTypeScheme a skos:ConceptScheme ;
+  rdfs:label "Endorsement Type Scheme"@en ;
+  rdfs:comment "SKOS concept scheme for endorsement types."@en .
+
+gc:CertificationEndorsement a gc:EndorsementType ;
+  rdfs:label "Certification"@en ;
+  skos:prefLabel "Certification"@en ;
+  skos:definition "A formal certification that the church meets specific standards."@en ;
+  skos:inScheme gc:EndorsementTypeScheme .
+
+gc:PartnershipEndorsement a gc:EndorsementType ;
+  rdfs:label "Partnership"@en ;
+  skos:prefLabel "Partnership"@en ;
+  skos:definition "A partnership or cooperative relationship with the endorsing organization."@en ;
+  skos:inScheme gc:EndorsementTypeScheme .
+
+gc:AffiliationEndorsement a gc:EndorsementType ;
+  rdfs:label "Affiliation"@en ;
+  skos:prefLabel "Affiliation"@en ;
+  skos:definition "A denominational or network affiliation."@en ;
+  skos:inScheme gc:EndorsementTypeScheme .
+
+gc:AccreditationEndorsement a gc:EndorsementType ;
+  rdfs:label "Accreditation"@en ;
+  skos:prefLabel "Accreditation"@en ;
+  skos:definition "A formal accreditation by a recognized accrediting body."@en ;
+  skos:inScheme gc:EndorsementTypeScheme .
+
+# Apply subset annotations — endorsements are public trust signals
+gc:hasEndorsement gc:dataSubset gc:SubsetPublic .
+
+
+##############################################################################
+#  XII.  RESOURCE & SCRIPTURE TRACKING
+#
+#  First-class resource entities so the platform can connect groups that
+#  need resources with organizations that provide them.  A single
+#  gc:MissionResource class with three orthogonal classification dimensions:
+#    1. gc:resourceDomain  → ResourceDomainScheme (SKOS)  — content domain
+#    2. gc:resourceFormat  → ResourceFormatScheme (SKOS)  — delivery format
+#    3. gc:resourceFunction → ResourceFunctionScheme (SKOS) — pedagogical function
+#
+#  Key design insights:
+#  - Delivery format is orthogonal to content type.
+#  - Content domain is multi-valued: a resource can span Scripture + Evangelism.
+#  - Pedagogical function is orthogonal to domain: a Curriculum can be about
+#    any domain (Scripture, Leadership, Evangelism).
+#  - gc:relatedAccelerator links resources to SKOS accelerator concepts.
+#
+#  PROV-O pattern:
+#    gc:MissionResource  -- gc:resourceForPeopleGroup -->  gc:PeopleGroup
+#    gc:MissionResource  -- gc:resourceLanguage -->  skos:Concept  (ROL)
+#    gc:MissionResource  -- gc:resourceProvider -->  gc:Organization
+#    gc:MissionResource  -- gc:resourceStatus -->  gc:ResourceStatusValue
+#    gc:MissionResource  -- gc:resourceFormat -->  gc:ResourceFormatValue
+#    gc:MissionResource  -- gc:resourceDomain -->  skos:Concept  (ResourceDomainScheme)
+#    gc:MissionResource  -- gc:resourceFunction -->  skos:Concept  (ResourceFunctionScheme)
+#    gc:MissionResource  -- gc:relatedAccelerator -->  skos:Concept
+#    gc:MissionResource  -- gc:partOfCollection -->  gc:ResourceCollection
+#    gc:MinistryActivity -- gc:usesResource -->  gc:MissionResource
+##############################################################################
+
+# --- 12.1 Resource Classes ---
+
+gc:MissionResource a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Mission Resource"@en ;
+  rdfs:comment "A deployable resource available for or needed by a people group. Classified along three orthogonal dimensions: content domain (gc:resourceDomain), delivery format (gc:resourceFormat), and pedagogical function (gc:resourceFunction)."@en .
+
+gc:ResourceCollection a owl:Class ;
+  rdfs:subClassOf prov:Entity ;
+  rdfs:label "Resource Collection"@en ;
+  rdfs:comment "A curated set of resources forming a coherent series, curriculum, or toolkit (e.g., a teaching series, a numbered paper collection, a multi-lesson curriculum)."@en .
+
+# --- 12.2 Base Resource Properties ---
+# Multi-valued properties (no sh:maxCount in SHACL):
+#   - gc:resourceForPeopleGroup — an Arabic Bible serves multiple Arabic-speaking groups
+#   - gc:resourceLanguage — GodTools is in 80+ languages; the JESUS Film is in 1,600+
+#   - gc:resourceProvider — translations are frequently co-produced (Wycliffe + SIL + Bible societies)
+#   - gc:resourceFormat — a teaching series may be available as Video + Audio + Print simultaneously
+#   - gc:resourceDomain — a resource can span multiple content domains (Scripture + Evangelism)
+
+gc:resourceName a owl:DatatypeProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range xsd:string ;
+  rdfs:label "resource name"@en ;
+  rdfs:comment "Human-readable name or title of the resource."@en .
+
+gc:resourceUrl a owl:DatatypeProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range xsd:anyURI ;
+  rdfs:label "resource URL"@en ;
+  rdfs:comment "URL where the resource can be accessed or downloaded."@en .
+
+gc:resourceDatePublished a owl:DatatypeProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range xsd:date ;
+  rdfs:label "date published"@en ;
+  rdfs:comment "The date the resource was first published or made available."@en .
+
+gc:resourceForPeopleGroup a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range gc:PeopleGroup ;
+  rdfs:label "resource for people group"@en ;
+  rdfs:comment "Links a resource to a people group it targets or serves. Multi-valued."@en .
+
+gc:resourceLanguage a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range skos:Concept ;
+  rdfs:label "resource language"@en ;
+  rdfs:comment "The language of the resource. Points to ROL SKOS concepts. Multi-valued for multilingual resources."@en .
+
+gc:resourceProvider a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range gc:Organization ;
+  rdfs:label "resource provider"@en ;
+  rdfs:comment "Organization that created or provides the resource. Multi-valued for co-productions."@en .
+
+gc:resourceStatus a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range gc:ResourceStatusValue ;
+  rdfs:label "resource status"@en ;
+  rdfs:comment "Current lifecycle status of the resource."@en .
+
+gc:resourceFormat a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range gc:ResourceFormatValue ;
+  rdfs:label "resource format"@en ;
+  rdfs:comment "The delivery format or medium of the resource, orthogonal to its content type. Multi-valued when the same content is available in multiple formats."@en .
+
+gc:resourceDomain a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range skos:Concept ;
+  rdfs:label "resource domain"@en ;
+  rdfs:comment "The content domain of the resource (e.g., Scripture, Evangelism, Discipleship, Leadership). Multi-valued — a resource can span multiple domains. Constrained via SHACL to gc:ResourceDomainScheme concepts."@en .
+
+gc:resourceFunction a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range skos:Concept ;
+  rdfs:label "resource function"@en ;
+  rdfs:comment "How the resource is used — its pedagogical or ministry function (e.g., Curriculum, Manual, Tool, Broadcast). Constrained via SHACL to gc:ResourceFunctionScheme concepts."@en .
+
+gc:relatedAccelerator a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range skos:Concept ;
+  rdfs:label "related accelerator"@en ;
+  rdfs:comment "Links a resource to an engagement accelerator concept it contributes to (e.g., Scripture, Film, Church Planting). Values are SKOS concepts."@en .
+
+gc:completionPercentage a owl:DatatypeProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range xsd:decimal ;
+  rdfs:label "completion percentage"@en ;
+  rdfs:comment "Progress on in-progress resources, as a decimal from 0.0 to 1.0. Most relevant for Scripture translations but applicable to any resource."@en .
+
+gc:estimatedCompletionDate a owl:DatatypeProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range xsd:date ;
+  rdfs:label "estimated completion date"@en ;
+  rdfs:comment "Target completion date for in-progress resources."@en .
+
+# --- 12.3 Activity-Resource Linkage ---
+
+gc:usesResource a owl:ObjectProperty ;
+  rdfs:domain gc:MinistryActivity ;
+  rdfs:range gc:MissionResource ;
+  rdfs:label "uses resource"@en ;
+  rdfs:comment "Links a ministry activity to a resource used during that activity. Enables tracking which resources are actually being deployed."@en .
+
+# --- 12.4 Resource Collection Properties ---
+
+gc:partOfCollection a owl:ObjectProperty ;
+  rdfs:domain gc:MissionResource ;
+  rdfs:range gc:ResourceCollection ;
+  rdfs:label "part of collection"@en ;
+  rdfs:comment "Links an individual resource to the collection or series it belongs to."@en .
+
+gc:collectionName a owl:DatatypeProperty ;
+  rdfs:domain gc:ResourceCollection ;
+  rdfs:range xsd:string ;
+  rdfs:label "collection name"@en ;
+  rdfs:comment "Human-readable name of the resource collection or series."@en .
+
+# --- 12.5 Resource Status Vocabulary ---
+
+gc:ResourceStatusValue a owl:Class ;
+  rdfs:subClassOf skos:Concept ;
+  rdfs:label "Resource Status Value"@en ;
+  rdfs:comment "Lifecycle status of a mission resource."@en .
+
+gc:ResourceStatusScheme a skos:ConceptScheme ;
+  rdfs:label "Resource Status Scheme"@en ;
+  rdfs:comment "SKOS concept scheme for resource lifecycle stages. Progression: NotStarted → Planned → InProgress → InReview → Available."@en .
+
+gc:ResourceNotStarted a gc:ResourceStatusValue ;
+  skos:prefLabel "Not Started"@en ;
+  skos:definition "No work has begun on this resource."@en ;
+  skos:notation "NST" ;
+  skos:inScheme gc:ResourceStatusScheme .
+
+gc:ResourcePlanned a gc:ResourceStatusValue ;
+  skos:prefLabel "Planned"@en ;
+  skos:definition "A commitment exists to create this resource, but active work has not begun."@en ;
+  skos:notation "PLA" ;
+  skos:inScheme gc:ResourceStatusScheme .
+
+gc:ResourceInProgress a gc:ResourceStatusValue ;
+  skos:prefLabel "In Progress"@en ;
+  skos:definition "Active creation or translation work is underway."@en ;
+  skos:notation "INP" ;
+  skos:inScheme gc:ResourceStatusScheme .
+
+gc:ResourceInReview a gc:ResourceStatusValue ;
+  skos:prefLabel "In Review"@en ;
+  skos:definition "Draft is complete and undergoing quality review or consultant checking."@en ;
+  skos:notation "REV" ;
+  skos:inScheme gc:ResourceStatusScheme .
+
+gc:ResourceAvailable a gc:ResourceStatusValue ;
+  skos:prefLabel "Available"@en ;
+  skos:definition "The resource is published and available for use."@en ;
+  skos:notation "AVL" ;
+  skos:inScheme gc:ResourceStatusScheme .
+
+# --- 12.6 Resource Format Vocabulary ---
+# Format is orthogonal to content domain and function.
+
+gc:ResourceFormatValue a owl:Class ;
+  rdfs:subClassOf skos:Concept ;
+  rdfs:label "Resource Format Value"@en ;
+  rdfs:comment "Delivery format or medium of a resource, orthogonal to content type."@en .
+
+gc:ResourceFormatScheme a skos:ConceptScheme ;
+  rdfs:label "Resource Format Scheme"@en ;
+  rdfs:comment "SKOS concept scheme for resource delivery formats."@en .
+
+gc:FormatText a gc:ResourceFormatValue ;
+  skos:prefLabel "Text"@en ;
+  skos:definition "Written text, whether digital or manuscript."@en ;
+  skos:notation "TXT" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatAudio a gc:ResourceFormatValue ;
+  skos:prefLabel "Audio"@en ;
+  skos:definition "Audio recording for listening."@en ;
+  skos:notation "AUD" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatVideo a gc:ResourceFormatValue ;
+  skos:prefLabel "Video"@en ;
+  skos:definition "Video content for viewing."@en ;
+  skos:notation "VID" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatApp a gc:ResourceFormatValue ;
+  skos:prefLabel "Mobile App"@en ;
+  skos:definition "Native mobile application."@en ;
+  skos:notation "APP" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatWeb a gc:ResourceFormatValue ;
+  skos:prefLabel "Website"@en ;
+  skos:definition "Web-based content accessible via browser."@en ;
+  skos:notation "WEB" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatSignLanguage a gc:ResourceFormatValue ;
+  skos:prefLabel "Sign Language"@en ;
+  skos:definition "Content delivered in a sign language."@en ;
+  skos:notation "SGN" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatPrint a gc:ResourceFormatValue ;
+  skos:prefLabel "Print"@en ;
+  skos:definition "Printed physical material."@en ;
+  skos:notation "PRT" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+gc:FormatPodcast a gc:ResourceFormatValue ;
+  skos:prefLabel "Podcast"@en ;
+  skos:definition "Episodic audio content distributed via podcast feeds."@en ;
+  skos:notation "POD" ;
+  skos:inScheme gc:ResourceFormatScheme .
+
+# --- 12.7 Resource Domain Vocabulary ---
+# Content domain classification — what the resource is ABOUT.
+# Multi-valued: a resource can span multiple domains.
+# Hierarchical: top concepts are broad domains, narrower concepts are specializations.
+
+gc:ResourceDomainScheme a skos:ConceptScheme ;
+  rdfs:label "Resource Domain Scheme"@en ;
+  rdfs:comment "Content domain classification for ministry resources. Hierarchical — top concepts are broad domains, narrower concepts are specializations."@en .
+
+# === Scripture domain ===
+gc:DomainScripture a skos:Concept ;
+  skos:prefLabel "Scripture"@en ;
+  skos:definition "Bible translation or Scripture-derived content."@en ;
+  skos:topConceptOf gc:ResourceDomainScheme .
+
+gc:DomainScriptureFullBible a skos:Concept ;
+  skos:prefLabel "Full Bible"@en ;
+  skos:definition "Complete Old and New Testament translation."@en ;
+  skos:broader gc:DomainScripture ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainScriptureNT a skos:Concept ;
+  skos:prefLabel "New Testament"@en ;
+  skos:definition "Complete New Testament translation."@en ;
+  skos:broader gc:DomainScripture ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainScripturePortions a skos:Concept ;
+  skos:prefLabel "Portions"@en ;
+  skos:definition "Selected portions of Scripture translated (less than a full Testament)."@en ;
+  skos:broader gc:DomainScripture ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+# === Evangelism domain ===
+gc:DomainEvangelism a skos:Concept ;
+  skos:prefLabel "Evangelism"@en ;
+  skos:definition "Content designed for gospel sharing and outreach."@en ;
+  skos:topConceptOf gc:ResourceDomainScheme .
+
+gc:DomainGospelPresentation a skos:Concept ;
+  skos:prefLabel "Gospel Presentation"@en ;
+  skos:broader gc:DomainEvangelism ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainConversationGuide a skos:Concept ;
+  skos:prefLabel "Conversation Guide"@en ;
+  skos:broader gc:DomainEvangelism ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainDigitalOutreach a skos:Concept ;
+  skos:prefLabel "Digital Outreach"@en ;
+  skos:broader gc:DomainEvangelism ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainTestimony a skos:Concept ;
+  skos:prefLabel "Testimony"@en ;
+  skos:broader gc:DomainEvangelism ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+# === Discipleship & Training domain ===
+gc:DomainDiscipleship a skos:Concept ;
+  skos:prefLabel "Discipleship & Training"@en ;
+  skos:definition "Content for spiritual growth, equipping, and education."@en ;
+  skos:topConceptOf gc:ResourceDomainScheme .
+
+gc:DomainBibleStudy a skos:Concept ;
+  skos:prefLabel "Bible Study"@en ;
+  skos:broader gc:DomainDiscipleship ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainDevotional a skos:Concept ;
+  skos:prefLabel "Devotional"@en ;
+  skos:broader gc:DomainDiscipleship ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainOralBibleStory a skos:Concept ;
+  skos:prefLabel "Oral Bible Story"@en ;
+  skos:broader gc:DomainDiscipleship ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+# === Leadership domain ===
+gc:DomainLeadership a skos:Concept ;
+  skos:prefLabel "Leadership Development"@en ;
+  skos:definition "Content for equipping ministry leaders."@en ;
+  skos:topConceptOf gc:ResourceDomainScheme .
+
+gc:DomainChurchPlanting a skos:Concept ;
+  skos:prefLabel "Church Planting"@en ;
+  skos:broader gc:DomainLeadership ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+gc:DomainMovementStrategy a skos:Concept ;
+  skos:prefLabel "Movement Strategy"@en ;
+  skos:broader gc:DomainLeadership ;
+  skos:inScheme gc:ResourceDomainScheme .
+
+# === Worship & Prayer domain ===
+gc:DomainWorship a skos:Concept ;
+  skos:prefLabel "Worship & Prayer"@en ;
+  skos:definition "Music, liturgy, and prayer resources."@en ;
+  skos:topConceptOf gc:ResourceDomainScheme .
+
+# === Community Development domain ===
+gc:DomainCommunityDev a skos:Concept ;
+  skos:prefLabel "Community Development"@en ;
+  skos:definition "Holistic community development, compassion ministries, and transformational development."@en ;
+  skos:topConceptOf gc:ResourceDomainScheme .
+
+# --- 12.8 Resource Function Vocabulary ---
+# Pedagogical function — how the resource is USED.
+# Inspired by IEEE LOM's LearningResourceType.
+
+gc:ResourceFunctionScheme a skos:ConceptScheme ;
+  rdfs:label "Resource Function Scheme"@en ;
+  rdfs:comment "How the resource is used — its pedagogical or ministry function."@en .
+
+gc:FunctionCurriculum a skos:Concept ;
+  skos:prefLabel "Curriculum"@en ;
+  skos:definition "Structured course of study or lesson sequence."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionManual a skos:Concept ;
+  skos:prefLabel "Manual / Guide"@en ;
+  skos:definition "Reference guide or handbook."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionWorkshop a skos:Concept ;
+  skos:prefLabel "Workshop Material"@en ;
+  skos:definition "Materials for a facilitated workshop or seminar."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionOnlineCourse a skos:Concept ;
+  skos:prefLabel "Online Course"@en ;
+  skos:definition "Self-paced or instructor-led digital course."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionTool a skos:Concept ;
+  skos:prefLabel "Interactive Tool"@en ;
+  skos:definition "A tool used during ministry activities (conversation guides, apps)."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionBroadcast a skos:Concept ;
+  skos:prefLabel "Broadcast Content"@en ;
+  skos:definition "Content designed for radio, TV, or streaming distribution."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionTranslation a skos:Concept ;
+  skos:prefLabel "Translation"@en ;
+  skos:definition "A language translation of source content."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+gc:FunctionReferenceText a skos:Concept ;
+  skos:prefLabel "Reference Text"@en ;
+  skos:definition "Source text for reading, study, or lookup."@en ;
+  skos:inScheme gc:ResourceFunctionScheme .
+
+# Apply subset annotations — resources are public
+gc:resourceName gc:dataSubset gc:SubsetPublic .
+gc:resourceForPeopleGroup gc:dataSubset gc:SubsetPublic .
+gc:resourceStatus gc:dataSubset gc:SubsetPublic .
+
+
+##############################################################################
+#  XIII.  ENGAGEMENT CLAIMS
+#
+#  Self-reported assertions by organizations about their current or recent
+#  engagement with people groups.  A claim is what an organization says it
+#  is *currently doing*.
+#
+#  Collected via the engage.global.church onboarding flow: a ministry
+#  leader signs up, claims their org, and declares "we do Bible Translation
+#  and Discipleship among these 3 people groups in Pakistan."
+#
+#  Modeled as prov:Entity (same tier as gc:Endorsement and
+#  gc:AssessmentResult) because each claim is an assertion with
+#  provenance — who said it, when, and about what.  The claim itself
+#  is a persisting record; its status can change (active → paused →
+#  completed → withdrawn).
+#
+#  PROV-O pattern:
+#    gc:EngagementClaim  -- gc:claimingOrganization -->  gc:Organization
+#    gc:EngagementClaim  -- gc:claimedPeopleGroup   -->  gc:PeopleGroup  (multi-valued)
+#    gc:EngagementClaim  -- gc:claimedCountry        -->  skos:Concept   (ROG SKOS)
+#    gc:EngagementClaim  -- gc:engagementType         -->  skos:Concept   (EngagementTypeScheme, multi-valued)
+#    gc:EngagementClaim  -- gc:claimDate              -->  xsd:date
+#    gc:EngagementClaim  -- gc:claimStatus            -->  gc:ClaimStatusValue
+#    gc:EngagementClaim  -- gc:claimDescription       -->  xsd:string
+#    gc:EngagementClaim  -- prov:wasAttributedTo      -->  gc:Person      (who registered it)
+#    gc:Organization     -- gc:hasEngagementClaim     -->  gc:EngagementClaim
+##############################################################################
+
+gc:EngagementClaim a owl:Class ;
+  rdfs:label "Engagement Claim"@en ;
+  rdfs:comment "A self-reported assertion by an organization about its current or recent engagement with one or more people groups. Collected through the onboarding flow when ministry leaders declare what types of engagement work their organization is doing (e.g., church planting, Bible translation, prayer). Provenance: use prov:wasAttributedTo to link the claim to the gc:Person who registered it."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:claimingOrganization a owl:ObjectProperty ;
+  rdfs:label "claiming organization"@en ;
+  rdfs:comment "The organization that made this engagement claim."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range gc:Organization .
+
+gc:claimedPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "claimed people group"@en ;
+  rdfs:comment "A people group that the organization claims to be engaged with. Multi-valued — an org may claim engagement across multiple people groups in a single claim."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range gc:PeopleGroup .
+
+gc:claimedCountry a owl:ObjectProperty ;
+  rdfs:label "claimed country"@en ;
+  rdfs:comment "The country where this engagement takes place. Points to a ROG SKOS concept (e.g., rog:PK for Pakistan). Optional — if absent, the claim applies to the people group globally."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range skos:Concept .
+
+gc:engagementType a owl:ObjectProperty ;
+  rdfs:label "engagement type"@en ;
+  rdfs:comment "The type of engagement work being done. Points to SKOS concepts from gc:EngagementTypeScheme (Church Planting, Discipleship, Bible Translation, etc.). Multi-valued — an org can do multiple types of engagement with the same people group."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range skos:Concept .
+
+gc:claimDate a owl:DatatypeProperty ;
+  rdfs:label "claim date"@en ;
+  rdfs:comment "The date when this engagement claim was submitted."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range xsd:date .
+
+gc:claimStatus a owl:ObjectProperty ;
+  rdfs:label "claim status"@en ;
+  rdfs:comment "Current status of the engagement claim. Points to SKOS concepts from gc:ClaimStatusScheme (Active, Paused, Completed, Withdrawn)."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range gc:ClaimStatusValue .
+
+gc:claimDescription a owl:DatatypeProperty ;
+  rdfs:label "claim description"@en ;
+  rdfs:comment "Free-text description of the engagement — what the organization is doing, team size, approach, or any other context the claiming org wants to share."@en ;
+  rdfs:domain gc:EngagementClaim ;
+  rdfs:range xsd:string .
+
+gc:hasEngagementClaim a owl:ObjectProperty ;
+  rdfs:label "has engagement claim"@en ;
+  rdfs:comment "Links an organization to an engagement claim it has made. Convenience navigation property (inverse direction of gc:claimingOrganization)."@en ;
+  rdfs:range gc:EngagementClaim .
+
+# ── Claim Status Vocabulary (SKOS) ──────────────────────────────────────
+
+gc:ClaimStatusValue a owl:Class ;
+  rdfs:label "Claim Status Value"@en ;
+  rdfs:comment "A status value for an engagement claim from the claim status vocabulary."@en ;
+  rdfs:subClassOf skos:Concept .
+
+gc:ClaimStatusScheme a skos:ConceptScheme ;
+  rdfs:label "Claim Status Scheme"@en ;
+  rdfs:comment "SKOS concept scheme for engagement claim status values."@en .
+
+gc:ClaimStatusActive a gc:ClaimStatusValue ;
+  rdfs:label "Active"@en ;
+  skos:prefLabel "Active"@en ;
+  skos:notation "ACT" ;
+  skos:definition "The engagement is currently active — the organization is doing this work."@en ;
+  skos:inScheme gc:ClaimStatusScheme .
+
+gc:ClaimStatusPaused a gc:ClaimStatusValue ;
+  rdfs:label "Paused"@en ;
+  skos:prefLabel "Paused"@en ;
+  skos:notation "PAU" ;
+  skos:definition "The engagement is temporarily paused but the organization intends to resume."@en ;
+  skos:inScheme gc:ClaimStatusScheme .
+
+gc:ClaimStatusCompleted a gc:ClaimStatusValue ;
+  rdfs:label "Completed"@en ;
+  skos:prefLabel "Completed"@en ;
+  skos:notation "CMP" ;
+  skos:definition "The engagement work has been completed."@en ;
+  skos:inScheme gc:ClaimStatusScheme .
+
+gc:ClaimStatusWithdrawn a gc:ClaimStatusValue ;
+  rdfs:label "Withdrawn"@en ;
+  skos:prefLabel "Withdrawn"@en ;
+  skos:notation "WDN" ;
+  skos:definition "The engagement claim has been withdrawn by the organization."@en ;
+  skos:inScheme gc:ClaimStatusScheme .
+
+# Apply subset annotations — engagement claims are public coordination data
+gc:hasEngagementClaim gc:dataSubset gc:SubsetPublic .
+
+
+##############################################################################
+#  End of GC-Core Ontology
+##############################################################################

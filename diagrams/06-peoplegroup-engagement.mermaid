@@ -1,0 +1,98 @@
+---
+title: "People Group, Engagement State & 3D Insight Model"
+---
+erDiagram
+    PeopleGroup ||--o{ PeopleGroupEngagement : "engagementPeopleGroup"
+    PeopleGroup ||--o{ EngagementState : "stateForPeopleGroup"
+    EngagementAssessment ||--|{ EngagementState : "prov:generated"
+    EngagementAssessment }o--|| PeopleGroup : "assessesPeopleGroup"
+    EngagementAssessment }o--o{ DataSet : "assessmentUsedDataSet"
+    EngagementAssessment }o--o{ ExchangePayload : "assessmentUsedPayload"
+    EngagementAssessment }o--o{ EngagementRecord : "assessmentUsedRecord"
+    EngagementState ||--|| EngagementStrengthLevel : "engagementStrength"
+    EngagementState ||--o{ AcceleratorScore : "hasAcceleratorScore"
+    EngagementState ||--o| STSCAssessment : "hasSTSCAssessment"
+    AcceleratorScore ||--|| EngagementAccelerator : "acceleratorDomain"
+    MinistryActivity ||--o{ PeopleGroupEngagement : "hasPeopleGroupEngagement"
+    Church ||--o{ PeopleGroupEngagement : "hasPeopleGroupEngagement"
+    DataSet ||--|| Location : "coversArea"
+    DataSet ||--|| DataSource : "hasSource"
+    MinistryActivity }o--o{ PeopleGroup : "engagesPeopleGroup"
+    MinistryActivity }o--|| Location : "atLocation"
+    Overture }o--o{ PeopleGroup : "targetsPeopleGroup"
+    Overture }o--|| Location : "overtureLocation"
+    Overture }o--o| Church : "matchedChurch"
+
+    PeopleGroup {
+        skos_Concept hasPeopleClassification "links to HIS ROP3 SKOS concept"
+        string peopleGroupName
+        double evangelicalPercentage
+        int populationInCountry
+    }
+
+    EngagementAssessment {
+        dateTime assessmentDate
+        string assessmentMethodology
+    }
+
+    EngagementState {
+        int phaseValue "0-7 scale (D1)"
+        string phaseSubIndicator "0-9 or R"
+    }
+
+    EngagementStrengthLevel {
+        string prefLabel "D2: Unknown|Initial|Growing|Active|Flourishing"
+        string notation "U|I|G|A|F"
+    }
+
+    AcceleratorScore {
+        string acceleratorLevel "none|partial|significant|full"
+    }
+
+    EngagementAccelerator {
+        string prefLabel "12 strategic domains"
+    }
+
+    PeopleGroupEngagement {
+        int engagementCount
+    }
+
+    STSCAssessment {
+        int statusOfTheTask "0-6 scale"
+        int stateOfTheChurch "0-5 scale"
+    }
+
+    DataSet {
+        string dataSetId
+        string dataSetName
+        string dataSetAltName
+        dateTime lastUpdatedDate
+    }
+
+    Location {
+        string countryCode "ISO 3166-1 alpha-3"
+        double latitude
+        double longitude
+        int crs "default 4326"
+        string polygonGeoJson
+    }
+
+    MinistryActivity {
+        dateTime dateTimeOfActivity
+    }
+
+    Overture {
+        string overtureId
+        string overtureCategory
+        double overtureConfidence
+        string overtureSourceDataset
+    }
+
+    DataSource {
+        string sourceName
+    }
+
+    Church {
+        boolean isActive
+        date dateStarted
+    }

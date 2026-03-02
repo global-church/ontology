@@ -1,0 +1,40 @@
+---
+title: "Role & Participation Model — PROV-O Qualified Association"
+---
+flowchart LR
+    subgraph Agents["Agents (prov:Agent)"]
+        P["Person\n(gc:Person)"]
+    end
+
+    subgraph Roles["Ministry Roles\n(gc:MinistryRole instances)"]
+        FW["FieldWorkerRole"]
+        LR["LeaderRole"]
+        TR["TrainerRole"]
+        RR["RecorderRole"]
+    end
+
+    subgraph Activities["Activities (prov:Activity)"]
+        MA["MinistryActivity"]
+        GC["GospelConversation"]
+        PW["PrayerWalk"]
+        CF["ChurchFormation"]
+        DA["DataRecordingActivity"]
+    end
+
+    subgraph Association["Qualified Association\n(gc:MinistryParticipation)"]
+        MP["MinistryParticipation\n⊆ prov:Association"]
+    end
+
+    MA -. "prov:wasAssociatedWith\n(simple link)" .-> P
+    MA -- "prov:qualifiedAssociation" --> MP
+    MP -- "prov:agent" --> P
+    MP -- "gc:participationRole" --> FW
+
+    GC -- "prov:qualifiedAssociation" --> MP
+    CF -- "prov:qualifiedAssociation" --> MP
+    DA -- "prov:qualifiedAssociation" --> MP
+
+    style Agents fill:#e1f5fe,stroke:#0288d1
+    style Roles fill:#fff3e0,stroke:#f57c00
+    style Activities fill:#e8f5e9,stroke:#388e3c
+    style Association fill:#fce4ec,stroke:#c62828

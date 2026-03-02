@@ -1,0 +1,112 @@
+##############################################################################
+# Engagement Type Vocabulary — SKOS Concept Scheme
+#
+# Classifies self-reported engagement claims by type of work: Church
+# Planting, Discipleship, Bible Translation, Prayer, Evangelism, Media
+# Ministry, Humanitarian Aid, Training, Funding.
+#
+# Used via gc:engagementType on gc:EngagementClaim. Multi-valued: a single
+# claim can cover multiple engagement types (e.g., "we do Church Planting
+# and Discipleship among the Pashtun").
+#
+# This is a gc:-owned vocabulary — Global.Church is the authority on what
+# engagement type classifications exist in its coordination platform.
+#
+# Named graph: loaded alongside ontology (default graph or seed graph)
+# Namespace:   https://ontology.global.church/core#
+#
+# Version:    0.1.0
+# Date:       2026-02-26
+##############################################################################
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gc:      <https://ontology.global.church/core#> .
+
+
+##############################################################################
+#  Engagement Type Scheme
+#
+#  Flat vocabulary (no hierarchy). Each concept is a top concept.
+#  Extensible — new engagement types can be added without ontology changes.
+##############################################################################
+
+gc:EngagementTypeScheme a skos:ConceptScheme ;
+  skos:prefLabel "Engagement Type"@en ;
+  dcterms:publisher "Global Church Alliance" ;
+  dcterms:description "Classification of self-reported engagement claims by type of ministry work. Used by organizations during onboarding to declare what kinds of engagement they are doing among people groups."@en ;
+  dcterms:created "2026-02-26"^^xsd:date ;
+  skos:hasTopConcept gc:EngTypeChurchPlanting ,
+                     gc:EngTypeDiscipleship ,
+                     gc:EngTypeBibleTranslation ,
+                     gc:EngTypePrayer ,
+                     gc:EngTypeEvangelism ,
+                     gc:EngTypeMediaMinistry ,
+                     gc:EngTypeHumanitarianAid ,
+                     gc:EngTypeTraining ,
+                     gc:EngTypeFunding .
+
+gc:EngTypeChurchPlanting a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Church Planting"@en ;
+  skos:notation "CP" ;
+  skos:definition "Planting new churches or faith communities among a people group."@en .
+
+gc:EngTypeDiscipleship a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Discipleship"@en ;
+  skos:notation "DISC" ;
+  skos:definition "Intentional discipleship — mentoring believers, running discovery groups, or facilitating spiritual growth among a people group."@en .
+
+gc:EngTypeBibleTranslation a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Bible Translation"@en ;
+  skos:notation "BT" ;
+  skos:definition "Translating Scripture (full Bible, New Testament, or portions) into the language of a people group."@en .
+
+gc:EngTypePrayer a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Prayer"@en ;
+  skos:notation "PR" ;
+  skos:definition "Organized prayer initiatives targeting a people group — prayer teams, prayer walks, or ongoing intercession."@en .
+
+gc:EngTypeEvangelism a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Evangelism"@en ;
+  skos:notation "EVG" ;
+  skos:definition "Direct evangelism and gospel sharing — personal outreach, evangelistic events, or gospel conversations among a people group."@en .
+
+gc:EngTypeMediaMinistry a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Media Ministry"@en ;
+  skos:notation "MED" ;
+  skos:definition "Producing or distributing media content (film, radio, audio, digital) for a people group — distinct from direct evangelism in that media ministry focuses on content creation and distribution rather than personal outreach."@en .
+
+gc:EngTypeHumanitarianAid a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Humanitarian Aid"@en ;
+  skos:notation "HA" ;
+  skos:definition "Humanitarian assistance, relief, community development, or compassion ministries targeting a people group."@en .
+
+gc:EngTypeTraining a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Training / Equipping"@en ;
+  skos:notation "TR" ;
+  skos:definition "Training and equipping local leaders, pastors, or workers among a people group — seminary education, workshops, mentoring programs."@en .
+
+gc:EngTypeFunding a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Funding / Resourcing"@en ;
+  skos:notation "FN" ;
+  skos:definition "Financial partnership or resourcing targeting a people group — grants, sponsorship, or funding of ministry activities carried out by others."@en .

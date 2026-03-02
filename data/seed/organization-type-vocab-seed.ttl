@@ -1,0 +1,94 @@
+##############################################################################
+# Organization Type Vocabulary — SKOS Concept Scheme
+#
+# Classifies organizations by type: Church, Mission Agency, Denomination,
+# Network, Coalition, Seminary, Parachurch Ministry.
+#
+# Used via gc:hasOrganizationType on gc:Organization. Multi-valued: an org
+# can have multiple types (e.g., a megachurch that also runs a mission agency).
+#
+# This is a gc:-owned vocabulary — Global.Church is the authority on what
+# organization types exist in its coordination platform.
+#
+# Named graph: loaded alongside ontology (default graph or seed graph)
+# Namespace:   https://ontology.global.church/core#
+#
+# Version:    0.1.0
+# Date:       2026-02-26
+##############################################################################
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gc:      <https://ontology.global.church/core#> .
+
+
+##############################################################################
+#  Organization Type Scheme
+#
+#  Flat vocabulary (no hierarchy). Each concept is a top concept.
+#  Extensible — new org types can be added without ontology changes.
+##############################################################################
+
+gc:OrganizationTypeScheme a skos:ConceptScheme ;
+  skos:prefLabel "Organization Type"@en ;
+  dcterms:publisher "Global Church Alliance" ;
+  dcterms:description "Classification of organizations by type. Used to distinguish churches, mission agencies, denominations, networks, coalitions, seminaries, and parachurch ministries within the unified gc:Organization model."@en ;
+  dcterms:created "2026-02-26"^^xsd:date ;
+  skos:hasTopConcept gc:OrgTypeChurch ,
+                     gc:OrgTypeMissionAgency ,
+                     gc:OrgTypeDenomination ,
+                     gc:OrgTypeNetwork ,
+                     gc:OrgTypeCoalition ,
+                     gc:OrgTypeSeminary ,
+                     gc:OrgTypeParachurchMinistry .
+
+gc:OrgTypeChurch a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Church"@en ;
+  skos:notation "CHR" ;
+  skos:definition "A local gathering of believers — may or may not formally identify as a 'church'. Includes house churches, cell groups that function as churches, and traditional congregations."@en .
+
+gc:OrgTypeMissionAgency a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Mission Agency"@en ;
+  skos:notation "AGN" ;
+  skos:definition "An organization that sends and supports cross-cultural workers, coordinates mission strategy, or provides missionary member care."@en .
+
+gc:OrgTypeDenomination a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Denomination"@en ;
+  skos:notation "DEN" ;
+  skos:definition "A recognized grouping of churches sharing common beliefs, governance, and identity (e.g., Southern Baptist Convention, Assemblies of God)."@en .
+
+gc:OrgTypeNetwork a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Network"@en ;
+  skos:notation "NET" ;
+  skos:definition "A relational network of organizations or individuals collaborating around a shared mission focus, geography, or people group (e.g., Ethne, Finishing the Task)."@en .
+
+gc:OrgTypeCoalition a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Coalition"@en ;
+  skos:notation "COA" ;
+  skos:definition "A formal or informal coalition of organizations united around a specific strategic initiative, region, or people group cluster (e.g., Arabian Peninsula Network, Horn of Africa Cluster)."@en .
+
+gc:OrgTypeSeminary a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Seminary"@en ;
+  skos:notation "SEM" ;
+  skos:definition "A theological training institution — seminary, Bible college, or ministry training center."@en .
+
+gc:OrgTypeParachurchMinistry a skos:Concept ;
+  skos:inScheme gc:OrganizationTypeScheme ;
+  skos:topConceptOf gc:OrganizationTypeScheme ;
+  skos:prefLabel "Parachurch Ministry"@en ;
+  skos:notation "PAR" ;
+  skos:definition "A Christian organization that operates outside and across denominational lines to engage in social welfare, evangelism, discipleship, or other specialized ministry functions."@en .

@@ -1,0 +1,1245 @@
+##############################################################################
+# GC-Core Ontology — Test Data: Denver, Colorado
+#
+# Real-world instance data for Denver-area churches, people groups,
+# ministry activities, Overture Maps records, and engagement assessments.
+# Exercises all major ontology classes and provenance patterns.
+#
+# Version:    0.15.1 (test data — Organization Supabase fields + BeliefType/Denomination)
+# Date:       2026-02-25
+##############################################################################
+
+@base          <https://data.global.church/denver/> .
+@prefix :      <https://data.global.church/denver/> .
+@prefix gc:    <https://ontology.global.church/core#> .
+@prefix owl:   <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:   <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix jp:    <https://ontology.global.church/joshuaproject#> .
+@prefix rop3:  <https://data.global.church/his/rop3/> .
+@prefix rol:   <https://data.global.church/his/rol/> .
+@prefix ror:   <https://data.global.church/his/ror/> .
+
+
+##############################################################################
+#  LOCATIONS
+##############################################################################
+
+:loc-denver a gc:Location ;
+  rdfs:label "Denver Metro Area"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.7392"^^xsd:double ;
+  gc:longitude "-104.9903"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+:loc-calvary a gc:Location ;
+  rdfs:label "Calvary Church — 6100 S University Blvd, Centennial, CO"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.6008"^^xsd:double ;
+  gc:longitude "-104.9611"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+:loc-arise a gc:Location ;
+  rdfs:label "Arise Church Denver — 8001 E 36th Ave, Denver, CO"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.7677"^^xsd:double ;
+  gc:longitude "-104.8979"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+:loc-firstbaptist a gc:Location ;
+  rdfs:label "First Baptist Church — 1373 Grant St, Denver, CO"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.7369"^^xsd:double ;
+  gc:longitude "-104.9847"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+:loc-redrocks a gc:Location ;
+  rdfs:label "Red Rocks Church — 350 Indiana St, Lakewood, CO"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.7116"^^xsd:double ;
+  gc:longitude "-105.0404"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+:loc-ccc a gc:Location ;
+  rdfs:label "Colorado Community Church — 5500 E Yale Ave, Denver, CO"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.6689"^^xsd:double ;
+  gc:longitude "-104.9230"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+:loc-aurora-eastside a gc:Location ;
+  rdfs:label "East Aurora — Somali/Ethiopian diaspora area"@en ;
+  gc:countryCode "USA" ;
+  gc:latitude "39.7294"^^xsd:double ;
+  gc:longitude "-104.8319"^^xsd:double ;
+  gc:coordinateReferenceSystem "4326"^^xsd:integer .
+
+
+##############################################################################
+#  LANGUAGES — now ROL SKOS concepts in his-rol-seed.ttl
+#  (gc:Language class removed in v0.5.0 — languages are reference data
+#   owned by HIS ROL / ISO 639-3, modeled as SKOS ConceptScheme)
+#
+#  URIs: <https://data.global.church/his/rol/{iso639-3-code}>
+#  Named graph: <https://data.global.church/his-registries/>
+##############################################################################
+
+
+##############################################################################
+#  RELIGIONS — now ROR SKOS concepts in <https://data.global.church/his-registries/>
+#  See data/seed/his-ror-seed.ttl. Use gc:hasReligionClassification to link.
+##############################################################################
+
+
+##############################################################################
+#  PEOPLE GROUPS (Denver-area diaspora + local)
+##############################################################################
+
+:pg-somali-us a gc:PeopleGroup ;
+  rdfs:label "Somali in USA"@en ;
+  gc:peopleGroupName "Somali" ;
+  gc:hasPeopleClassification rop3:109392 ;
+  gc:hasReligionClassification ror:M ;
+  jp:evangelicalPercentage "0.5"^^xsd:double ;
+  gc:populationInCountry "150000"^^xsd:nonNegativeInteger .
+
+:pg-amhara-us a gc:PeopleGroup ;
+  rdfs:label "Amhara in USA"@en ;
+  gc:peopleGroupName "Amhara, Ethiopian" ;
+  gc:hasPeopleClassification rop3:100293 ;
+  gc:hasReligionClassification ror:COR ;
+  jp:evangelicalPercentage "22.1"^^xsd:double ;
+  gc:populationInCountry "320000"^^xsd:nonNegativeInteger .
+
+:pg-burmese-us a gc:PeopleGroup ;
+  rdfs:label "Burmese in USA"@en ;
+  gc:peopleGroupName "Burmese" ;
+  gc:hasPeopleClassification rop3:101776 ;
+  gc:hasReligionClassification ror:B ;
+  jp:evangelicalPercentage "5.0"^^xsd:double ;
+  gc:populationInCountry "176000"^^xsd:nonNegativeInteger .
+
+:pg-nepali-us a gc:PeopleGroup ;
+  rdfs:label "Nepali in USA"@en ;
+  gc:peopleGroupName "Nepali" ;
+  gc:hasPeopleClassification rop3:107204 ;
+  gc:hasReligionClassification ror:H ;
+  jp:evangelicalPercentage "1.4"^^xsd:double ;
+  gc:populationInCountry "200000"^^xsd:nonNegativeInteger .
+
+:pg-angloamerican a gc:PeopleGroup ;
+  rdfs:label "Anglo-American in USA"@en ;
+  gc:peopleGroupName "Anglo-American" ;
+  gc:hasReligionClassification ror:CPR ;
+  jp:evangelicalPercentage "26.4"^^xsd:double ;
+  gc:populationInCountry "191000000"^^xsd:nonNegativeInteger .
+
+:pg-hispanic-us a gc:PeopleGroup ;
+  rdfs:label "Hispanic American (Mestizo)"@en ;
+  gc:peopleGroupName "Hispanic American, Mestizo" ;
+  gc:hasReligionClassification ror:CRC ;
+  jp:evangelicalPercentage "14.5"^^xsd:double ;
+  gc:populationInCountry "60000000"^^xsd:nonNegativeInteger .
+
+
+##############################################################################
+#  ORGANIZATIONS & SOFTWARE AGENTS
+##############################################################################
+
+:org-searchparty a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeMissionAgency ;
+  rdfs:label "Search Party"@en ;
+  rdfs:comment "501(c)(3) Colorado non-profit focused on starting discipleship and church planting movements among unreached people groups."@en .
+
+:org-denver-missions-network a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeNetwork ;
+  rdfs:label "Denver Missions Network"@en .
+
+:ds-missiontool a gc:DataSource ;
+  rdfs:label "MissionToolX"@en ;
+  rdfs:comment "A mobile activity tracker used by Denver-area field workers."@en .
+
+:ds-joshuaproject a gc:DataSource ;
+  rdfs:label "Joshua Project"@en ;
+  rdfs:comment "joshuaproject.net — people group data and 3D Insight."@en .
+
+:bridge-gcdata a gc:GCBridge ;
+  rdfs:label "GCData Bridge — Denver Node"@en .
+
+
+##############################################################################
+#  PERSONS
+##############################################################################
+
+:person-fw-a a gc:Person ;
+  rdfs:label "Field Worker A"@en ;
+  gc:userId "denver-fw-001" ;
+  gc:personName "Field Worker A" ;
+  gc:memberOf :org-searchparty ;
+  gc:sendingOrganization :org-searchparty ;
+  gc:deploymentStatus gc:DeploymentActive ;
+  gc:isCrossCultural true ;
+  gc:fieldEntryDate "2022-06-01"^^xsd:date .
+
+:person-leader-b a gc:Person ;
+  rdfs:label "Team Leader B"@en ;
+  gc:userId "denver-fw-002" ;
+  gc:personName "Team Leader B" ;
+  gc:memberOf :org-searchparty ;
+  gc:sendingOrganization :org-searchparty ;
+  gc:deploymentStatus gc:DeploymentActive ;
+  gc:isCrossCultural true ;
+  gc:fieldEntryDate "2020-01-15"^^xsd:date .
+
+:person-contact-c a gc:Person ;
+  rdfs:label "Community Contact C"@en ;
+  gc:userId "denver-contact-003" ;
+  gc:personName "Community Contact C" .
+
+:person-recorder-d a gc:Person ;
+  rdfs:label "Data Recorder D"@en ;
+  gc:userId "denver-rec-004" ;
+  gc:personName "Data Recorder D" ;
+  gc:memberOf :org-denver-missions-network ;
+  gc:deploymentStatus gc:DeploymentActive ;
+  gc:isCrossCultural false .
+
+
+##############################################################################
+#  CHURCHES (Denver area — real churches, modeled data)
+##############################################################################
+
+:church-calvary a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeChurch ;
+  rdfs:label "Calvary Church — Centennial, CO"@en ;
+  gc:isActive true ;
+  gc:dateStarted "1951-06-15"^^xsd:date ;
+  gc:identifiesAsChurch true ;
+  gc:hasAppointedLeaders true ;
+  gc:numberOfPeopleAttending "2500"^^xsd:nonNegativeInteger ;
+  gc:numberOfBelievers "2100"^^xsd:nonNegativeInteger ;
+  gc:numberOfBaptizedBelievers "1800"^^xsd:nonNegativeInteger ;
+  gc:languageUsedWhenGathering "eng" ;
+  gc:website "https://www.calvarychurch.com"^^xsd:anyURI ;
+  gc:summary "A multi-generational, Bible-centered church in Centennial, Colorado serving the south Denver metro area since 1951." ;
+  gc:hasBeliefClassification gc:BeliefChristian ;
+  gc:hasDenominationClassification gc:DenomNonDenominational ;
+  gc:servicesInfo "Sundays 9:00am & 11:00am" ;
+  gc:isMultiCampus false ;
+  gc:hasLocation :loc-calvary ;
+  prov:wasGeneratedBy :act-calvary-formation ;
+  prov:wasAttributedTo :person-leader-b ;
+  gc:hasPractice :practice-calvary-baptism, :practice-calvary-lords-supper,
+                   :practice-calvary-worship, :practice-calvary-teaching,
+                   :practice-calvary-giving, :practice-calvary-disciplemaking ;
+  gc:hasPeopleGroupEngagement :pge-calvary-anglo, :pge-calvary-hispanic ;
+  gc:servesPeopleGroup :pg-angloamerican, :pg-hispanic-us .
+
+:church-arise a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeChurch ;
+  rdfs:label "Arise Church Denver — Central Park"@en ;
+  gc:isActive true ;
+  gc:dateStarted "2014-09-07"^^xsd:date ;
+  gc:identifiesAsChurch true ;
+  gc:hasAppointedLeaders true ;
+  gc:numberOfPeopleAttending "3500"^^xsd:nonNegativeInteger ;
+  gc:numberOfBelievers "2800"^^xsd:nonNegativeInteger ;
+  gc:numberOfBaptizedBelievers "2200"^^xsd:nonNegativeInteger ;
+  gc:languageUsedWhenGathering "eng" ;
+  gc:website "https://www.arisechurchdenver.com"^^xsd:anyURI ;
+  gc:email "info@arisechurchdenver.com" ;
+  gc:summary "A vibrant, multi-ethnic church in Denver's Central Park neighborhood focused on community transformation and global missions." ;
+  gc:hasBeliefClassification gc:BeliefChristian ;
+  gc:hasDenominationClassification gc:DenomNonDenominational ;
+  gc:servicesInfo "Sundays 9:30am & 11:15am" ;
+  gc:isMultiCampus false ;
+  gc:socialMediaUrl "https://www.instagram.com/arisechurchdenver"^^xsd:anyURI ;
+  gc:hasLocation :loc-arise ;
+  prov:wasGeneratedBy :act-arise-formation ;
+  gc:hasPractice :practice-arise-baptism, :practice-arise-worship,
+                   :practice-arise-prayer, :practice-arise-teaching,
+                   :practice-arise-serving, :practice-arise-disciplemaking ;
+  gc:hasPeopleGroupEngagement :pge-arise-anglo ;
+  gc:servesPeopleGroup :pg-angloamerican .
+
+:church-firstbaptist a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeChurch ;
+  rdfs:label "First Baptist Church of Denver — founded 1864"@en ;
+  gc:isActive true ;
+  gc:dateStarted "1864-01-01"^^xsd:date ;
+  gc:identifiesAsChurch true ;
+  gc:hasAppointedLeaders true ;
+  gc:numberOfPeopleAttending "350"^^xsd:nonNegativeInteger ;
+  gc:numberOfBelievers "280"^^xsd:nonNegativeInteger ;
+  gc:numberOfBaptizedBelievers "250"^^xsd:nonNegativeInteger ;
+  gc:languageUsedWhenGathering "eng" ;
+  gc:website "https://www.firstbaptistdenver.org"^^xsd:anyURI ;
+  gc:summary "Denver's oldest Protestant church, serving the community since 1864 with historic roots in the American Baptist tradition." ;
+  gc:hasBeliefClassification gc:BeliefChristian ;
+  gc:hasDenominationClassification gc:DenomBaptist ;
+  gc:hasLocation :loc-firstbaptist ;
+  prov:wasGeneratedBy :act-firstbaptist-formation ;
+  gc:hasPractice :practice-fb-baptism, :practice-fb-lords-supper,
+                   :practice-fb-serving, :practice-fb-prayer ;
+  gc:servesPeopleGroup :pg-angloamerican .
+
+:church-redrocks a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeChurch ;
+  rdfs:label "Red Rocks Church — Lakewood, CO"@en ;
+  gc:isActive true ;
+  gc:dateStarted "2005-03-20"^^xsd:date ;
+  gc:identifiesAsChurch true ;
+  gc:hasAppointedLeaders true ;
+  gc:numberOfPeopleAttending "8000"^^xsd:nonNegativeInteger ;
+  gc:numberOfBelievers "6200"^^xsd:nonNegativeInteger ;
+  gc:numberOfBaptizedBelievers "4800"^^xsd:nonNegativeInteger ;
+  gc:languageUsedWhenGathering "eng" ;
+  prov:wasGeneratedBy :act-redrocks-formation ;
+  gc:hasPractice :practice-rr-baptism, :practice-rr-worship,
+                   :practice-rr-teaching, :practice-rr-giving,
+                   :practice-rr-accountability, :practice-rr-disciplemaking ;
+  gc:servesPeopleGroup :pg-angloamerican .
+
+:church-ccc a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeChurch ;
+  rdfs:label "Colorado Community Church — Denver, CO"@en ;
+  gc:isActive true ;
+  gc:dateStarted "1983-06-01"^^xsd:date ;
+  gc:identifiesAsChurch true ;
+  gc:hasAppointedLeaders true ;
+  gc:numberOfPeopleAttending "1200"^^xsd:nonNegativeInteger ;
+  gc:numberOfBelievers "950"^^xsd:nonNegativeInteger ;
+  gc:numberOfBaptizedBelievers "780"^^xsd:nonNegativeInteger ;
+  gc:languageUsedWhenGathering "eng" ;
+  prov:wasGeneratedBy :act-ccc-formation ;
+  gc:hasPractice :practice-ccc-prayer, :practice-ccc-teaching,
+                   :practice-ccc-serving ;
+  gc:servesPeopleGroup :pg-angloamerican .
+
+# A newer Burmese house church in Aurora
+:church-burmese-aurora a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeChurch ;
+  rdfs:label "Aurora Burmese Fellowship"@en ;
+  gc:isActive true ;
+  gc:dateStarted "2021-03-14"^^xsd:date ;
+  gc:identifiesAsChurch false ;
+  gc:hasAppointedLeaders false ;
+  gc:numberOfPeopleAttending "28"^^xsd:nonNegativeInteger ;
+  gc:numberOfBelievers "20"^^xsd:nonNegativeInteger ;
+  gc:numberOfBaptizedBelievers "12"^^xsd:nonNegativeInteger ;
+  gc:languageUsedWhenGathering "mya" ;
+  prov:wasGeneratedBy :act-burmese-church-formation ;
+  gc:hasPractice :practice-burmese-prayer, :practice-burmese-teaching ;
+  gc:hasPeopleGroupEngagement :pge-burmese-church ;
+  gc:servesPeopleGroup :pg-burmese-us .
+
+
+##############################################################################
+#  CHURCH FORMATION ACTIVITIES
+##############################################################################
+
+:act-calvary-formation a gc:ChurchFormation ;
+  rdfs:label "Calvary Church established 1951"@en ;
+  gc:dateTimeOfActivity "1951-06-15T10:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-calvary ;
+  prov:wasAssociatedWith :person-leader-b ;
+  prov:generated :church-calvary .
+
+:act-arise-formation a gc:ChurchFormation ;
+  rdfs:label "Arise Church Denver launch"@en ;
+  gc:dateTimeOfActivity "2014-09-07T10:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-arise ;
+  prov:generated :church-arise .
+
+:act-firstbaptist-formation a gc:ChurchFormation ;
+  rdfs:label "First Baptist Church founded 1864"@en ;
+  gc:dateTimeOfActivity "1864-01-01T10:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-firstbaptist ;
+  prov:generated :church-firstbaptist .
+
+:act-redrocks-formation a gc:ChurchFormation ;
+  rdfs:label "Red Rocks Church launch"@en ;
+  gc:dateTimeOfActivity "2005-03-20T10:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-redrocks ;
+  prov:generated :church-redrocks .
+
+:act-ccc-formation a gc:ChurchFormation ;
+  rdfs:label "Colorado Community Church founded"@en ;
+  gc:dateTimeOfActivity "1983-06-01T10:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-ccc ;
+  prov:generated :church-ccc .
+
+:act-burmese-church-formation a gc:ChurchFormation ;
+  rdfs:label "Aurora Burmese Fellowship started"@en ;
+  gc:dateTimeOfActivity "2021-03-14T15:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-aurora-eastside ;
+  prov:wasAssociatedWith :person-fw-a ;
+  gc:engagesPeopleGroup :pg-burmese-us ;
+  gc:usesMethodology gc:MethodologyDMM ;
+  prov:generated :church-burmese-aurora .
+
+
+##############################################################################
+#  PRACTICES (sample practices for churches)
+##############################################################################
+
+# Calvary Church practices
+:practice-calvary-baptism a gc:Practice ;
+  gc:practiceType gc:BaptismPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "monthly" ;
+  gc:practiceDateAdopted "1951-06-15"^^xsd:date ;
+  gc:dateTimeOfActivity "2026-01-12T10:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-calvary ;
+  prov:wasAssociatedWith :person-leader-b .
+
+:practice-calvary-lords-supper a gc:Practice ;
+  gc:practiceType gc:LordsSupperPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-calvary-worship a gc:Practice ;
+  gc:practiceType gc:WorshipPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-calvary-teaching a gc:Practice ;
+  gc:practiceType gc:TeachingTheWordPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-calvary-giving a gc:Practice ;
+  gc:practiceType gc:GivingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-calvary-disciplemaking a gc:Practice ;
+  gc:practiceType gc:DiscipleMakingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+# Arise Church practices
+:practice-arise-baptism a gc:Practice ;
+  gc:practiceType gc:BaptismPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "monthly" .
+
+:practice-arise-worship a gc:Practice ;
+  gc:practiceType gc:WorshipPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-arise-prayer a gc:Practice ;
+  gc:practiceType gc:PrayerPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-arise-teaching a gc:Practice ;
+  gc:practiceType gc:TeachingTheWordPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-arise-serving a gc:Practice ;
+  gc:practiceType gc:ServingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-arise-disciplemaking a gc:Practice ;
+  gc:practiceType gc:DiscipleMakingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+# First Baptist practices
+:practice-fb-baptism a gc:Practice ;
+  gc:practiceType gc:BaptismPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "as needed" .
+
+:practice-fb-lords-supper a gc:Practice ;
+  gc:practiceType gc:LordsSupperPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "monthly" .
+
+:practice-fb-serving a gc:Practice ;
+  gc:practiceType gc:ServingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-fb-prayer a gc:Practice ;
+  gc:practiceType gc:PrayerPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+# Red Rocks practices
+:practice-rr-baptism a gc:Practice ;
+  gc:practiceType gc:BaptismPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "monthly" .
+
+:practice-rr-worship a gc:Practice ;
+  gc:practiceType gc:WorshipPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-rr-teaching a gc:Practice ;
+  gc:practiceType gc:TeachingTheWordPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-rr-giving a gc:Practice ;
+  gc:practiceType gc:GivingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-rr-accountability a gc:Practice ;
+  gc:practiceType gc:AccountabilityPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-rr-disciplemaking a gc:Practice ;
+  gc:practiceType gc:DiscipleMakingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+# Colorado Community Church practices
+:practice-ccc-prayer a gc:Practice ;
+  gc:practiceType gc:PrayerPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-ccc-teaching a gc:Practice ;
+  gc:practiceType gc:TeachingTheWordPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+:practice-ccc-serving a gc:Practice ;
+  gc:practiceType gc:ServingPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" .
+
+# Aurora Burmese Fellowship practices
+:practice-burmese-prayer a gc:Practice ;
+  gc:practiceType gc:PrayerPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally true ;
+  gc:practiceFrequency "weekly" ;
+  gc:practiceDateAdopted "2021-03-14"^^xsd:date .
+
+:practice-burmese-teaching a gc:Practice ;
+  gc:practiceType gc:TeachingTheWordPractice ;
+  gc:practiceIsActive true ;
+  gc:isPerformedInternally false ;
+  gc:practiceFrequency "weekly" ;
+  gc:practiceDateAdopted "2021-03-14"^^xsd:date .
+
+
+##############################################################################
+#  PEOPLE GROUP ENGAGEMENT COUNTS
+##############################################################################
+
+:pge-calvary-anglo a gc:PeopleGroupEngagement ;
+  gc:engagementPeopleGroup :pg-angloamerican ;
+  gc:engagementCount "2200"^^xsd:nonNegativeInteger .
+
+:pge-calvary-hispanic a gc:PeopleGroupEngagement ;
+  gc:engagementPeopleGroup :pg-hispanic-us ;
+  gc:engagementCount "300"^^xsd:nonNegativeInteger .
+
+:pge-arise-anglo a gc:PeopleGroupEngagement ;
+  gc:engagementPeopleGroup :pg-angloamerican ;
+  gc:engagementCount "3200"^^xsd:nonNegativeInteger .
+
+:pge-burmese-church a gc:PeopleGroupEngagement ;
+  gc:engagementPeopleGroup :pg-burmese-us ;
+  gc:engagementCount "28"^^xsd:nonNegativeInteger .
+
+
+##############################################################################
+#  OVERTURE MAPS PLACE RECORDS
+#
+#  Simulated Overture Maps "places" theme records for Denver churches.
+#  In production, these would be imported from Overture GeoParquet data.
+##############################################################################
+
+:overture-calvary a gc:Overture ;
+  rdfs:label "Overture: Calvary Church"@en ;
+  gc:overtureId "08f2e5881235e5d5041716bcbbfceeed" ;
+  gc:overtureCategory "place_of_worship" ;
+  gc:overtureConfidence "0.92"^^xsd:double ;
+  gc:overtureSourceDataset "meta" ;
+  gc:matchedOrganization :church-calvary ;
+  gc:overtureLocation :loc-calvary ;
+  gc:targetsPeopleGroup :pg-angloamerican ;
+  prov:wasAttributedTo :ds-overturemaps .
+
+:overture-arise a gc:Overture ;
+  rdfs:label "Overture: Arise Church Denver"@en ;
+  gc:overtureId "08f2e5881235e5d5041716bcbbfcee01" ;
+  gc:overtureCategory "place_of_worship" ;
+  gc:overtureConfidence "0.88"^^xsd:double ;
+  gc:overtureSourceDataset "msft" ;
+  gc:matchedOrganization :church-arise ;
+  gc:overtureLocation :loc-arise ;
+  gc:targetsPeopleGroup :pg-angloamerican .
+
+:overture-firstbaptist a gc:Overture ;
+  rdfs:label "Overture: First Baptist Church of Denver"@en ;
+  gc:overtureId "08f2e5881235e5d5041716bcbbfcee02" ;
+  gc:overtureCategory "place_of_worship" ;
+  gc:overtureConfidence "0.95"^^xsd:double ;
+  gc:overtureSourceDataset "osm" ;
+  gc:matchedOrganization :church-firstbaptist ;
+  gc:overtureLocation :loc-firstbaptist .
+
+:overture-redrocks a gc:Overture ;
+  rdfs:label "Overture: Red Rocks Church"@en ;
+  gc:overtureId "08f2e5881235e5d5041716bcbbfcee03" ;
+  gc:overtureCategory "place_of_worship" ;
+  gc:overtureConfidence "0.91"^^xsd:double ;
+  gc:overtureSourceDataset "meta" ;
+  gc:matchedOrganization :church-redrocks ;
+  gc:overtureLocation :loc-redrocks .
+
+:overture-ccc a gc:Overture ;
+  rdfs:label "Overture: Colorado Community Church"@en ;
+  gc:overtureId "08f2e5881235e5d5041716bcbbfcee04" ;
+  gc:overtureCategory "place_of_worship" ;
+  gc:overtureConfidence "0.87"^^xsd:double ;
+  gc:overtureSourceDataset "meta" ;
+  gc:matchedOrganization :church-ccc ;
+  gc:overtureLocation :loc-ccc .
+
+# Overture Maps as a data source (software agent)
+:ds-overturemaps a gc:DataSource ;
+  rdfs:label "Overture Maps Foundation"@en ;
+  rdfs:comment "overturemaps.org — open-source collaborative map dataset."@en .
+
+
+##############################################################################
+#  MINISTRY ACTIVITIES
+##############################################################################
+
+# Gospel Conversation — Somali community outreach in Aurora
+:act-gc-somali-001 a gc:GospelConversation ;
+  rdfs:label "Gospel conversation at Aurora Somali café"@en ;
+  gc:dateTimeOfActivity "2026-01-15T14:30:00"^^xsd:dateTime ;
+  gc:atLocation :loc-aurora-eastside ;
+  gc:engagesPeopleGroup :pg-somali-us ;
+  gc:inLanguage rol:som ;
+  gc:concernsReligion ror:M ;
+  gc:usesMethodology gc:MethodologyFourFields ;
+  gc:totalHeard "4"^^xsd:nonNegativeInteger ;
+  gc:positiveResponse "0"^^xsd:nonNegativeInteger ;
+  gc:interestedResponse "2"^^xsd:nonNegativeInteger ;
+  gc:negativeResponse "1"^^xsd:nonNegativeInteger ;
+  gc:unknownResponse "1"^^xsd:nonNegativeInteger ;
+  gc:alreadyFollowingResponse "0"^^xsd:nonNegativeInteger ;
+  prov:wasAssociatedWith :person-fw-a ;
+  prov:qualifiedAssociation :participation-fw-a-gc .
+
+:participation-fw-a-gc a gc:MinistryParticipation ;
+  prov:agent :person-fw-a ;
+  gc:participationRole gc:FieldWorkerRole .
+
+# Gospel Conversation — Hispanic outreach
+:act-gc-hispanic-001 a gc:GospelConversation ;
+  rdfs:label "Gospel conversation — Denver Hispanic neighborhood"@en ;
+  gc:dateTimeOfActivity "2026-01-22T11:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-denver ;
+  gc:engagesPeopleGroup :pg-hispanic-us ;
+  gc:inLanguage rol:spa ;
+  gc:totalHeard "6"^^xsd:nonNegativeInteger ;
+  gc:positiveResponse "2"^^xsd:nonNegativeInteger ;
+  gc:interestedResponse "3"^^xsd:nonNegativeInteger ;
+  gc:negativeResponse "0"^^xsd:nonNegativeInteger ;
+  gc:unknownResponse "1"^^xsd:nonNegativeInteger ;
+  gc:alreadyFollowingResponse "0"^^xsd:nonNegativeInteger ;
+  prov:wasAssociatedWith :person-fw-a, :person-leader-b ;
+  prov:qualifiedAssociation :participation-leader-b-gc-hispanic .
+
+:participation-leader-b-gc-hispanic a gc:MinistryParticipation ;
+  prov:agent :person-leader-b ;
+  gc:participationRole gc:LeaderRole .
+
+# Prayer Walk — East Aurora for Burmese community
+:act-pw-burmese-001 a gc:PrayerWalk ;
+  rdfs:label "Prayer walk — East Aurora for Burmese community"@en ;
+  gc:dateTimeOfActivity "2026-02-01T09:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-aurora-eastside ;
+  gc:engagesPeopleGroup :pg-burmese-us ;
+  gc:inLanguage rol:eng ;
+  prov:wasAssociatedWith :person-fw-a, :person-leader-b .
+
+# Discipleship session with Ethiopian contacts
+:act-disc-amhara-001 a gc:DiscipleshipActivity ;
+  rdfs:label "Discipleship group — Amhara contacts in Denver"@en ;
+  gc:dateTimeOfActivity "2026-02-05T18:30:00"^^xsd:dateTime ;
+  gc:atLocation :loc-denver ;
+  gc:engagesPeopleGroup :pg-amhara-us ;
+  gc:inLanguage rol:amh ;
+  gc:concernsReligion ror:COR ;
+  gc:usesMethodology gc:MethodologyT4T ;
+  prov:wasAssociatedWith :person-leader-b ;
+  prov:qualifiedAssociation :participation-leader-b-disc .
+
+:participation-leader-b-disc a gc:MinistryParticipation ;
+  prov:agent :person-leader-b ;
+  gc:participationRole gc:TrainerRole .
+
+# Leadership Development
+:act-ld-001 a gc:LeadershipDevelopment ;
+  rdfs:label "Leadership training — Search Party Denver"@en ;
+  gc:dateTimeOfActivity "2026-02-10T09:00:00"^^xsd:dateTime ;
+  gc:atLocation :loc-denver ;
+  gc:usesMethodology gc:MethodologyT4T ;
+  prov:wasAssociatedWith :person-leader-b .
+
+
+##############################################################################
+#  DATA RECORDING & EXCHANGE PROVENANCE (Pattern 4 & 5)
+##############################################################################
+
+# Pattern 4: Field worker records the gospel conversation
+:act-recording-gc-somali a gc:DataRecordingActivity ;
+  rdfs:label "Field Worker A records Somali gospel conversation"@en ;
+  gc:recordDateTime "2026-01-15T15:00:00"^^xsd:dateTime ;
+  gc:recordsActivity :act-gc-somali-001 ;
+  prov:wasAssociatedWith :person-fw-a ;
+  prov:generated :record-gc-somali-001 ;
+  gc:hasSource :ds-missiontool .
+
+:record-gc-somali-001 a gc:EngagementRecord ;
+  rdfs:label "Record: Somali gospel conversation 2026-01-15"@en ;
+  gc:entityType "GospelConversation" ;
+  prov:wasGeneratedBy :act-recording-gc-somali ;
+  prov:wasAttributedTo :ds-missiontool .
+
+:act-recording-gc-hispanic a gc:DataRecordingActivity ;
+  rdfs:label "Field Worker A records Hispanic gospel conversation"@en ;
+  gc:recordDateTime "2026-01-22T12:00:00"^^xsd:dateTime ;
+  gc:recordsActivity :act-gc-hispanic-001 ;
+  prov:wasAssociatedWith :person-fw-a ;
+  prov:generated :record-gc-hispanic-001 ;
+  gc:hasSource :ds-missiontool .
+
+:record-gc-hispanic-001 a gc:EngagementRecord ;
+  rdfs:label "Record: Hispanic gospel conversation 2026-01-22"@en ;
+  gc:entityType "GospelConversation" ;
+  prov:wasGeneratedBy :act-recording-gc-hispanic ;
+  prov:wasAttributedTo :ds-missiontool .
+
+:act-recording-pw-burmese a gc:DataRecordingActivity ;
+  rdfs:label "Team Leader B records Burmese prayer walk"@en ;
+  gc:recordDateTime "2026-02-01T10:30:00"^^xsd:dateTime ;
+  gc:recordsActivity :act-pw-burmese-001 ;
+  prov:wasAssociatedWith :person-leader-b ;
+  prov:generated :record-pw-burmese-001 ;
+  gc:hasSource :ds-missiontool .
+
+:record-pw-burmese-001 a gc:EngagementRecord ;
+  rdfs:label "Record: Burmese prayer walk 2026-02-01"@en ;
+  gc:entityType "PrayerWalk" ;
+  prov:wasGeneratedBy :act-recording-pw-burmese ;
+  prov:wasAttributedTo :ds-missiontool .
+
+# Pattern 5: Data exchange through GCBridge
+:payload-eep-denver-2026q1 a gc:EntityExchangePayload ;
+  rdfs:label "EEP payload — Denver Q1 2026"@en ;
+  gc:payloadFormat "EEP" ;
+  gc:payloadVersion "1.0" ;
+  gc:payloadPermissions "read-write" ;
+  gc:hasSource :ds-missiontool ;
+  prov:hadMember :record-gc-somali-001, :record-gc-hispanic-001,
+                  :record-pw-burmese-001 .
+
+:act-exchange-denver-q1 a gc:DataExchangeActivity ;
+  rdfs:label "GCBridge exchange — Denver Q1 2026 EEP"@en ;
+  prov:used :payload-eep-denver-2026q1 ;
+  prov:wasAssociatedWith :bridge-gcdata .
+
+
+##############################################################################
+#  DATASETS
+##############################################################################
+
+:dataset-denver-metro a gc:DataSet ;
+  rdfs:label "Denver Metro Engagement Dataset"@en ;
+  gc:dataSetId "denver-metro-2026" ;
+  gc:dataSetName "Denver-Aurora-Lakewood Metro" ;
+  gc:dataSetAltName "Denver Metro" ;
+  gc:lastUpdatedDate "2026-02-10T00:00:00"^^xsd:dateTime ;
+  gc:coversArea :loc-denver ;
+  gc:hasSource :ds-joshuaproject .
+
+
+##############################################################################
+#  HISTORICAL ENGAGEMENT ASSESSMENTS (Unified Assessment Model)
+#
+#  Time-series data: 2-3 prior assessments per people group to enable
+#  velocity analysis (avg time between phases, stalled detection).
+##############################################################################
+
+# ── Burmese historical: Phase 2 (2024-03) → Phase 3 (2025-01) ───────────
+
+:assessment-burmese-2024q1 a gc:Assessment ;
+  rdfs:label "Engagement assessment: Burmese in Denver — 2024-Q1"@en ;
+  gc:assessmentDate "2024-03-15T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-burmese-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-leader-b ;
+  prov:generated :result-burmese-2024q1 .
+
+:result-burmese-2024q1 a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Burmese in Denver — Phase 2, Growing (2024-03)"@en ;
+  jp:phaseValue 2 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthGrowing ;
+  gc:resultForPeopleGroup :pg-burmese-us ;
+  gc:resultDate "2024-03-15T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-burmese-2024q1 .
+
+:assessment-burmese-2025q1 a gc:Assessment ;
+  rdfs:label "Engagement assessment: Burmese in Denver — 2025-Q1"@en ;
+  gc:assessmentDate "2025-01-20T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-burmese-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-leader-b ;
+  prov:generated :result-burmese-2025q1 .
+
+:result-burmese-2025q1 a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Burmese in Denver — Phase 3, Growing (2025-01)"@en ;
+  jp:phaseValue 3 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthGrowing ;
+  gc:resultForPeopleGroup :pg-burmese-us ;
+  gc:resultDate "2025-01-20T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-burmese-2025q1 .
+
+# ── Somali historical: Phase 1 (2023-06) ────────────────────────────────
+
+:assessment-somali-2023q2 a gc:Assessment ;
+  rdfs:label "Engagement assessment: Somali in Denver — 2023-Q2"@en ;
+  gc:assessmentDate "2023-06-10T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-somali-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-somali-2023q2 .
+
+:result-somali-2023q2 a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Somali in Denver — Phase 1, Initial (2023-06)"@en ;
+  jp:phaseValue 1 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthInitial ;
+  gc:resultForPeopleGroup :pg-somali-us ;
+  gc:resultDate "2023-06-10T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-somali-2023q2 .
+
+# ── Amhara historical: Phase 3 (2023-01) → Phase 4 (2024-02) ───────────
+
+:assessment-amhara-2023q1 a gc:Assessment ;
+  rdfs:label "Engagement assessment: Amhara in Denver — 2023-Q1"@en ;
+  gc:assessmentDate "2023-01-12T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-amhara-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-amhara-2023q1 .
+
+:result-amhara-2023q1 a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Amhara in Denver — Phase 3, Growing (2023-01)"@en ;
+  jp:phaseValue 3 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthGrowing ;
+  gc:resultForPeopleGroup :pg-amhara-us ;
+  gc:resultDate "2023-01-12T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-amhara-2023q1 .
+
+:assessment-amhara-2024q1 a gc:Assessment ;
+  rdfs:label "Engagement assessment: Amhara in Denver — 2024-Q1"@en ;
+  gc:assessmentDate "2024-02-08T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-amhara-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-amhara-2024q1 .
+
+:result-amhara-2024q1 a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Amhara in Denver — Phase 4, Active (2024-02)"@en ;
+  jp:phaseValue 4 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthActive ;
+  gc:resultForPeopleGroup :pg-amhara-us ;
+  gc:resultDate "2024-02-08T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-amhara-2024q1 .
+
+# ── Nepali historical: Phase 1 (2024-01) — stalled, no movement ────────
+
+:assessment-nepali-2024q1 a gc:Assessment ;
+  rdfs:label "Engagement assessment: Nepali in Denver — 2024-Q1"@en ;
+  gc:assessmentDate "2024-01-05T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-nepali-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-nepali-2024q1 .
+
+:result-nepali-2024q1 a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Nepali in Denver — Phase 1, Initial (2024-01)"@en ;
+  jp:phaseValue 1 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthInitial ;
+  gc:resultForPeopleGroup :pg-nepali-us ;
+  gc:resultDate "2024-01-05T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-nepali-2024q1 .
+
+
+##############################################################################
+#  ENGAGEMENT ASSESSMENTS + RESULTS (Pattern 6: Unified Assessment)
+##############################################################################
+
+# ── Assessment for Somali in Denver ──────────────────────────────────────
+
+:assessment-somali-denver a gc:Assessment ;
+  rdfs:label "Engagement assessment: Somali in Denver"@en ;
+  gc:assessmentDate "2026-02-10T09:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-somali-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  jp:assessmentUsedPayload :payload-eep-denver-2026q1 ;
+  jp:assessmentUsedRecord :record-gc-somali-001 ;
+  prov:wasAssociatedWith :person-recorder-d, :ds-joshuaproject ;
+  prov:generated :result-somali-denver .
+
+:result-somali-denver a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Somali in Denver — Phase 2, Growing"@en ;
+  jp:phaseValue 2 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthGrowing ;
+  gc:resultForPeopleGroup :pg-somali-us ;
+  gc:resultDate "2026-02-10T09:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-somali-denver .
+
+# ── Assessment for Burmese in Denver ─────────────────────────────────────
+
+:assessment-burmese-denver a gc:Assessment ;
+  rdfs:label "Engagement assessment: Burmese in Denver"@en ;
+  gc:assessmentDate "2026-02-10T10:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-burmese-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  jp:assessmentUsedRecord :record-pw-burmese-001 ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-burmese-denver .
+
+:result-burmese-denver a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Burmese in Denver — Phase 4, Active"@en ;
+  jp:phaseValue 4 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthActive ;
+  gc:resultForPeopleGroup :pg-burmese-us ;
+  gc:resultDate "2026-02-10T10:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-burmese-denver .
+
+# ── Assessment for Nepali in Denver (stale data) ─────────────────────────
+
+:assessment-nepali-denver a gc:Assessment ;
+  rdfs:label "Engagement assessment: Nepali in Denver"@en ;
+  gc:assessmentDate "2026-02-10T11:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-nepali-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-nepali-denver .
+
+:result-nepali-denver a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Nepali in Denver — Phase 1, Initial (2yr stale)"@en ;
+  jp:phaseValue 1 ;
+  jp:phaseSubIndicator "2" ;
+  jp:engagementStrength jp:StrengthInitial ;
+  gc:resultForPeopleGroup :pg-nepali-us ;
+  gc:resultDate "2026-02-10T11:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-nepali-denver .
+
+# ── Assessment for Amhara in Denver ──────────────────────────────────────
+
+:assessment-amhara-denver a gc:Assessment ;
+  rdfs:label "Engagement assessment: Amhara in Denver"@en ;
+  gc:assessmentDate "2026-02-10T12:00:00"^^xsd:dateTime ;
+  gc:assessmentMethodology gc:MethodologyJPProgressScale ;
+  gc:assessesPeopleGroup :pg-amhara-us ;
+  gc:assessedBy :org-denver-missions-network ;
+  jp:assessmentUsedDataSet :dataset-denver-metro ;
+  prov:wasAssociatedWith :person-recorder-d ;
+  prov:generated :result-amhara-denver .
+
+:result-amhara-denver a gc:AssessmentResult ;
+  rdfs:label "Assessment result: Amhara in Denver — Phase 5, Active"@en ;
+  jp:phaseValue 5 ;
+  jp:phaseSubIndicator "0" ;
+  jp:engagementStrength jp:StrengthActive ;
+  gc:resultForPeopleGroup :pg-amhara-us ;
+  gc:resultDate "2026-02-10T12:00:00"^^xsd:dateTime ;
+  jp:stateForDataSet :dataset-denver-metro ;
+  prov:wasGeneratedBy :assessment-amhara-denver .
+
+
+##############################################################################
+#  ORGANIZATIONS — Endorsing Bodies
+##############################################################################
+
+:org-bgea a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeParachurchMinistry ;
+  rdfs:label "Billy Graham Evangelical Association"@en ;
+  dct:alternative "BGEA"@en ;
+  rdfs:comment "The Billy Graham Evangelical Association (BGEA) — maintains a Search for Churches directory of vetted congregations."@en .
+
+
+##############################################################################
+#  ENDORSEMENTS — BGEA Search for Churches (pilot endorsement data)
+#
+#  Three Denver-area churches endorsed by BGEA as certified congregations.
+#  Demonstrates the gc:Endorsement pattern with active certifications.
+##############################################################################
+
+:endorsement-bgea-calvary a gc:Endorsement ;
+  rdfs:label "BGEA certification: Calvary Church"@en ;
+  gc:endorsingOrganization :org-bgea ;
+  gc:endorsedOrganization :church-calvary ;
+  gc:endorsedDate "2020-06-15"^^xsd:date ;
+  gc:endorsementStatus gc:EndorsementActive ;
+  gc:endorsementType gc:CertificationEndorsement ;
+  prov:wasAttributedTo :org-bgea .
+
+:endorsement-bgea-firstbaptist a gc:Endorsement ;
+  rdfs:label "BGEA certification: First Baptist Church of Denver"@en ;
+  gc:endorsingOrganization :org-bgea ;
+  gc:endorsedOrganization :church-firstbaptist ;
+  gc:endorsedDate "2019-03-22"^^xsd:date ;
+  gc:endorsementStatus gc:EndorsementActive ;
+  gc:endorsementType gc:CertificationEndorsement ;
+  prov:wasAttributedTo :org-bgea .
+
+:endorsement-bgea-redrocks a gc:Endorsement ;
+  rdfs:label "BGEA certification: Red Rocks Church"@en ;
+  gc:endorsingOrganization :org-bgea ;
+  gc:endorsedOrganization :church-redrocks ;
+  gc:endorsedDate "2021-11-08"^^xsd:date ;
+  gc:endorsementStatus gc:EndorsementActive ;
+  gc:endorsementType gc:CertificationEndorsement ;
+  prov:wasAttributedTo :org-bgea .
+
+# Link churches to their endorsements
+:church-calvary gc:hasEndorsement :endorsement-bgea-calvary .
+:church-firstbaptist gc:hasEndorsement :endorsement-bgea-firstbaptist .
+:church-redrocks gc:hasEndorsement :endorsement-bgea-redrocks .
+
+
+##############################################################################
+#  CHURCH WEBSITE TEXT (enrichment data)
+##############################################################################
+
+:cwt-calvary a gc:ChurchWebsiteText ;
+  rdfs:label "Calvary Church website text"@en ;
+  gc:websiteUrl "https://www.calvarychurch.com"^^xsd:anyURI ;
+  gc:websiteTextContent "Calvary Church is a multi-generational, Bible-teaching church in Centennial, Colorado. We exist to make disciples who love God, love people, and serve the world." .
+
+:church-calvary gc:hasWebsiteText :cwt-calvary .
+
+
+##############################################################################
+#  RESOURCE PROVIDER ORGANIZATIONS
+##############################################################################
+
+:org-wycliffe a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeMissionAgency ;
+  rdfs:label "Wycliffe Bible Translators"@en ;
+  rdfs:comment "Wycliffe Bible Translators — Bible translation and literacy."@en .
+
+:org-sil a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeMissionAgency ;
+  rdfs:label "SIL International"@en ;
+  rdfs:comment "SIL International — linguistic research and Scripture translation."@en .
+
+:org-cru a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeParachurchMinistry ;
+  rdfs:label "Cru"@en ;
+  rdfs:comment "Cru (formerly Campus Crusade for Christ) — evangelism and discipleship."@en .
+
+:org-frontiers a gc:Organization ;
+  gc:hasOrganizationType gc:OrgTypeMissionAgency ;
+  rdfs:label "Frontiers"@en ;
+  rdfs:comment "Frontiers — church planting among Muslim peoples."@en .
+
+
+##############################################################################
+#  RESOURCES — Orthogonal classification (domain × format × function)
+#
+#  Demonstrates the flat MissionResource model with three orthogonal
+#  classification dimensions: content domain, delivery format, and
+#  pedagogical function.  Also demonstrates multi-domain resources,
+#  format separation (same content in multiple formats), in-progress
+#  resources with completion tracking, provider attribution, accelerator
+#  linkage, and collections.
+#  Somali intentionally has NO scripture resources (gap case).
+##############################################################################
+
+# --- Scripture-domain Resources ---
+
+# Burmese New Testament — text, available (from Wycliffe)
+:resource-burmese-nt a gc:MissionResource ;
+  gc:resourceName "Burmese New Testament" ;
+  gc:resourceForPeopleGroup :pg-burmese-us ;
+  gc:resourceDomain gc:DomainScriptureNT ;
+  gc:resourceFunction gc:FunctionReferenceText ;
+  gc:resourceFormat gc:FormatText ;
+  gc:resourceStatus gc:ResourceAvailable ;
+  gc:resourceProvider :org-wycliffe ;
+  gc:resourceLanguage rol:mya ;
+  gc:resourceDatePublished "2012-03-15"^^xsd:date ;
+  gc:relatedAccelerator jp:AccScripture .
+
+# Burmese New Testament — audio, in progress at 40% (from SIL)
+# Same content domain (NT) as above, different format (audio) — demonstrates format separation
+:resource-burmese-audio-nt a gc:MissionResource ;
+  gc:resourceName "Burmese Audio New Testament" ;
+  gc:resourceForPeopleGroup :pg-burmese-us ;
+  gc:resourceDomain gc:DomainScriptureNT ;
+  gc:resourceFunction gc:FunctionReferenceText ;
+  gc:resourceFormat gc:FormatAudio ;
+  gc:resourceStatus gc:ResourceInProgress ;
+  gc:completionPercentage "0.40"^^xsd:decimal ;
+  gc:estimatedCompletionDate "2027-06-01"^^xsd:date ;
+  gc:resourceProvider :org-sil ;
+  gc:resourceLanguage rol:mya ;
+  gc:relatedAccelerator jp:AccAudioResources .
+
+# Nepali Scripture Portions — text, available
+:resource-nepali-portions a gc:MissionResource ;
+  gc:resourceName "Nepali Scripture Portions" ;
+  gc:resourceForPeopleGroup :pg-nepali-us ;
+  gc:resourceDomain gc:DomainScripturePortions ;
+  gc:resourceFunction gc:FunctionReferenceText ;
+  gc:resourceFormat gc:FormatText ;
+  gc:resourceStatus gc:ResourceAvailable ;
+  gc:resourceLanguage rol:nep ;
+  gc:relatedAccelerator jp:AccScripture .
+
+# Somali — no scripture resources (gap case, demonstrated by absence)
+
+# --- Evangelism-domain Resources ---
+
+# JESUS Film for Amhara — evangelistic video, available
+# Multi-domain: both Evangelism (primary purpose) and Scripture (content derived from Gospel of Luke)
+:resource-amhara-film a gc:MissionResource ;
+  gc:resourceName "JESUS Film - Amharic" ;
+  gc:resourceForPeopleGroup :pg-amhara-us ;
+  gc:resourceDomain gc:DomainEvangelism, gc:DomainScripture ;
+  gc:resourceFunction gc:FunctionBroadcast ;
+  gc:resourceFormat gc:FormatVideo ;
+  gc:resourceStatus gc:ResourceAvailable ;
+  gc:resourceLanguage rol:amh ;
+  gc:relatedAccelerator jp:AccFilm .
+
+# --- Leadership & Training-domain Resources ---
+
+# Church planting curriculum for Somali — print, available (from Frontiers)
+:resource-somali-curriculum a gc:MissionResource ;
+  gc:resourceName "Somali Church Planting Curriculum" ;
+  gc:resourceForPeopleGroup :pg-somali-us ;
+  gc:resourceDomain gc:DomainChurchPlanting ;
+  gc:resourceFunction gc:FunctionCurriculum ;
+  gc:resourceFormat gc:FormatPrint ;
+  gc:resourceStatus gc:ResourceAvailable ;
+  gc:resourceProvider :org-frontiers ;
+  gc:resourceLanguage rol:som ;
+  gc:relatedAccelerator jp:AccChurchPlanting ;
+  gc:resourceUrl "https://example.org/somali-cp-curriculum"^^xsd:anyURI .
+
+# Nepali discipleship manual — in progress (from Cru), part of a collection
+:resource-nepali-discipleship a gc:MissionResource ;
+  gc:resourceName "Nepali Discipleship Manual" ;
+  gc:resourceForPeopleGroup :pg-nepali-us ;
+  gc:resourceDomain gc:DomainDiscipleship ;
+  gc:resourceFunction gc:FunctionManual ;
+  gc:resourceFormat gc:FormatPrint ;
+  gc:resourceStatus gc:ResourceInProgress ;
+  gc:resourceProvider :org-cru ;
+  gc:resourceLanguage rol:nep ;
+  gc:relatedAccelerator jp:AccLeaderDevelopment ;
+  gc:partOfCollection :collection-nepali-discipleship .
+
+# --- Evangelism Tool Resources ---
+
+# GodTools for Amhara — conversation guide app, available (from Cru)
+# Multi-domain: Evangelism (primary purpose) + Conversation Guide (specific evangelism sub-domain)
+:resource-amhara-godtools a gc:MissionResource ;
+  gc:resourceName "GodTools - Amharic" ;
+  gc:resourceForPeopleGroup :pg-amhara-us ;
+  gc:resourceDomain gc:DomainEvangelism, gc:DomainConversationGuide ;
+  gc:resourceFunction gc:FunctionTool ;
+  gc:resourceFormat gc:FormatApp ;
+  gc:resourceStatus gc:ResourceAvailable ;
+  gc:resourceProvider :org-cru ;
+  gc:resourceLanguage rol:amh ;
+  gc:relatedAccelerator jp:AccGospelPresentation .
+
+# --- Resource Collections ---
+
+# Nepali discipleship series (groups individual lessons)
+:collection-nepali-discipleship a gc:ResourceCollection ;
+  gc:collectionName "Nepali Discipleship Series" .
+
+
+##############################################################################
+#  End of Denver Test Data
+##############################################################################

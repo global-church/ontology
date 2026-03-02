@@ -1,0 +1,1509 @@
+##############################################################################
+# Global.Church Core Ontology (GC-Core) SHACL Shapes
+#
+# Validation constraints for GC-Core entities.
+# Validates required properties, cardinality, value ranges, and
+# provenance chain integrity.
+#
+# Namespace:  https://ontology.global.church/core/shapes#
+# Date:       2026-02-25 (v0.15.1 — Organization: Supabase field properties, BeliefType + Denomination SKOS)
+##############################################################################
+
+@base          <https://ontology.global.church/core/shapes#> .
+@prefix :      <https://ontology.global.church/core/shapes#> .
+@prefix sh:    <http://www.w3.org/ns/shacl#> .
+@prefix gc:    <https://ontology.global.church/core#> .
+@prefix jp:    <https://ontology.global.church/joshuaproject#> .
+@prefix prov:  <http://www.w3.org/ns/prov#> .
+@prefix xsd:   <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:  <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dct:   <http://purl.org/dc/terms/> .
+@prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
+@prefix ror:   <https://data.global.church/his/ror/> .
+@prefix rog:   <https://data.global.church/his/rog/> .
+@prefix imb:   <https://ontology.global.church/imb#> .
+
+
+##############################################################################
+#  Organization Shape (unified — all org types)
+##############################################################################
+
+:OrganizationShape a sh:NodeShape ;
+  sh:targetClass gc:Organization ;
+  rdfs:label "Organization Shape"@en ;
+  rdfs:comment "Validates gc:Organization instances. All org types (churches, agencies, networks, denominations) must satisfy these base constraints. Type-specific constraints are in separate shapes (e.g., ChurchOrganizationShape)."@en ;
+
+  # Required: every org must have a name
+  sh:property [
+    sh:path rdfs:label ;
+    sh:minCount 1 ;
+    sh:name "label" ;
+    sh:description "Organization name (required)." ;
+  ] ;
+
+  # Required: every org must declare at least one type
+  sh:property [
+    sh:path gc:hasOrganizationType ;
+    sh:class skos:Concept ;
+    sh:minCount 1 ;
+    sh:name "organization type" ;
+    sh:message "Every Organization must have at least one gc:hasOrganizationType from OrganizationTypeScheme." ;
+  ] ;
+
+  # Optional: abbreviation
+  sh:property [
+    sh:path dct:alternative ;
+    sh:name "abbreviation" ;
+    sh:description "Common abbreviation or acronym (e.g., BGEA, CIL, IMB)." ;
+  ] ;
+
+  # Optional: location
+  sh:property [
+    sh:path gc:hasLocation ;
+    sh:class gc:Location ;
+    sh:name "location" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization SHOULD have a location via gc:hasLocation." ;
+  ] ;
+
+  # Optional: website
+  sh:property [
+    sh:path gc:website ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "website" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization SHOULD have a website URL." ;
+  ] ;
+
+  # Optional: email
+  sh:property [
+    sh:path gc:email ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "email" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization SHOULD have a contact email." ;
+  ] ;
+
+  # Optional: phone
+  sh:property [
+    sh:path gc:phone ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "phone" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization SHOULD have a contact phone number." ;
+  ] ;
+
+  # Optional: summary
+  sh:property [
+    sh:path gc:summary ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "summary" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization SHOULD have a summary description." ;
+  ] ;
+
+  # Optional: logo
+  sh:property [
+    sh:path gc:logoUrl ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "logo URL" ;
+  ] ;
+
+  # Optional: banner
+  sh:property [
+    sh:path gc:bannerUrl ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "banner URL" ;
+  ] ;
+
+  # Optional: giving URL
+  sh:property [
+    sh:path gc:givingUrl ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "giving URL" ;
+  ] ;
+
+  # Optional: social media (multi-valued)
+  sh:property [
+    sh:path gc:socialMediaUrl ;
+    sh:datatype xsd:anyURI ;
+    sh:name "social media URL" ;
+  ] ;
+
+  # Optional: overarching name (parent org)
+  sh:property [
+    sh:path gc:overarchingName ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "overarching name" ;
+  ] ;
+
+  # Optional: belief classification
+  sh:property [
+    sh:path gc:hasBeliefClassification ;
+    sh:class skos:Concept ;
+    sh:name "belief classification" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization SHOULD have a belief classification from BeliefTypeScheme." ;
+  ] ;
+
+  # Optional: denomination classification
+  sh:property [
+    sh:path gc:hasDenominationClassification ;
+    sh:class skos:Concept ;
+    sh:name "denomination classification" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization MAY have a denomination classification from DenominationScheme." ;
+  ] ;
+
+  # Endorsements (applies to all org types)
+  sh:property [
+    sh:path gc:hasEndorsement ;
+    sh:class gc:Endorsement ;
+    sh:name "has endorsement" ;
+    sh:severity sh:Info ;
+    sh:message "An Organization MAY have endorsements from recognized bodies via gc:hasEndorsement." ;
+  ] .
+
+
+##############################################################################
+#  Church Organization Shape (type-specific constraints)
+#
+#  Targets gc:Organization instances that have
+#  gc:hasOrganizationType gc:OrgTypeChurch. Uses SPARQL-based target
+#  because the org type is a SKOS classification, not an OWL class.
+##############################################################################
+
+:ChurchOrganizationShape a sh:NodeShape ;
+  sh:target [
+    a sh:SPARQLTarget ;
+    sh:select """
+      PREFIX gc: <https://ontology.global.church/core#>
+      SELECT ?this WHERE {
+        ?this gc:hasOrganizationType gc:OrgTypeChurch .
+      }
+    """ ;
+  ] ;
+  rdfs:label "Church Organization Shape"@en ;
+  rdfs:comment "Validates organizations typed as Church. These constraints only apply to orgs with gc:hasOrganizationType gc:OrgTypeChurch."@en ;
+
+  # Required church properties
+  sh:property [
+    sh:path gc:isActive ;
+    sh:datatype xsd:boolean ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "is active" ;
+  ] ;
+  sh:property [
+    sh:path gc:dateStarted ;
+    sh:datatype xsd:date ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "date started" ;
+  ] ;
+
+  # Optional church properties
+  sh:property [
+    sh:path gc:identifiesAsChurch ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "identifies as church" ;
+  ] ;
+  sh:property [
+    sh:path gc:dateEnded ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "date ended" ;
+  ] ;
+
+  # Numeric measures
+  sh:property [
+    sh:path gc:numberOfPeopleAttending ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+    sh:name "number of people attending" ;
+  ] ;
+  sh:property [
+    sh:path gc:numberOfBelievers ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+    sh:name "number of believers" ;
+  ] ;
+  sh:property [
+    sh:path gc:numberOfBaptizedBelievers ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+    sh:name "number of baptized believers" ;
+  ] ;
+
+  # Provenance: should be generated by a ChurchFormation activity
+  sh:property [
+    sh:path prov:wasGeneratedBy ;
+    sh:class gc:ChurchFormation ;
+    sh:name "was generated by" ;
+    sh:severity sh:Info ;
+    sh:message "A church Organization SHOULD be linked to its ChurchFormation activity via prov:wasGeneratedBy." ;
+  ] ;
+
+  # Church health indicators
+  sh:property [ sh:path gc:hasAppointedLeaders ; sh:datatype xsd:boolean ; sh:maxCount 1 ] ;
+
+  # Practices
+  sh:property [
+    sh:path gc:hasPractice ;
+    sh:class gc:Practice ;
+    sh:name "has practice" ;
+    sh:severity sh:Info ;
+    sh:message "A church Organization SHOULD have at least one Practice linked via gc:hasPractice." ;
+  ] ;
+
+  # Language used when gathering
+  sh:property [
+    sh:path gc:languageUsedWhenGathering ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "language used when gathering" ;
+  ] ;
+
+  # People group demographic focus
+  sh:property [
+    sh:path gc:servesPeopleGroup ;
+    sh:class gc:PeopleGroup ;
+    sh:name "serves people group" ;
+    sh:severity sh:Info ;
+    sh:message "A church Organization SHOULD declare at least one people group it serves via gc:servesPeopleGroup." ;
+  ] ;
+
+  # Website text
+  sh:property [
+    sh:path gc:hasWebsiteText ;
+    sh:class gc:ChurchWebsiteText ;
+    sh:name "has website text" ;
+    sh:severity sh:Info ;
+    sh:message "A church Organization MAY have extracted website text via gc:hasWebsiteText." ;
+  ] ;
+
+  # Multi-campus indicator
+  sh:property [
+    sh:path gc:isMultiCampus ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "is multi-campus" ;
+  ] ;
+
+  # Campus name (only relevant for multi-campus churches)
+  sh:property [
+    sh:path gc:campusName ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "campus name" ;
+  ] ;
+
+  # Service times / gathering schedule
+  sh:property [
+    sh:path gc:servicesInfo ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "services info" ;
+    sh:severity sh:Info ;
+    sh:message "A church Organization SHOULD have service times via gc:servicesInfo." ;
+  ] .
+
+
+##############################################################################
+#  Practice Shape
+##############################################################################
+
+:PracticeShape a sh:NodeShape ;
+  sh:targetClass gc:Practice ;
+  rdfs:label "Practice Shape"@en ;
+  rdfs:comment "Validates Practice activity instances."@en ;
+
+  sh:property [
+    sh:path gc:practiceType ;
+    sh:class gc:PracticeType ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "practice type" ;
+    sh:message "Every Practice must have exactly one practiceType from the PracticeType vocabulary." ;
+  ] ;
+  sh:property [
+    sh:path gc:practiceIsActive ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "practice is active" ;
+  ] ;
+  sh:property [
+    sh:path gc:isPerformedInternally ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "is performed internally" ;
+  ] ;
+  sh:property [
+    sh:path gc:practiceFrequency ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "practice frequency" ;
+  ] ;
+  sh:property [
+    sh:path gc:practiceDateAdopted ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "practice date adopted" ;
+  ] .
+
+
+##############################################################################
+#  Person Shape
+##############################################################################
+
+:PersonShape a sh:NodeShape ;
+  sh:targetClass gc:Person ;
+  rdfs:label "Person Shape"@en ;
+
+  sh:property [
+    sh:path gc:userId ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "user ID" ;
+  ] ;
+
+  # Worker deployment properties (all optional — not every Person is a deployed worker)
+  sh:property [
+    sh:path gc:sendingOrganization ;
+    sh:class gc:Organization ;
+    sh:maxCount 1 ;
+    sh:name "sending organization" ;
+    sh:severity sh:Info ;
+    sh:message "A Person MAY declare a sending organization via gc:sendingOrganization." ;
+  ] ;
+  sh:property [
+    sh:path gc:deploymentStatus ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "deployment status" ;
+    sh:severity sh:Info ;
+    sh:message "A Person MAY declare deployment status via gc:deploymentStatus pointing to a DeploymentStatusScheme concept." ;
+  ] ;
+  sh:property [
+    sh:path gc:isCrossCultural ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "is cross-cultural worker" ;
+  ] ;
+  sh:property [
+    sh:path gc:fieldEntryDate ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "field entry date" ;
+  ] .
+
+
+##############################################################################
+#  Ministry Participation Shape
+##############################################################################
+
+:MinistryParticipationShape a sh:NodeShape ;
+  sh:targetClass gc:MinistryParticipation ;
+  rdfs:label "Ministry Participation Shape"@en ;
+
+  sh:property [
+    sh:path prov:agent ;
+    sh:class gc:Person ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "participating agent" ;
+    sh:message "Every participation must identify the person involved." ;
+  ] ;
+  sh:property [
+    sh:path gc:participationRole ;
+    sh:class gc:MinistryRole ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "participation role" ;
+    sh:message "Every participation must specify a ministry role." ;
+  ] .
+
+
+##############################################################################
+#  Ministry Activity Shape
+##############################################################################
+
+:MinistryActivityShape a sh:NodeShape ;
+  sh:targetClass gc:MinistryActivity ;
+  rdfs:label "Ministry Activity Shape"@en ;
+  rdfs:comment "Validates MinistryActivity instances. Note: dateTimeOfActivity, atLocation, and wasAssociatedWith are sh:Warning severity because Practice (subClassOf MinistryActivity) represents recurring activities that may not have a single discrete datetime, location, or performer."@en ;
+
+  sh:property [
+    sh:path gc:dateTimeOfActivity ;
+    sh:datatype xsd:dateTime ;
+    sh:maxCount 1 ;
+    sh:name "date-time of activity" ;
+    sh:severity sh:Warning ;
+    sh:message "A ministry activity SHOULD have a dateTimeOfActivity. Recurring practices may omit this." ;
+  ] ;
+  sh:property [
+    sh:path gc:atLocation ;
+    sh:class gc:Location ;
+    sh:name "at location" ;
+    sh:severity sh:Warning ;
+    sh:message "A ministry activity SHOULD have at least one location. Recurring practices may omit this." ;
+  ] ;
+  sh:property [
+    sh:path prov:wasAssociatedWith ;
+    sh:class prov:Agent ;
+    sh:name "associated agent" ;
+    sh:severity sh:Warning ;
+    sh:message "A ministry activity SHOULD be associated with at least one agent." ;
+  ] .
+
+
+##############################################################################
+#  Gospel Conversation Shape
+##############################################################################
+
+:GospelConversationShape a sh:NodeShape ;
+  sh:targetClass gc:GospelConversation ;
+  rdfs:label "Gospel Conversation Shape"@en ;
+
+  sh:property [
+    sh:path gc:totalHeard ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+    sh:name "total heard" ;
+  ] ;
+  sh:property [
+    sh:path gc:positiveResponse ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+  ] ;
+  sh:property [
+    sh:path gc:interestedResponse ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+  ] ;
+  sh:property [
+    sh:path gc:negativeResponse ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+  ] ;
+  sh:property [
+    sh:path gc:unknownResponse ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+  ] ;
+  sh:property [
+    sh:path gc:alreadyFollowingResponse ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+  ] .
+
+
+##############################################################################
+#  Location Shape
+##############################################################################
+
+:LocationShape a sh:NodeShape ;
+  sh:targetClass gc:Location ;
+  rdfs:label "Location Shape"@en ;
+
+  sh:property [
+    sh:path gc:countryCode ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:minLength 3 ;
+    sh:maxLength 3 ;
+    sh:name "country code" ;
+    sh:message "Country code must be a 3-letter ISO 3166-1 alpha-3 code." ;
+  ] ;
+  sh:property [
+    sh:path gc:latitude ;
+    sh:datatype xsd:double ;
+    sh:minInclusive -90.0 ;
+    sh:maxInclusive 90.0 ;
+    sh:maxCount 1 ;
+  ] ;
+  sh:property [
+    sh:path gc:longitude ;
+    sh:datatype xsd:double ;
+    sh:minInclusive -180.0 ;
+    sh:maxInclusive 180.0 ;
+    sh:maxCount 1 ;
+  ] .
+
+
+##############################################################################
+#  People Group Shape
+##############################################################################
+
+:PeopleGroupShape a sh:NodeShape ;
+  sh:targetClass gc:PeopleGroup ;
+  rdfs:label "People Group Shape"@en ;
+
+  # At least one identifier system must be present
+  sh:or (
+    [ sh:property [ sh:path gc:rop3Code ; sh:minCount 1 ] ]
+    [ sh:property [ sh:path gc:rop25Code ; sh:minCount 1 ] ]
+    [ sh:property [ sh:path gc:hasPeopleClassification ; sh:minCount 1 ] ]
+  ) ;
+  sh:message "A PeopleGroup must have at least one standard identifier (ROP3 code, ROP25 code, or hasPeopleClassification link)." ;
+
+  sh:property [
+    sh:path gc:hasPeopleClassification ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "people classification" ;
+    sh:message "hasPeopleClassification must link to a skos:Concept." ;
+  ] ;
+
+  sh:property [
+    sh:path jp:evangelicalPercentage ;
+    sh:datatype xsd:double ;
+    sh:minInclusive 0.0 ;
+    sh:maxInclusive 100.0 ;
+    sh:maxCount 1 ;
+    sh:name "evangelical percentage" ;
+    sh:message "Evangelical percentage must be between 0.0 and 100.0." ;
+  ] ;
+
+  # ── JP PeopleGroup Identity & Descriptive Metadata (v0.14.0) ─────────
+  sh:property [
+    sh:path jp:population ;
+    sh:datatype xsd:integer ;
+    sh:maxCount 1 ;
+    sh:name "population" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:globalPopulation ;
+    sh:datatype xsd:integer ;
+    sh:maxCount 1 ;
+    sh:name "global population" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:nameAcrossCountries ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "name across countries" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:countOfCountries ;
+    sh:datatype xsd:integer ;
+    sh:maxCount 1 ;
+    sh:name "count of countries" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:primaryLanguage ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "primary language" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:continent ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "continent" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:region ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "region" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:countryName ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "country name" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:affinityBloc ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "affinity bloc" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:peopleCluster ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "people cluster" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:photoUrl ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "photo URL" ;
+    sh:severity sh:Info ;
+  ] .
+
+
+# ── Removed SHACL shapes (v0.13.0) ──────────────────────────────────────
+#  EngagementAssessmentShape → replaced by :AssessmentShape (above)
+#  EngagementStateShape → replaced by :AssessmentResultShape (above)
+#  STSCAssessmentShape → removed (no real data)
+#  AcceleratorScoreShape → removed (no real data)
+
+
+##############################################################################
+#  Overture Shape (Geospatial Place Record)
+##############################################################################
+
+:OvertureShape a sh:NodeShape ;
+  sh:targetClass gc:Overture ;
+  rdfs:label "Overture Shape"@en ;
+  rdfs:comment "Validates Overture Maps place record instances."@en ;
+
+  sh:property [
+    sh:path gc:overtureId ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "Overture ID" ;
+    sh:message "Every Overture record must have an overtureId." ;
+  ] ;
+  sh:property [
+    sh:path gc:overtureLocation ;
+    sh:class gc:Location ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "Overture location" ;
+    sh:message "Every Overture record must have a location." ;
+  ] .
+
+
+##############################################################################
+#  Exchange Payload Shape
+##############################################################################
+
+:ExchangePayloadShape a sh:NodeShape ;
+  sh:targetClass gc:ExchangePayload ;
+  rdfs:label "Exchange Payload Shape"@en ;
+
+  sh:property [
+    sh:path gc:payloadFormat ;
+    sh:datatype xsd:string ;
+    sh:in ( "EEP" "SEP" ) ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "payload format" ;
+  ] ;
+  sh:property [
+    sh:path gc:payloadVersion ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "payload version" ;
+  ] ;
+  sh:property [
+    sh:path gc:payloadPermissions ;
+    sh:datatype xsd:string ;
+    sh:in ( "read-only" "read-cache" "read-write" ) ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "payload permissions" ;
+  ] .
+
+
+##############################################################################
+#  Data Recording Activity Shape
+##############################################################################
+
+:DataRecordingActivityShape a sh:NodeShape ;
+  sh:targetClass gc:DataRecordingActivity ;
+  rdfs:label "Data Recording Activity Shape"@en ;
+
+  sh:property [
+    sh:path gc:recordDateTime ;
+    sh:datatype xsd:dateTime ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "record date-time" ;
+  ] ;
+  sh:property [
+    sh:path gc:recordsActivity ;
+    sh:class gc:MinistryActivity ;
+    sh:minCount 1 ;
+    sh:name "records activity" ;
+    sh:message "A DataRecordingActivity must reference the ministry activity it records." ;
+  ] ;
+  sh:property [
+    sh:path prov:generated ;
+    sh:class gc:EngagementRecord ;
+    sh:minCount 1 ;
+    sh:name "generated record" ;
+    sh:message "A DataRecordingActivity must generate at least one EngagementRecord." ;
+  ] .
+
+
+##############################################################################
+#  People Group Engagement Shape
+##############################################################################
+
+:PeopleGroupEngagementShape a sh:NodeShape ;
+  sh:targetClass gc:PeopleGroupEngagement ;
+  rdfs:label "People Group Engagement Shape"@en ;
+
+  sh:property [
+    sh:path gc:engagementPeopleGroup ;
+    sh:class gc:PeopleGroup ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "engagement people group" ;
+  ] ;
+  sh:property [
+    sh:path gc:engagementCount ;
+    sh:datatype xsd:nonNegativeInteger ;
+    sh:minInclusive 0 ;
+    sh:maxCount 1 ;
+    sh:name "engagement count" ;
+  ] .
+
+
+##############################################################################
+#  DataSet Shape
+##############################################################################
+
+:DataSetShape a sh:NodeShape ;
+  sh:targetClass gc:DataSet ;
+  rdfs:label "Data Set Shape"@en ;
+
+  sh:property [
+    sh:path gc:dataSetId ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "data set ID" ;
+  ] ;
+  sh:property [
+    sh:path gc:dataSetName ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "data set name" ;
+  ] ;
+  sh:property [
+    sh:path gc:lastUpdatedDate ;
+    sh:datatype xsd:dateTime ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "last updated date" ;
+  ] ;
+  sh:property [
+    sh:path gc:hasSource ;
+    sh:minCount 1 ;
+    sh:name "source" ;
+    sh:message "Every DataSet must reference the system that provided it." ;
+  ] .
+
+
+
+##############################################################################
+#  Endorsement Shape
+##############################################################################
+
+:EndorsementShape a sh:NodeShape ;
+  sh:targetClass gc:Endorsement ;
+  rdfs:label "Endorsement Shape"@en ;
+  rdfs:comment "Validates Endorsement instances."@en ;
+
+  sh:property [
+    sh:path gc:endorsingOrganization ;
+    sh:class gc:Organization ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "endorsing organization" ;
+    sh:message "Every Endorsement must have exactly one endorsing organization." ;
+  ] ;
+  sh:property [
+    sh:path gc:endorsedOrganization ;
+    sh:class gc:Organization ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "endorsed organization" ;
+    sh:message "Every Endorsement must reference exactly one endorsed organization." ;
+  ] ;
+  sh:property [
+    sh:path gc:endorsedDate ;
+    sh:datatype xsd:date ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "endorsed date" ;
+    sh:message "Every Endorsement must have an endorsed date." ;
+  ] ;
+  sh:property [
+    sh:path gc:endorsementExpirationDate ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "endorsement expiration date" ;
+  ] ;
+  sh:property [
+    sh:path gc:endorsementStatus ;
+    sh:class gc:EndorsementStatusValue ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "endorsement status" ;
+    sh:message "Every Endorsement must have a status." ;
+  ] ;
+  sh:property [
+    sh:path gc:endorsementType ;
+    sh:class gc:EndorsementType ;
+    sh:maxCount 1 ;
+    sh:name "endorsement type" ;
+    sh:severity sh:Info ;
+    sh:message "An Endorsement SHOULD have a type classification." ;
+  ] .
+
+
+##############################################################################
+#  Engagement Claim Shape
+##############################################################################
+
+:EngagementClaimShape a sh:NodeShape ;
+  sh:targetClass gc:EngagementClaim ;
+  rdfs:label "Engagement Claim Shape"@en ;
+  rdfs:comment "Validates gc:EngagementClaim instances — self-reported engagement assertions from organizations."@en ;
+
+  # Required: exactly one claiming organization
+  sh:property [
+    sh:path gc:claimingOrganization ;
+    sh:class gc:Organization ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "claiming organization" ;
+    sh:message "Every EngagementClaim must have exactly one claiming organization." ;
+  ] ;
+
+  # Required: at least one people group
+  sh:property [
+    sh:path gc:claimedPeopleGroup ;
+    sh:class gc:PeopleGroup ;
+    sh:minCount 1 ;
+    sh:name "claimed people group" ;
+    sh:message "Every EngagementClaim must reference at least one people group." ;
+  ] ;
+
+  # Required: at least one engagement type
+  sh:property [
+    sh:path gc:engagementType ;
+    sh:class skos:Concept ;
+    sh:minCount 1 ;
+    sh:name "engagement type" ;
+    sh:message "Every EngagementClaim must declare at least one engagement type from EngagementTypeScheme." ;
+  ] ;
+
+  # Required: exactly one claim date
+  sh:property [
+    sh:path gc:claimDate ;
+    sh:datatype xsd:date ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "claim date" ;
+    sh:message "Every EngagementClaim must have exactly one claim date." ;
+  ] ;
+
+  # Required: exactly one claim status
+  sh:property [
+    sh:path gc:claimStatus ;
+    sh:class gc:ClaimStatusValue ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "claim status" ;
+    sh:message "Every EngagementClaim must have exactly one status from ClaimStatusScheme." ;
+  ] ;
+
+  # Optional: free-text description (at most one)
+  sh:property [
+    sh:path gc:claimDescription ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "claim description" ;
+  ] ;
+
+  # Optional: country (ROG SKOS concept)
+  sh:property [
+    sh:path gc:claimedCountry ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "claimed country" ;
+    sh:description "The ROG SKOS concept for the country where this engagement takes place. Optional." ;
+  ] .
+
+
+##############################################################################
+#  Ministry Activity Shape — Language constraint
+##############################################################################
+
+:MinistryActivityLanguageShape a sh:NodeShape ;
+  sh:targetClass gc:MinistryActivity ;
+  rdfs:label "Ministry Activity Language Shape"@en ;
+  rdfs:comment "Validates that gc:inLanguage points to a SKOS Concept (ROL language)."@en ;
+
+  sh:property [
+    sh:path gc:inLanguage ;
+    sh:class skos:Concept ;
+    sh:name "in language" ;
+    sh:severity sh:Info ;
+    sh:message "A ministry activity SHOULD specify the language used via gc:inLanguage pointing to a ROL SKOS concept." ;
+  ] .
+
+
+##############################################################################
+#  Ministry Activity Shape — Methodology constraint
+##############################################################################
+
+:MinistryActivityMethodologyShape a sh:NodeShape ;
+  sh:targetClass gc:MinistryActivity ;
+  rdfs:label "Ministry Activity Methodology Shape"@en ;
+  rdfs:comment "Validates that gc:usesMethodology points to a SKOS Concept (MethodologyScheme)."@en ;
+
+  sh:property [
+    sh:path gc:usesMethodology ;
+    sh:class skos:Concept ;
+    sh:name "uses methodology" ;
+    sh:severity sh:Info ;
+    sh:message "A ministry activity MAY specify the methodology used via gc:usesMethodology pointing to a MethodologyScheme concept." ;
+  ] .
+
+
+##############################################################################
+#  Language Classification constraint
+##############################################################################
+
+:HasLanguageClassificationShape a sh:PropertyShape ;
+  rdfs:label "Language Classification Shape"@en ;
+  sh:path gc:hasLanguageClassification ;
+  sh:class skos:Concept ;
+  sh:name "language classification" ;
+  sh:message "hasLanguageClassification must link to a skos:Concept from the ROL concept scheme." .
+
+
+##############################################################################
+#  Religion Classification constraint
+##############################################################################
+
+:HasReligionClassificationShape a sh:PropertyShape ;
+  rdfs:label "Religion Classification Shape"@en ;
+  sh:path gc:hasReligionClassification ;
+  sh:class skos:Concept ;
+  sh:name "religion classification" ;
+  sh:message "hasReligionClassification must link to a skos:Concept from the ROR concept scheme." .
+
+
+##############################################################################
+#  Geography Classification constraint
+##############################################################################
+
+:HasGeographyClassificationShape a sh:PropertyShape ;
+  rdfs:label "Geography Classification Shape"@en ;
+  sh:path gc:hasGeographyClassification ;
+  sh:class skos:Concept ;
+  sh:name "geography classification" ;
+  sh:message "hasGeographyClassification must link to a skos:Concept from the ROG concept scheme." .
+
+
+##############################################################################
+#  HIS Registry Concept Shape (covers ROP + ROL + ROR + ROG concepts)
+##############################################################################
+
+:HISConceptShape a sh:NodeShape ;
+  sh:targetClass skos:Concept ;
+  rdfs:label "HIS Registry Concept Shape"@en ;
+  sh:property [
+    sh:path skos:prefLabel ;
+    sh:minCount 1 ;
+    sh:datatype xsd:string ;
+    sh:name "preferred label" ;
+    sh:message "Every HIS concept must have at least one skos:prefLabel." ;
+  ] ;
+  sh:property [
+    sh:path skos:inScheme ;
+    sh:minCount 1 ;
+    sh:name "in scheme" ;
+    sh:message "Every HIS concept must belong to a skos:ConceptScheme." ;
+  ] .
+
+
+##############################################################################
+#  Mission Resource Shape (base)
+##############################################################################
+
+:MissionResourceShape a sh:NodeShape ;
+  sh:targetClass gc:MissionResource ;
+  rdfs:label "Mission Resource Shape"@en ;
+  rdfs:comment "Validates MissionResource instances (base properties)."@en ;
+
+  sh:property [
+    sh:path gc:resourceName ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "resource name" ;
+    sh:message "Every MissionResource must have exactly one resourceName." ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceForPeopleGroup ;
+    sh:class gc:PeopleGroup ;
+    sh:name "resource for people group" ;
+    sh:message "resourceForPeopleGroup must point to a gc:PeopleGroup instance." ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceStatus ;
+    sh:class gc:ResourceStatusValue ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "resource status" ;
+    sh:message "Every MissionResource must have exactly one resource status." ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceProvider ;
+    sh:class gc:Organization ;
+    sh:name "resource provider" ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceLanguage ;
+    sh:class skos:Concept ;
+    sh:name "resource language" ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceUrl ;
+    sh:datatype xsd:anyURI ;
+    sh:maxCount 1 ;
+    sh:name "resource URL" ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceFormat ;
+    sh:class gc:ResourceFormatValue ;
+    sh:name "resource format" ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceDatePublished ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "date published" ;
+  ] ;
+  sh:property [
+    sh:path gc:relatedAccelerator ;
+    sh:class skos:Concept ;
+    sh:name "related accelerator" ;
+    sh:severity sh:Info ;
+    sh:message "A MissionResource MAY link to an engagement accelerator concept." ;
+  ] ;
+  sh:property [
+    sh:path gc:partOfCollection ;
+    sh:class gc:ResourceCollection ;
+    sh:name "part of collection" ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceDomain ;
+    sh:class skos:Concept ;
+    sh:name "resource domain" ;
+    sh:message "Resource domain must be a SKOS concept from ResourceDomainScheme." ;
+  ] ;
+  sh:property [
+    sh:path gc:resourceFunction ;
+    sh:class skos:Concept ;
+    sh:name "resource function" ;
+    sh:message "Resource function must be a SKOS concept from ResourceFunctionScheme." ;
+  ] ;
+  sh:property [
+    sh:path gc:completionPercentage ;
+    sh:datatype xsd:decimal ;
+    sh:minInclusive 0.0 ;
+    sh:maxInclusive 1.0 ;
+    sh:maxCount 1 ;
+    sh:name "completion percentage" ;
+    sh:message "Completion percentage must be between 0.0 and 1.0." ;
+  ] ;
+  sh:property [
+    sh:path gc:estimatedCompletionDate ;
+    sh:datatype xsd:date ;
+    sh:maxCount 1 ;
+    sh:name "estimated completion date" ;
+  ] .
+
+
+##############################################################################
+#  Resource Collection Shape
+##############################################################################
+
+:ResourceCollectionShape a sh:NodeShape ;
+  sh:targetClass gc:ResourceCollection ;
+  rdfs:label "Resource Collection Shape"@en ;
+  rdfs:comment "Validates ResourceCollection instances."@en ;
+
+  sh:property [
+    sh:path gc:collectionName ;
+    sh:datatype xsd:string ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "collection name" ;
+    sh:message "Every ResourceCollection must have exactly one collection name." ;
+  ] .
+
+
+##############################################################################
+#  Assessment Shape (Activity)
+##############################################################################
+
+:AssessmentShape a sh:NodeShape ;
+  sh:targetClass gc:Assessment ;
+  rdfs:label "Assessment Shape"@en ;
+  rdfs:comment "Validates gc:Assessment activity instances."@en ;
+
+  sh:property [
+    sh:path gc:assessmentDate ;
+    sh:datatype xsd:dateTime ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "assessment date" ;
+    sh:message "Every Assessment must have exactly one assessment date." ;
+  ] ;
+  sh:property [
+    sh:path gc:assessmentMethodology ;
+    sh:class skos:Concept ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "assessment methodology" ;
+    sh:message "Every Assessment must declare exactly one methodology from AssessmentMethodologyScheme." ;
+  ] ;
+  sh:property [
+    sh:path gc:assessedBy ;
+    sh:class gc:Organization ;
+    sh:maxCount 1 ;
+    sh:name "assessed by" ;
+    sh:severity sh:Info ;
+    sh:message "An Assessment SHOULD identify the organization that performed it." ;
+  ] ;
+  sh:property [
+    sh:path gc:assessesPeopleGroup ;
+    sh:class gc:PeopleGroup ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "assesses people group" ;
+    sh:message "Every Assessment must target exactly one PeopleGroup." ;
+  ] ;
+  sh:property [
+    sh:path prov:generated ;
+    sh:class gc:AssessmentResult ;
+    sh:minCount 1 ;
+    sh:name "generated result" ;
+    sh:message "An Assessment must generate at least one AssessmentResult." ;
+  ] .
+
+
+##############################################################################
+#  Assessment Result Shape (Entity)
+##############################################################################
+
+:AssessmentResultShape a sh:NodeShape ;
+  sh:targetClass gc:AssessmentResult ;
+  rdfs:label "Assessment Result Shape"@en ;
+  rdfs:comment "Validates gc:AssessmentResult entity instances."@en ;
+
+  sh:property [
+    sh:path gc:resultForPeopleGroup ;
+    sh:class gc:PeopleGroup ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "result for people group" ;
+    sh:message "Every AssessmentResult must reference exactly one PeopleGroup." ;
+  ] ;
+  sh:property [
+    sh:path gc:resultDate ;
+    sh:datatype xsd:dateTime ;
+    sh:minCount 1 ;
+    sh:maxCount 1 ;
+    sh:name "result date" ;
+    sh:message "Every AssessmentResult must have exactly one result date." ;
+  ] ;
+  sh:property [
+    sh:path prov:wasGeneratedBy ;
+    sh:class gc:Assessment ;
+    sh:name "was generated by" ;
+    sh:severity sh:Info ;
+    sh:message "An AssessmentResult SHOULD link back to its Assessment via prov:wasGeneratedBy." ;
+  ] ;
+
+  # ── JP AssessmentResult Metrics (v0.14.0) ────────────────────────────
+  sh:property [
+    sh:path jp:leastReached ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "least reached" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:frontier ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "frontier" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:in1040Window ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "in 10/40 Window" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:primaryReligion ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "primary religion" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:religionCode ;
+    sh:datatype xsd:integer ;
+    sh:maxCount 1 ;
+    sh:name "religion code" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:percentChristian ;
+    sh:datatype xsd:decimal ;
+    sh:minInclusive 0.0 ;
+    sh:maxInclusive 100.0 ;
+    sh:maxCount 1 ;
+    sh:name "percent Christian" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:percentIslam ;
+    sh:datatype xsd:decimal ;
+    sh:minInclusive 0.0 ;
+    sh:maxInclusive 100.0 ;
+    sh:maxCount 1 ;
+    sh:name "percent Islam" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:bibleStatus ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 0 ;
+    sh:maxInclusive 5 ;
+    sh:maxCount 1 ;
+    sh:name "Bible status" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:bibleYear ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "Bible year" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:ntYear ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "New Testament year" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:jesusFilmCode ;
+    sh:datatype xsd:string ;
+    sh:maxCount 1 ;
+    sh:name "Jesus Film code" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:hasAudioRecordings ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "has audio recordings" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:hasGospelRadio ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "has gospel radio" ;
+    sh:severity sh:Info ;
+  ] ;
+  sh:property [
+    sh:path jp:securityLevel ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 3 ;
+    sh:maxCount 1 ;
+    sh:name "security level" ;
+    sh:severity sh:Info ;
+  ] .
+
+
+##############################################################################
+#  IMB Assessment Shape
+#
+#  Validates IMB assessment properties on PeopleGroup instances.
+#  All IMB properties are optional (not every PeopleGroup has IMB data),
+#  but when present they must conform to type and cardinality constraints.
+##############################################################################
+
+:IMBAssessmentShape a sh:NodeShape ;
+  sh:targetClass gc:AssessmentResult ;
+  rdfs:label "IMB Assessment Shape"@en ;
+  rdfs:comment "Validates IMB assessment properties on AssessmentResult instances (methodology: gc:MethodologyIMBAssessment)."@en ;
+
+  # GSEC level — link to SKOS concept, at most one
+  sh:property [
+    sh:path imb:gsecLevel ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "GSEC level" ;
+    sh:message "gsecLevel must link to a skos:Concept from the GSEC scheme." ;
+  ] ;
+
+  # SPI category — link to SKOS concept, at most one
+  sh:property [
+    sh:path imb:spiCategory ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "SPI category" ;
+    sh:message "spiCategory must link to a skos:Concept from the SPI scheme." ;
+  ] ;
+
+  # Church planting status — link to SKOS concept, at most one
+  sh:property [
+    sh:path imb:churchPlantingStatus ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "church planting status" ;
+    sh:message "churchPlantingStatus must link to a skos:Concept from the ChurchPlantingStatus scheme." ;
+  ] ;
+
+  # LPI score — integer 0–6
+  sh:property [
+    sh:path imb:lpiScore ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 0 ;
+    sh:maxInclusive 6 ;
+    sh:maxCount 1 ;
+    sh:name "LPI score" ;
+    sh:message "LPI score must be an integer between 0 and 6." ;
+  ] ;
+
+  # Engagement status — boolean
+  sh:property [
+    sh:path imb:isEngaged ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "is engaged" ;
+    sh:message "isEngaged must be a boolean." ;
+  ] ;
+
+  # Congregations exist — boolean
+  sh:property [
+    sh:path imb:congregationsExist ;
+    sh:datatype xsd:boolean ;
+    sh:maxCount 1 ;
+    sh:name "congregations exist" ;
+    sh:message "congregationsExist must be a boolean." ;
+  ] ;
+
+  # Resource availability — string enums
+  sh:property [
+    sh:path imb:bibleAvailability ;
+    sh:datatype xsd:string ;
+    sh:in ( "Available" "Not Available" "None" ) ;
+    sh:maxCount 1 ;
+    sh:name "Bible availability" ;
+  ] ;
+
+  sh:property [
+    sh:path imb:jesusFilmAvailability ;
+    sh:datatype xsd:string ;
+    sh:in ( "Available" "Not Available" "None" ) ;
+    sh:maxCount 1 ;
+    sh:name "Jesus Film availability" ;
+  ] ;
+
+  sh:property [
+    sh:path imb:radioAvailability ;
+    sh:datatype xsd:string ;
+    sh:in ( "Available" "Not Available" "None" ) ;
+    sh:maxCount 1 ;
+    sh:name "radio availability" ;
+  ] ;
+
+  sh:property [
+    sh:path imb:gospelAvailability ;
+    sh:datatype xsd:string ;
+    sh:in ( "Available" "Not Available" "None" ) ;
+    sh:maxCount 1 ;
+    sh:name "gospel availability" ;
+  ] ;
+
+  sh:property [
+    sh:path imb:audioAvailability ;
+    sh:datatype xsd:string ;
+    sh:in ( "Available" "Not Available" "None" ) ;
+    sh:maxCount 1 ;
+    sh:name "audio availability" ;
+  ] ;
+
+  sh:property [
+    sh:path imb:storiesAvailability ;
+    sh:datatype xsd:string ;
+    sh:in ( "Available" "Not Available" "None" ) ;
+    sh:maxCount 1 ;
+    sh:name "stories availability" ;
+  ] ;
+
+  # Resource total — integer 0–6
+  sh:property [
+    sh:path imb:resourceTotal ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 0 ;
+    sh:maxInclusive 6 ;
+    sh:maxCount 1 ;
+    sh:name "resource total" ;
+    sh:message "Resource total must be an integer between 0 and 6." ;
+  ] ;
+
+  # Bible completion level — string enum
+  sh:property [
+    sh:path imb:bibleCompletionLevel ;
+    sh:datatype xsd:string ;
+    sh:in ( "None" "Stories" "Selections" "New Testament" "Bible" ) ;
+    sh:maxCount 1 ;
+    sh:name "Bible completion level" ;
+  ] ;
+
+  # Evangelical level — link to SKOS concept, at most one
+  sh:property [
+    sh:path imb:evangelicalLevel ;
+    sh:class skos:Concept ;
+    sh:maxCount 1 ;
+    sh:name "evangelical level" ;
+    sh:message "evangelicalLevel must link to a skos:Concept from the EvangelicalLevel scheme." ;
+  ] .

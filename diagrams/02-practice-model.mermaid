@@ -1,0 +1,48 @@
+---
+title: "Practice Model — Church Practices as Activities"
+---
+erDiagram
+    Church ||--o{ Practice : "hasPractice"
+    Practice ||--|| PracticeType : "practiceType"
+    Practice }o--o{ Person : "prov:wasAssociatedWith"
+    Practice }o--o| Location : "atLocation"
+    Practice }o--o| Language : "inLanguage"
+
+    Church {
+        boolean isActive
+        date dateStarted
+        boolean identifiesAsChurch
+        boolean hasAppointedLeaders
+        int numberOfPeopleAttending
+        int numberOfBelievers
+        int numberOfBaptizedBelievers
+    }
+
+    Practice {
+        boolean practiceIsActive
+        boolean isPerformedInternally
+        string practiceFrequency
+        date practiceDateAdopted
+        dateTime dateTimeOfActivity
+    }
+
+    PracticeType {
+        string prefLabel
+        string definition
+    }
+
+    Person {
+        string userId
+        string personName
+    }
+
+    Location {
+        string countryCode
+        double latitude
+        double longitude
+    }
+
+    Language {
+        string languageCode
+        string languageName
+    }

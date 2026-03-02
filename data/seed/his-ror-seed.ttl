@@ -1,0 +1,411 @@
+##############################################################################
+# HIS Registry of Religions (ROR) — Seed Data
+#
+# IMB's religion classification system with 3-level hierarchy:
+#   ROR3 (10 families) → ROR4 (36 sub-traditions) → ROR (42 total codes)
+#
+# Source:  gc-core/reference/data/peoplegroups.org/people_groups.csv
+#          (IMB Comprehensive People Group List)
+#
+# Named graph: <https://data.global.church/his-registries/>
+# URI pattern:  ror:{code}
+#
+# Version:    0.1.0
+# Date:       2026-02-17
+##############################################################################
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix his:     <https://data.global.church/his/> .
+@prefix ror:     <https://data.global.church/his/ror/> .
+
+
+##############################################################################
+#  CONCEPT SCHEME
+##############################################################################
+
+his:ror a skos:ConceptScheme ;
+  skos:prefLabel "HIS Registry of Religions"@en ;
+  dcterms:publisher "IMB (International Mission Board)" ;
+  dcterms:description "Religion classification system used by IMB. Two-level hierarchy: ROR3 religion families (10) → ROR4 sub-traditions (36). 42 total codes."@en ;
+  skos:hasTopConcept ror:B ,
+                     ror:C ,
+                     ror:E ,
+                     ror:H ,
+                     ror:J ,
+                     ror:M ,
+                     ror:N ,
+                     ror:O ,
+                     ror:S ,
+                     ror:U .
+
+
+##############################################################################
+#  ROR3 — RELIGION FAMILIES (top-level)
+##############################################################################
+
+ror:B a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Buddhism"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "B" ;
+  skos:narrower ror:BLA ,
+                ror:BMA ,
+                ror:BOF ,
+                ror:BTH .
+
+ror:C a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Christianity"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "C" ;
+  skos:narrower ror:CAN ,
+                ror:CFC ,
+                ror:CNP ,
+                ror:COR ,
+                ror:CPR ,
+                ror:CRC .
+
+ror:E a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Ethnoreligion"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "E" ;
+  skos:definition "ethnoreligion, consisting of practices deeply rooted in this groups ethnic identity."@en ;
+  skos:narrower ror:EAF ,
+                ror:EAN ,
+                ror:EAW ,
+                ror:ECF ,
+                ror:ECO ,
+                ror:EDA ,
+                ror:EJF ,
+                ror:ENA ,
+                ror:EPO ,
+                ror:ESA ,
+                ror:ESM ,
+                ror:EYZ .
+
+ror:H a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Hinduism"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "H" ;
+  skos:definition "Hinduism, the predominant religious tradition of the Indian subcontinent. There are many forms of Hinduism, each with its own deities and beliefs."@en ;
+  skos:narrower ror:HOF .
+
+ror:J a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Judaism"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "J" ;
+  skos:definition "Judaism, a religion developed among the ancient Hebrews and characterized by belief in one transcendent God who has revealed himself to Abraham, Moses, and the Hebrew prophets and by a religious life in accordance with Scriptures and rabbinic traditions."@en .
+
+ror:M a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Islam"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "M" ;
+  skos:narrower ror:MIS ,
+                ror:MOF ,
+                ror:MSH ,
+                ror:MSN .
+
+ror:N a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Unaffiliated"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "N" ;
+  skos:definition "unaffiliated, a category that includes atheists, agnostics, and others who do not identify with a particular world religion."@en ;
+  skos:narrower ror:NAG ,
+                ror:NAT ,
+                ror:NSE .
+
+ror:O a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Other"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "O" ;
+  skos:narrower ror:OBH ,
+                ror:ODZ ,
+                ror:OJA ,
+                ror:OKI ,
+                ror:OMA ,
+                ror:OZR .
+
+ror:S a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Sikhism"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "S" ;
+  skos:definition "Sikhism, a monotheistic religion founded in the Punjab region of India in the 15th century. Sikhs value truth as the highest ideal and pursue truthful living, rejecting the Indian caste system in favor of the equality of all humans."@en .
+
+ror:U a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Unknown"@en ;
+  skos:topConceptOf his:ror ;
+  skos:notation "U" ;
+  skos:definition "unknown."@en .
+
+
+##############################################################################
+#  ROR4 — SUB-TRADITIONS
+##############################################################################
+
+ror:BLA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Tibetan Buddhism"@en ;
+  skos:broader ror:B ;
+  skos:notation "BLA" ;
+  skos:definition "Tibetan Buddhism, a branch of Buddhism characteristic of Tibet and certain regions of the Himalayas."@en .
+
+ror:BMA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Mahayana Buddhism"@en ;
+  skos:broader ror:B ;
+  skos:notation "BMA" ;
+  skos:definition "Mahayana Buddhism, the largest major tradition of Buddhism today."@en .
+
+ror:BOF a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Folk Buddhism"@en ;
+  skos:broader ror:B ;
+  skos:notation "BOF" ;
+  skos:definition "folk Buddhism, a syncretistic blend of traditional Buddhist practices with elements of magic and superstition."@en .
+
+ror:BTH a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Theravada Buddhism"@en ;
+  skos:broader ror:B ;
+  skos:notation "BTH" ;
+  skos:definition "Theravada Buddhism, the oldest surviving branch of Buddhism."@en .
+
+ror:CAN a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Anglicanism"@en ;
+  skos:broader ror:C ;
+  skos:notation "CAN" ;
+  skos:definition "Anglicanism, a tradition within Christianity comprising the Church of England and churches historically tied to it or holding similar beliefs, worship practices, and patterns of church administration."@en .
+
+ror:CFC a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Folk Catholicism"@en ;
+  skos:broader ror:C ;
+  skos:notation "CFC" ;
+  skos:definition "folk Catholicism, characterized by local expressions of faith that combine Catholic traditions with local animistic rituals, resulting in syncretized forms of Catholicism that diverge from official church doctrine and practice."@en .
+
+ror:CNP a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Neo-Pentecostalism"@en ;
+  skos:broader ror:C ;
+  skos:notation "CNP" ;
+  skos:definition "Neo-Pentecostalism, a movement characterized by manifestations in non-Pentecostal churches of what have been traditionally categorized as Pentecostal experiences, frequently combined with prosperity gospel theology."@en .
+
+ror:COR a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Eastern Orthodoxy"@en ;
+  skos:broader ror:C ;
+  skos:notation "COR" ;
+  skos:definition "Orthodox Christianity, a branch of Christianity that includes Copts, the Assyrian Church of the East, Eastern Orthodox Churches and Oriental Orthodox Churches."@en .
+
+ror:CPR a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Protestantism"@en ;
+  skos:broader ror:C ;
+  skos:notation "CPR" ;
+  skos:definition "Protestant Christianity, a tradition that emerged from the Protestant Reformation. Protestants reject the idea of papal supremacy, instead stressing the authority of scripture alone, justification by faith alone, and salvation through Christ alone."@en .
+
+ror:CRC a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Roman Catholicism"@en ;
+  skos:broader ror:C ;
+  skos:notation "CRC" ;
+  skos:definition "Roman Catholicism, the largest branch of the Christian church and one of the oldest religious institutions in the world. Roman Catholicism teaches that it is the one true Church founded by Jesus Christ and that its bishops are the successors of Christ."@en .
+
+ror:EAF a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "African Traditional Religion"@en ;
+  skos:broader ror:E ;
+  skos:notation "EAF" ;
+  skos:definition "African Traditional Religion, a collection of beliefs and practices unique to various African ethnic groups."@en .
+
+ror:EAN a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Animism"@en ;
+  skos:broader ror:E ;
+  skos:notation "EAN" ;
+  skos:definition "animism, a religious worldview that natural physical entities--including animals, plants, and even inanimate objects--possess a spiritual essence."@en .
+
+ror:EAW a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Ancestor Worship"@en ;
+  skos:broader ror:E ;
+  skos:notation "EAW" ;
+  skos:definition "ancestor worship, based on the belief that the deceased have a continued existence and possess the ability to influence the fortune of the living."@en .
+
+ror:ECF a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Chinese Folk Religion"@en ;
+  skos:broader ror:E ;
+  skos:notation "ECF" ;
+  skos:definition "Chinese folk religion, a complex mix of beliefs and practices that includes elements of Buddhism, Taoism and ancestor veneration."@en .
+
+ror:ECO a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Confucianism"@en ;
+  skos:broader ror:E ;
+  skos:notation "ECO" ;
+  skos:definition "Confucianism, a Chinese ethical and philosophical system linked to the teachings of the Chinese philosopher Confucius."@en .
+
+ror:EDA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Daoism"@en ;
+  skos:broader ror:E ;
+  skos:notation "EDA" ;
+  skos:definition "Daoism, one of three major religions with historical roots in China, regarded as part of Chinese folk religion."@en .
+
+ror:EJF a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Shinbutsu-Shugo"@en ;
+  skos:broader ror:E ;
+  skos:notation "EJF" ;
+  skos:definition "Shinbutsu-shugo, a syncretized mixture of Shinto and Buddhism that forms a unique Japanese Folk Religion  practiced by Japanese worldwide."@en .
+
+ror:ENA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Native American religions"@en ;
+  skos:broader ror:E ;
+  skos:notation "ENA" ;
+  skos:definition "Native American religions, an umbrella term that encompasses widely varied spiritual practices unique to the culture and location of individual nations."@en .
+
+ror:EPO a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Polytheism"@en ;
+  skos:broader ror:E ;
+  skos:notation "EPO" ;
+  skos:definition "polytheism, a belief in multiple deities that are often arranged as pantheons of gods or goddeses."@en .
+
+ror:ESA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Samaritanism"@en ;
+  skos:broader ror:E ;
+  skos:notation "ESA" ;
+  skos:definition "Samaritanism, an Abrahamic religion closely related to Judaism."@en .
+
+ror:ESM a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Shamanism"@en ;
+  skos:broader ror:E ;
+  skos:notation "ESM" ;
+  skos:definition "shamanism, a practice that involves reaching an altered state of consciousness in order to interact with the spirit world."@en .
+
+ror:EYZ a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Yazidism"@en ;
+  skos:broader ror:E ;
+  skos:notation "EYZ" ;
+  skos:definition "Yazidism, a monotheistic, syncretic ethnic religion practiced by the Yazidi (Yezidi) people that fuses elements of Zoroastrianism, Sufism, and Nestorian Christianity. It teaches belief in one supreme God, Xwedê, who created the universe and entrusted its care to Seven Holy Beings (the Heptad)."@en .
+
+ror:HOF a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Folk Hinduism"@en ;
+  skos:broader ror:H ;
+  skos:notation "HOF" ;
+  skos:definition "folk Hinduism, characterized by local traditions and cults of local deities worshiped at the community level."@en .
+
+ror:MIS a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Shia Imami Ismaili Islam"@en ;
+  skos:broader ror:M ;
+  skos:notation "MIS" ;
+  skos:definition "Ismailism, the second largest branch of Shia Islam."@en .
+
+ror:MOF a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Folk Islam"@en ;
+  skos:broader ror:M ;
+  skos:notation "MOF" ;
+  skos:definition "folk Islam, a syncretistic belief system that blends traditional elements of Islam with superstitious practices such as warding off spirits with incantations and magic amulets, and reciting verses of the Qur'an to bring about miraculous healings."@en .
+
+ror:MSH a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Shia Islam"@en ;
+  skos:broader ror:M ;
+  skos:notation "MSH" ;
+  skos:definition "Shia Islam, one of two major denominations of Islam. The followers of Shia Islam are called 'Shi'as' or 'Shiites'."@en .
+
+ror:MSN a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Sunni Islam"@en ;
+  skos:broader ror:M ;
+  skos:notation "MSN" ;
+  skos:definition "Sunni Islam, the largest branch of Islam. Sunni Muslims follow the teachings of the Qur'an and consider the first four caliphs to be the rightful successors of Muhammad."@en .
+
+ror:NAG a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Agnosticism"@en ;
+  skos:broader ror:N ;
+  skos:notation "NAG" ;
+  skos:definition "agnosticism, a philosophical view that humans can never be certain in matters of so-called religious knowledge as to whether God exists or not."@en .
+
+ror:NAT a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Atheism"@en ;
+  skos:broader ror:N ;
+  skos:notation "NAT" ;
+  skos:definition "atheism, which is best described as the rejection of belief that any deities exist."@en .
+
+ror:NSE a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Secularism"@en ;
+  skos:broader ror:N ;
+  skos:notation "NSE" ;
+  skos:definition "secularism, a non-theistic philosphy that elevates human reason above the supernatural."@en .
+
+ror:OBH a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Baha'i"@en ;
+  skos:broader ror:O ;
+  skos:notation "OBH" ;
+  skos:definition "Baha'I, a universalist religion that stresses the essential unity of all faiths."@en .
+
+ror:ODZ a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Druze"@en ;
+  skos:broader ror:O ;
+  skos:notation "ODZ" ;
+  skos:definition "Druze, a small Middle Eastern religious sect characterized by secret religious practices and close social cohesion. The Druze do not permit outsiders to convert to their religion."@en .
+
+ror:OJA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Jainism"@en ;
+  skos:broader ror:O ;
+  skos:notation "OJA" ;
+  skos:definition "Jainism, an Indian religion that promotes non-violence towards all living beings and emphasizes the necessity of self-effort to move the soul towards divine consciousness and liberation."@en .
+
+ror:OKI a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Kirati"@en ;
+  skos:broader ror:O ;
+  skos:notation "OKI" ;
+  skos:definition "Kirati, a form of Shamanism practiced primarily by the Kirat or Kiranti people of the Himilayas."@en .
+
+ror:OMA a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Mandaeism"@en ;
+  skos:broader ror:O ;
+  skos:notation "OMA" ;
+  skos:definition "Mandaeism, a gnostic religion practiced primarily by the Mandaean people. Mandaeans settled in northern Mesopotamia and are still found in parts of Iraq and Iran."@en .
+
+ror:OZR a skos:Concept ;
+  skos:inScheme his:ror ;
+  skos:prefLabel "Zoroastrianism"@en ;
+  skos:broader ror:O ;
+  skos:notation "OZR" ;
+  skos:definition "Zoroastrianism, a religion and philosphy based on the teachings of the Persian prophet Zoroaster. Zoroastrians believe there is one universal and transcendent God, Ahura Mazda."@en .
+
+
+##############################################################################
+#  End of HIS ROR Seed Data
+##############################################################################

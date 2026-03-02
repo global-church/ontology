@@ -1,0 +1,106 @@
+---
+title: "Provenance Patterns — Field Activity → Data Record → Exchange"
+---
+flowchart TB
+    subgraph P1["Pattern 1: Ministry Activity with Roles"]
+        direction LR
+        P1_Person["Person"]
+        P1_MP["MinistryParticipation"]
+        P1_Role["FieldWorkerRole"]
+        P1_Act["MinistryActivity"]
+        P1_Loc["Location"]
+        P1_PG["PeopleGroup"]
+
+        P1_Act -- "prov:qualifiedAssociation" --> P1_MP
+        P1_MP -- "prov:agent" --> P1_Person
+        P1_MP -- "participationRole" --> P1_Role
+        P1_Act -- "atLocation" --> P1_Loc
+        P1_Act -- "engagesPeopleGroup" --> P1_PG
+    end
+
+    subgraph P2["Pattern 2: Church Formation"]
+        direction LR
+        P2_Person["Person"]
+        P2_CF["ChurchFormation\n(prov:Activity)"]
+        P2_Church["Church\n(prov:Entity)"]
+
+        P2_CF -- "prov:wasAssociatedWith" --> P2_Person
+        P2_CF -- "prov:generated" --> P2_Church
+        P2_Church -. "prov:wasGeneratedBy" .-> P2_CF
+        P2_Church -. "prov:wasAttributedTo" .-> P2_Person
+    end
+
+    subgraph P3["Pattern 3: Church Practice"]
+        direction LR
+        P3_Church["Church"]
+        P3_Prac["Practice\n(⊆ MinistryActivity)"]
+        P3_Type["BaptismPractice\n(PracticeType)"]
+        P3_Person["Person"]
+
+        P3_Church -- "hasPractice" --> P3_Prac
+        P3_Prac -- "practiceType" --> P3_Type
+        P3_Prac -- "prov:wasAssociatedWith" --> P3_Person
+    end
+
+    subgraph P4["Pattern 4: Data Recording"]
+        direction LR
+        P4_Person["Person\n(Recorder)"]
+        P4_DRA["DataRecording\nActivity"]
+        P4_MA["MinistryActivity"]
+        P4_ER["EngagementRecord\n(prov:Entity)"]
+        P4_DS["DataSource"]
+
+        P4_DRA -- "prov:wasAssociatedWith" --> P4_Person
+        P4_DRA -- "recordsActivity\n(⊆ prov:used)" --> P4_MA
+        P4_DRA -- "prov:generated" --> P4_ER
+        P4_ER -. "prov:wasAttributedTo" .-> P4_DS
+    end
+
+    subgraph P5["Pattern 5: Data Exchange"]
+        direction LR
+        P5_Bridge["GCBridge\n(SoftwareAgent)"]
+        P5_DEA["DataExchange\nActivity"]
+        P5_EP["ExchangePayload\n(prov:Collection)"]
+        P5_ER["EngagementRecord"]
+
+        P5_DEA -- "prov:wasAssociatedWith" --> P5_Bridge
+        P5_DEA -- "prov:used" --> P5_EP
+        P5_EP -- "prov:hadMember" --> P5_ER
+    end
+
+    P1 ~~~ P2
+    P2 ~~~ P3
+    P3 ~~~ P4
+    subgraph P6["Pattern 6: Multi-Source Engagement Assessment (3D Insight)"]
+        direction LR
+        P6_Person["Person / DataSource"]
+        P6_EA["EngagementAssessment\n(prov:Activity)"]
+        P6_DS["DataSet"]
+        P6_EP["ExchangePayload"]
+        P6_ER["EngagementRecord"]
+        P6_ES["EngagementState\n(prov:Entity)"]
+        P6_PG["PeopleGroup"]
+        P6_Str["EngagementStrength\nLevel"]
+        P6_Acc["AcceleratorScore"]
+
+        P6_EA -- "prov:wasAssociatedWith" --> P6_Person
+        P6_EA -- "assessesPeopleGroup" --> P6_PG
+        P6_EA -- "assessmentUsedDataSet\n(⊆ prov:used)" --> P6_DS
+        P6_EA -- "assessmentUsedPayload\n(⊆ prov:used)" --> P6_EP
+        P6_EA -- "assessmentUsedRecord\n(⊆ prov:used)" --> P6_ER
+        P6_EA -- "prov:generated" --> P6_ES
+        P6_ES -. "prov:wasGeneratedBy" .-> P6_EA
+        P6_ES -- "stateForPeopleGroup" --> P6_PG
+        P6_ES -- "engagementStrength" --> P6_Str
+        P6_ES -- "hasAcceleratorScore" --> P6_Acc
+    end
+
+    P4 ~~~ P5
+    P5 ~~~ P6
+
+    style P1 fill:#e8f5e9,stroke:#388e3c
+    style P2 fill:#e3f2fd,stroke:#1565c0
+    style P3 fill:#fff3e0,stroke:#ef6c00
+    style P4 fill:#f3e5f5,stroke:#7b1fa2
+    style P5 fill:#fce4ec,stroke:#c62828
+    style P6 fill:#e0f2f1,stroke:#00695c

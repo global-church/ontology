@@ -1,0 +1,66 @@
+---
+title: "GC-Core Ontology — PROV-O Three-Pillar Overview"
+---
+flowchart TB
+    subgraph Agents["prov:Agent — Who"]
+        direction TB
+        Person
+        Organization
+        Team
+        DataSource
+        GCBridge
+    end
+
+    subgraph Activities["prov:Activity — What Happened"]
+        direction TB
+        MA["MinistryActivity"]
+        CF["ChurchFormation"]
+        GC["GospelConversation"]
+        PW["PrayerWalk"]
+        DA["DiscipleshipActivity"]
+        BA["BaptismActivity"]
+        LD["LeadershipDevelopment"]
+        MD["MediaDistribution"]
+        TA["TrainingActivity"]
+        PR["Practice ★"]
+        DRA["DataRecordingActivity"]
+        DEA["DataExchangeActivity"]
+        EA["EngagementAssessment ★"]
+    end
+
+    subgraph Entities["prov:Entity — What Was Produced / Used"]
+        direction TB
+        Church
+        CWT["ChurchWebsiteText"]
+        Ovr["Overture (Maps) ★"]
+        PG["PeopleGroup"]
+        Loc["Location"]
+        ER["EngagementRecord"]
+        EP["ExchangePayload"]
+        DS["DataSet"]
+        ES["EngagementState ★"]
+        STSC["STSCAssessment"]
+        PGE["PeopleGroupEngagement"]
+        PT["PracticeType ★"]
+        ESL["EngagementStrengthLevel ★"]
+        EAcc["EngagementAccelerator ★"]
+    end
+
+    subgraph Roles["prov:Role — In What Capacity"]
+        direction TB
+        MR["MinistryRole"]
+        FWR["FieldWorkerRole"]
+        LRR["LeaderRole"]
+        TRR["TrainerRole"]
+        RRR["RecorderRole"]
+    end
+
+    Agents -- "prov:wasAssociatedWith" --> Activities
+    Activities -- "prov:generated\nprov:used" --> Entities
+    Entities -- "prov:wasAttributedTo" --> Agents
+    Agents -. "qualified via\nMinistryParticipation" .-> Roles
+
+    style Agents fill:#e1f5fe,stroke:#0288d1,stroke-width:2px
+    style Activities fill:#e8f5e9,stroke:#388e3c,stroke-width:2px
+    style Entities fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    style Roles fill:#fce4ec,stroke:#c62828,stroke-width:2px

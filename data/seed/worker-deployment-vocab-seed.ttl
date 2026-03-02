@@ -1,0 +1,120 @@
+##############################################################################
+# Worker Deployment Vocabularies — SKOS Concept Schemes
+#
+# Two controlled vocabularies for worker deployment intelligence:
+#   1. Deployment Status — Active, Furlough, In Training, Retired
+#   2. Ministry Methodology — CPM, DMM, Four Fields, T4T, Traditional
+#
+# These are gc:-owned vocabularies (not external registries), loaded
+# alongside seed data for worker deployment tracking.
+#
+# Named graph: <https://data.global.church/denver/>
+# Namespace:   https://ontology.global.church/core#
+#
+# Version:    0.1.0
+# Date:       2026-02-23
+##############################################################################
+
+@prefix skos:    <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:     <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs:    <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix gc:      <https://ontology.global.church/core#> .
+
+
+##############################################################################
+#  1. Deployment Status
+#
+#  Four-value classification of a worker's current deployment state.
+#  Used via gc:deploymentStatus on gc:Person.
+##############################################################################
+
+gc:DeploymentStatusScheme a skos:ConceptScheme ;
+  skos:prefLabel "Worker Deployment Status"@en ;
+  dcterms:publisher "Global Church Alliance" ;
+  dcterms:description "Four-value classification of a worker's current deployment state: actively serving on the field, on furlough, in pre-field training, or retired from field service."@en ;
+  skos:hasTopConcept gc:DeploymentActive ,
+                     gc:DeploymentFurlough ,
+                     gc:DeploymentInTraining ,
+                     gc:DeploymentRetired .
+
+gc:DeploymentActive a skos:Concept ;
+  skos:inScheme gc:DeploymentStatusScheme ;
+  skos:topConceptOf gc:DeploymentStatusScheme ;
+  skos:prefLabel "Active"@en ;
+  skos:notation "ACT" ;
+  skos:definition "The worker is currently serving on the field in an active deployment."@en .
+
+gc:DeploymentFurlough a skos:Concept ;
+  skos:inScheme gc:DeploymentStatusScheme ;
+  skos:topConceptOf gc:DeploymentStatusScheme ;
+  skos:prefLabel "On Furlough"@en ;
+  skos:notation "FUR" ;
+  skos:definition "The worker is on temporary leave from field service, typically for rest, reporting, or fundraising in their home country."@en .
+
+gc:DeploymentInTraining a skos:Concept ;
+  skos:inScheme gc:DeploymentStatusScheme ;
+  skos:topConceptOf gc:DeploymentStatusScheme ;
+  skos:prefLabel "In Training"@en ;
+  skos:notation "TRN" ;
+  skos:definition "The worker is in pre-field or ongoing training, preparing for deployment or skill development."@en .
+
+gc:DeploymentRetired a skos:Concept ;
+  skos:inScheme gc:DeploymentStatusScheme ;
+  skos:topConceptOf gc:DeploymentStatusScheme ;
+  skos:prefLabel "Retired"@en ;
+  skos:notation "RET" ;
+  skos:definition "The worker is no longer in active field service and has retired from their deployment."@en .
+
+
+##############################################################################
+#  2. Ministry Methodology
+#
+#  Five recognized strategic approaches to ministry and church planting.
+#  Used via gc:usesMethodology on gc:MinistryActivity.
+##############################################################################
+
+gc:MethodologyScheme a skos:ConceptScheme ;
+  skos:prefLabel "Ministry Methodology"@en ;
+  dcterms:publisher "Global Church Alliance" ;
+  dcterms:description "Five recognized strategic approaches to ministry and church planting. Activities (not persons) are classified by methodology, since the same worker may use different methodologies in different contexts."@en ;
+  skos:hasTopConcept gc:MethodologyCPM ,
+                     gc:MethodologyDMM ,
+                     gc:MethodologyFourFields ,
+                     gc:MethodologyT4T ,
+                     gc:MethodologyTraditional .
+
+gc:MethodologyCPM a skos:Concept ;
+  skos:inScheme gc:MethodologyScheme ;
+  skos:topConceptOf gc:MethodologyScheme ;
+  skos:prefLabel "Church Planting Movement (CPM)"@en ;
+  skos:notation "CPM" ;
+  skos:definition "A rapid multiplication of indigenous churches planting churches that sweeps through a people group or population segment. Characterized by local leadership, simple reproducible patterns, and exponential growth."@en .
+
+gc:MethodologyDMM a skos:Concept ;
+  skos:inScheme gc:MethodologyScheme ;
+  skos:topConceptOf gc:MethodologyScheme ;
+  skos:prefLabel "Disciple Making Movement (DMM)"@en ;
+  skos:notation "DMM" ;
+  skos:definition "A methodology focused on making disciples who make disciples through Discovery Bible Studies, obedience-based discipleship, and person-of-peace strategies."@en .
+
+gc:MethodologyFourFields a skos:Concept ;
+  skos:inScheme gc:MethodologyScheme ;
+  skos:topConceptOf gc:MethodologyScheme ;
+  skos:prefLabel "Four Fields"@en ;
+  skos:notation "4F" ;
+  skos:definition "A church planting framework organizing work into four fields: entry (empty field), gospel sowing (seeded field), discipleship (growing field), and church formation (harvested field)."@en .
+
+gc:MethodologyT4T a skos:Concept ;
+  skos:inScheme gc:MethodologyScheme ;
+  skos:topConceptOf gc:MethodologyScheme ;
+  skos:prefLabel "Training for Trainers (T4T)"@en ;
+  skos:notation "T4T" ;
+  skos:definition "A multiplicative training methodology where each trainee is expected to train others within a short cycle, creating cascading generations of trainers and new believers."@en .
+
+gc:MethodologyTraditional a skos:Concept ;
+  skos:inScheme gc:MethodologyScheme ;
+  skos:topConceptOf gc:MethodologyScheme ;
+  skos:prefLabel "Traditional Church Planting"@en ;
+  skos:notation "TCP" ;
+  skos:definition "Conventional church planting approach: a church planter or team establishes a single congregation through evangelism, discipleship, and formal organization with appointed leadership."@en .

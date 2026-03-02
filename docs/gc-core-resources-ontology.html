@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GC-Core Ontology — Resources & Training Structure</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #0f1117;
+    color: #e4e6ed;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ── Top Bar ─────────────────────────────────────────────── */
+  .top-bar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 12px 24px;
+    background: rgba(15, 17, 23, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid #2e3344;
+  }
+  .top-bar h1 {
+    font-size: 16px; font-weight: 600; color: #e4e6ed;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .top-bar h1 .prefix { color: #6c8cff; font-weight: 700; }
+  .top-bar .subtitle { font-size: 12px; color: #8b90a0; }
+  .top-bar .controls { display: flex; gap: 8px; }
+  .top-bar .controls button {
+    background: #1a1d27; border: 1px solid #2e3344; color: #8b90a0;
+    padding: 6px 14px; border-radius: 6px; font-size: 11px; font-family: inherit;
+    cursor: pointer; transition: all 0.2s;
+  }
+  .top-bar .controls button:hover,
+  .top-bar .controls button.active {
+    background: #232733; color: #e4e6ed; border-color: #6c8cff;
+  }
+
+  /* ── SVG Canvas ──────────────────────────────────────────── */
+  svg { width: 100%; height: 100%; display: block; }
+
+  /* ── Tooltip ─────────────────────────────────────────────── */
+  .tooltip {
+    position: fixed; pointer-events: none; z-index: 200;
+    background: #1a1d27; border: 1px solid #2e3344; border-radius: 8px;
+    padding: 12px 16px; max-width: 340px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    opacity: 0; transition: opacity 0.15s;
+  }
+  .tooltip.show { opacity: 1; }
+  .tooltip .tt-label {
+    font-size: 13px; font-weight: 600; margin-bottom: 4px;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tooltip .tt-type {
+    font-size: 10px; font-weight: 500; padding: 2px 6px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+  }
+  .tooltip .tt-desc { font-size: 11px; color: #8b90a0; line-height: 1.5; }
+  .tooltip .tt-uri { font-size: 10px; color: #6c8cff; margin-top: 4px; font-family: monospace; }
+
+  /* ── Legend Panel ─────────────────────────────────────────── */
+  .legend {
+    position: fixed; bottom: 16px; left: 16px; z-index: 100;
+    background: rgba(26, 29, 39, 0.92); backdrop-filter: blur(12px);
+    border: 1px solid #2e3344; border-radius: 10px;
+    padding: 16px; min-width: 220px;
+  }
+  .legend h3 {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #8b90a0; margin-bottom: 10px;
+  }
+  .legend-item {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 6px; font-size: 11px; color: #e4e6ed;
+  }
+  .legend-node {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid; flex-shrink: 0;
+  }
+  .legend-node.diamond {
+    border-radius: 2px; transform: rotate(45deg); width: 10px; height: 10px;
+  }
+  .legend-node.rect {
+    border-radius: 3px; width: 16px; height: 10px;
+  }
+  .legend-link {
+    width: 20px; height: 2px; flex-shrink: 0; border-radius: 1px;
+  }
+  .legend-sep { height: 1px; background: #2e3344; margin: 8px 0; }
+
+  /* ── Detail Panel (right sidebar) ────────────────────────── */
+  .detail-panel {
+    position: fixed; top: 52px; right: 0; bottom: 0; width: 360px; z-index: 90;
+    background: rgba(26, 29, 39, 0.95); backdrop-filter: blur(12px);
+    border-left: 1px solid #2e3344; padding: 20px;
+    transform: translateX(100%); transition: transform 0.3s ease;
+    overflow-y: auto;
+  }
+  .detail-panel.open { transform: translateX(0); }
+  .detail-panel .close-btn {
+    position: absolute; top: 12px; right: 12px;
+    background: none; border: none; color: #8b90a0; cursor: pointer;
+    font-size: 18px; line-height: 1;
+  }
+  .detail-panel h2 { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .detail-panel .dp-type {
+    display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 8px;
+    border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;
+    margin-bottom: 12px;
+  }
+  .detail-panel .dp-uri {
+    font-size: 10px; color: #6c8cff; font-family: monospace;
+    margin-bottom: 12px; word-break: break-all;
+  }
+  .detail-panel .dp-desc {
+    font-size: 12px; color: #8b90a0; line-height: 1.6; margin-bottom: 16px;
+  }
+  .detail-panel .dp-section {
+    margin-bottom: 16px;
+  }
+  .detail-panel .dp-section h3 {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #8b90a0; margin-bottom: 8px;
+    padding-bottom: 4px; border-bottom: 1px solid #2e3344;
+  }
+  .detail-panel .dp-prop {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 4px 0; font-size: 11px;
+  }
+  .detail-panel .dp-prop .prop-name { color: #e4e6ed; font-weight: 500; }
+  .detail-panel .dp-prop .prop-range {
+    color: #6c8cff; font-size: 10px; font-family: monospace;
+  }
+  .detail-panel .dp-conn {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 8px; margin-bottom: 4px;
+    background: #232733; border-radius: 6px; font-size: 11px;
+    cursor: pointer; transition: background 0.15s;
+  }
+  .detail-panel .dp-conn:hover { background: #2e3344; }
+  .detail-panel .dp-conn .conn-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+
+  /* ── Reach-back pulse animation ──────────────────────────── */
+  @keyframes rb-pulse {
+    0%, 100% { stroke-opacity: 0.3; stroke-width: 1.5; }
+    50% { stroke-opacity: 0.7; stroke-width: 2.5; }
+  }
+  .link-activity-resource { animation: rb-pulse 3s ease-in-out infinite; }
+
+  /* ── Fade in ─────────────────────────────────────────────── */
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  .legend, .top-bar { animation: fadeIn 0.4s ease; }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="top-bar">
+  <div>
+    <h1><span class="prefix">GC-Core</span> Resources Ontology</h1>
+    <div class="subtitle">Interactive ontology map — v0.12.0 · Orthogonal classification: Domain × Format × Function</div>
+  </div>
+  <div class="controls">
+    <button class="active" data-view="full">Full View</button>
+    <button data-view="dimensions">3 Dimensions</button>
+    <button data-view="domain">Domain Focus</button>
+    <button data-view="activities">Activity Links</button>
+    <button id="resetBtn">Reset Zoom</button>
+  </div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip"></div>
+
+<!-- Detail Panel -->
+<div class="detail-panel" id="detailPanel">
+  <button class="close-btn" id="closePanel">&times;</button>
+  <div id="panelContent"></div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <h3>Node Types</h3>
+  <div class="legend-item">
+    <div class="legend-node" style="background:#6c8cff15;border-color:#6c8cff;"></div>
+    Base / Abstract Class
+  </div>
+  <div class="legend-item">
+    <div class="legend-node" style="background:#ffa64d15;border-color:#ffa64d;"></div>
+    Activity Class
+  </div>
+  <div class="legend-item">
+    <div class="legend-node" style="background:#ff475715;border-color:#ff4757;"></div>
+    SKOS Vocabulary
+  </div>
+  <div class="legend-item">
+    <div class="legend-node diamond" style="background:#f5c54215;border-color:#f5c542;"></div>
+    SKOS Concept (Value)
+  </div>
+  <div class="legend-item">
+    <div class="legend-node rect" style="background:#47b5ff15;border-color:#47b5ff;"></div>
+    External Link Target
+  </div>
+  <div class="legend-sep"></div>
+  <h3>Connections</h3>
+  <div class="legend-item">
+    <div class="legend-link" style="background:#4ecb71;"></div>
+    rdfs:subClassOf / skos:broader
+  </div>
+  <div class="legend-item">
+    <div class="legend-link" style="background:#6c8cff;"></div>
+    Object Property
+  </div>
+  <div class="legend-item">
+    <div class="legend-link" style="background:#f5c542; opacity:0.6;"></div>
+    Activity/Role Link
+  </div>
+  <div class="legend-item">
+    <div class="legend-link" style="background:#ff4757; opacity:0.5;"></div>
+    skos:inScheme
+  </div>
+</div>
+
+<!-- SVG -->
+<svg id="graph"></svg>
+
+<script>
+// ────────────────────────────────────────────────────────────────────────────
+//  DATA: Ontology nodes & edges — v0.12.0 orthogonal resource model
+// ────────────────────────────────────────────────────────────────────────────
+
+const COLORS = {
+  base:     '#6c8cff',
+  activity: '#ffa64d',
+  vocab:    '#ff4757',
+  concept:  '#f5c542',
+  external: '#47b5ff',
+  role:     '#c084fc',
+};
+
+const nodes = [
+  // === Core base classes ===
+  { id: 'prov:Entity', label: 'prov:Entity', type: 'base', group: 'prov',
+    desc: 'W3C PROV-O base class. All resources are provenance-tracked entities.',
+    uri: 'http://www.w3.org/ns/prov#Entity', radius: 28 },
+  { id: 'gc:MissionResource', label: 'MissionResource', type: 'base', group: 'resource',
+    desc: 'A deployable resource available for or needed by a people group. Classified along three orthogonal dimensions: content domain (gc:resourceDomain), delivery format (gc:resourceFormat), and pedagogical function (gc:resourceFunction).',
+    uri: 'https://ontology.global.church/core#MissionResource', radius: 40 },
+  { id: 'gc:ResourceCollection', label: 'ResourceCollection', type: 'base', group: 'resource',
+    desc: 'A curated set of resources forming a coherent series, curriculum, or toolkit.',
+    uri: 'https://ontology.global.church/core#ResourceCollection', radius: 22 },
+
+  // === Activity classes ===
+  { id: 'gc:MinistryActivity', label: 'MinistryActivity', type: 'activity', group: 'activity',
+    desc: 'Base class for all ministry activities (prov:Activity). Activities link to resources via gc:usesResource.',
+    uri: 'https://ontology.global.church/core#MinistryActivity', radius: 26 },
+  { id: 'gc:TrainingActivity', label: 'TrainingActivity', type: 'activity', group: 'activity',
+    desc: 'A training event or program for equipping field workers.',
+    uri: 'https://ontology.global.church/core#TrainingActivity', radius: 24 },
+  { id: 'gc:LeadershipDevelopment', label: 'LeadershipDev', type: 'activity', group: 'activity',
+    desc: 'Training or mentoring activity for developing ministry leaders.',
+    uri: 'https://ontology.global.church/core#LeadershipDevelopment', radius: 24 },
+  { id: 'gc:MediaDistribution', label: 'MediaDistribution', type: 'activity', group: 'activity',
+    desc: 'Distribution of gospel media materials such as films, audio, or literature.',
+    uri: 'https://ontology.global.church/core#MediaDistribution', radius: 22 },
+
+  // === Three Orthogonal SKOS Vocabulary Schemes ===
+  { id: 'gc:ResourceDomainScheme', label: 'Resource Domain', type: 'vocab', group: 'vocab-domain',
+    desc: 'Content domain classification for ministry resources. Hierarchical — top concepts are broad domains (Scripture, Evangelism, Discipleship, Leadership, Worship, Community Dev), narrower concepts are specializations.',
+    uri: 'https://ontology.global.church/core#ResourceDomainScheme', radius: 26 },
+  { id: 'gc:ResourceFormatScheme', label: 'Resource Format', type: 'vocab', group: 'vocab-format',
+    desc: 'SKOS concept scheme for resource delivery formats (Text, Audio, Video, App, Web, Sign Language, Print, Podcast).',
+    uri: 'https://ontology.global.church/core#ResourceFormatScheme', radius: 24 },
+  { id: 'gc:ResourceFunctionScheme', label: 'Resource Function', type: 'vocab', group: 'vocab-function',
+    desc: 'How the resource is used — its pedagogical or ministry function (Curriculum, Manual, Workshop, Online Course, Tool, Broadcast, Translation, Reference Text).',
+    uri: 'https://ontology.global.church/core#ResourceFunctionScheme', radius: 24 },
+  { id: 'gc:ResourceStatusScheme', label: 'Resource Status', type: 'vocab', group: 'vocab-status',
+    desc: 'SKOS concept scheme for resource lifecycle stages. Progression: NotStarted → Planned → InProgress → InReview → Available.',
+    uri: 'https://ontology.global.church/core#ResourceStatusScheme', radius: 22 },
+
+  // === Resource Domain Concepts (top-level) ===
+  { id: 'gc:DomainScripture', label: 'Scripture', type: 'concept', group: 'vocab-domain',
+    desc: 'Bible translation or Scripture-derived content.', radius: 16 },
+  { id: 'gc:DomainEvangelism', label: 'Evangelism', type: 'concept', group: 'vocab-domain',
+    desc: 'Content designed for gospel sharing and outreach.', radius: 16 },
+  { id: 'gc:DomainDiscipleship', label: 'Discipleship', type: 'concept', group: 'vocab-domain',
+    desc: 'Content for spiritual growth, equipping, and education.', radius: 16 },
+  { id: 'gc:DomainLeadership', label: 'Leadership', type: 'concept', group: 'vocab-domain',
+    desc: 'Content for equipping ministry leaders.', radius: 16 },
+  { id: 'gc:DomainWorship', label: 'Worship', type: 'concept', group: 'vocab-domain',
+    desc: 'Music, liturgy, and prayer resources.', radius: 13 },
+  { id: 'gc:DomainCommunityDev', label: 'Community Dev', type: 'concept', group: 'vocab-domain',
+    desc: 'Holistic community development, compassion ministries.', radius: 13 },
+
+  // === Scripture sub-domains ===
+  { id: 'gc:DomainScriptureFullBible', label: 'Full Bible', type: 'concept', group: 'vocab-domain',
+    desc: 'Complete Old and New Testament translation.', radius: 11 },
+  { id: 'gc:DomainScriptureNT', label: 'New Testament', type: 'concept', group: 'vocab-domain',
+    desc: 'Complete New Testament translation.', radius: 11 },
+  { id: 'gc:DomainScripturePortions', label: 'Portions', type: 'concept', group: 'vocab-domain',
+    desc: 'Selected portions of Scripture translated.', radius: 11 },
+
+  // === Evangelism sub-domains ===
+  { id: 'gc:DomainGospelPresentation', label: 'Gospel Pres.', type: 'concept', group: 'vocab-domain',
+    desc: 'A prepared gospel message or tract.', radius: 11 },
+  { id: 'gc:DomainConversationGuide', label: 'Conv. Guide', type: 'concept', group: 'vocab-domain',
+    desc: 'A structured tool for faith conversations.', radius: 11 },
+  { id: 'gc:DomainDigitalOutreach', label: 'Digital Outreach', type: 'concept', group: 'vocab-domain',
+    desc: 'Website, ad campaign, or platform for online evangelism.', radius: 11 },
+  { id: 'gc:DomainTestimony', label: 'Testimony', type: 'concept', group: 'vocab-domain',
+    desc: 'Personal testimony or story-based content.', radius: 11 },
+
+  // === Discipleship sub-domains ===
+  { id: 'gc:DomainBibleStudy', label: 'Bible Study', type: 'concept', group: 'vocab-domain',
+    desc: 'A guided study of a biblical text or theme.', radius: 11 },
+  { id: 'gc:DomainDevotional', label: 'Devotional', type: 'concept', group: 'vocab-domain',
+    desc: 'Content for personal spiritual growth.', radius: 11 },
+  { id: 'gc:DomainOralBibleStory', label: 'Oral Bible Story', type: 'concept', group: 'vocab-domain',
+    desc: 'Audio narrative of biblical stories for oral cultures.', radius: 11 },
+
+  // === Leadership sub-domains ===
+  { id: 'gc:DomainChurchPlanting', label: 'Church Planting', type: 'concept', group: 'vocab-domain',
+    desc: 'Church planting methodology and training.', radius: 11 },
+  { id: 'gc:DomainMovementStrategy', label: 'Movement Strat.', type: 'concept', group: 'vocab-domain',
+    desc: 'Movement strategy resources (CPM/DMM).', radius: 11 },
+
+  // === Resource Format Concepts ===
+  { id: 'gc:FormatText', label: 'Text', type: 'concept', group: 'vocab-format', desc: 'Written text.', notation: 'TXT', radius: 11 },
+  { id: 'gc:FormatAudio', label: 'Audio', type: 'concept', group: 'vocab-format', desc: 'Audio recording.', notation: 'AUD', radius: 11 },
+  { id: 'gc:FormatVideo', label: 'Video', type: 'concept', group: 'vocab-format', desc: 'Video content.', notation: 'VID', radius: 11 },
+  { id: 'gc:FormatApp', label: 'Mobile App', type: 'concept', group: 'vocab-format', desc: 'Native mobile application.', notation: 'APP', radius: 11 },
+  { id: 'gc:FormatWeb', label: 'Website', type: 'concept', group: 'vocab-format', desc: 'Web-based content.', notation: 'WEB', radius: 11 },
+  { id: 'gc:FormatSignLanguage', label: 'Sign Lang.', type: 'concept', group: 'vocab-format', desc: 'Sign language content.', notation: 'SGN', radius: 11 },
+  { id: 'gc:FormatPrint', label: 'Print', type: 'concept', group: 'vocab-format', desc: 'Printed material.', notation: 'PRT', radius: 11 },
+  { id: 'gc:FormatPodcast', label: 'Podcast', type: 'concept', group: 'vocab-format', desc: 'Episodic audio content.', notation: 'POD', radius: 11 },
+
+  // === Resource Function Concepts ===
+  { id: 'gc:FunctionCurriculum', label: 'Curriculum', type: 'concept', group: 'vocab-function',
+    desc: 'Structured course of study or lesson sequence.', radius: 12 },
+  { id: 'gc:FunctionManual', label: 'Manual / Guide', type: 'concept', group: 'vocab-function',
+    desc: 'Reference guide or handbook.', radius: 12 },
+  { id: 'gc:FunctionWorkshop', label: 'Workshop', type: 'concept', group: 'vocab-function',
+    desc: 'Materials for a facilitated workshop.', radius: 12 },
+  { id: 'gc:FunctionOnlineCourse', label: 'Online Course', type: 'concept', group: 'vocab-function',
+    desc: 'Self-paced or instructor-led digital course.', radius: 12 },
+  { id: 'gc:FunctionTool', label: 'Interactive Tool', type: 'concept', group: 'vocab-function',
+    desc: 'A tool used during ministry activities.', radius: 12 },
+  { id: 'gc:FunctionBroadcast', label: 'Broadcast', type: 'concept', group: 'vocab-function',
+    desc: 'Content for radio, TV, or streaming.', radius: 12 },
+  { id: 'gc:FunctionTranslation', label: 'Translation', type: 'concept', group: 'vocab-function',
+    desc: 'A language translation of source content.', radius: 12 },
+  { id: 'gc:FunctionReferenceText', label: 'Reference Text', type: 'concept', group: 'vocab-function',
+    desc: 'Source text for reading, study, or lookup.', radius: 12 },
+
+  // === Resource Status Concepts ===
+  { id: 'gc:ResourceNotStarted', label: 'Not Started', type: 'concept', group: 'vocab-status', notation: 'NST', radius: 11 },
+  { id: 'gc:ResourcePlanned', label: 'Planned', type: 'concept', group: 'vocab-status', notation: 'PLA', radius: 11 },
+  { id: 'gc:ResourceInProgress', label: 'In Progress', type: 'concept', group: 'vocab-status', notation: 'INP', radius: 11 },
+  { id: 'gc:ResourceInReview', label: 'In Review', type: 'concept', group: 'vocab-status', notation: 'REV', radius: 11 },
+  { id: 'gc:ResourceAvailable', label: 'Available', type: 'concept', group: 'vocab-status', notation: 'AVL', radius: 11 },
+
+  // === External link targets ===
+  { id: 'gc:PeopleGroup', label: 'PeopleGroup', type: 'external', group: 'external',
+    desc: 'A people group entity. Resources target people groups via gc:resourceForPeopleGroup.',
+    uri: 'https://ontology.global.church/core#PeopleGroup', radius: 22 },
+  { id: 'gc:Organization', label: 'Organization', type: 'external', group: 'external',
+    desc: 'An organizational agent (prov:Agent). Linked via gc:resourceProvider.',
+    uri: 'https://ontology.global.church/core#Organization', radius: 22 },
+  { id: 'skos:Concept(ROL)', label: 'ROL Language', type: 'external', group: 'external',
+    desc: 'Registry of Languages (ROL) SKOS concept. Linked via gc:resourceLanguage.',
+    uri: 'https://data.global.church/his/rol/', radius: 20 },
+  { id: 'jp:EngagementAccelerator', label: 'JP Accelerator', type: 'external', group: 'external',
+    desc: 'Joshua Project engagement accelerator. Linked via gc:relatedAccelerator and skos:relatedMatch to domain concepts.',
+    uri: 'https://ontology.global.church/joshuaproject#EngagementAccelerator', radius: 20 },
+
+  // === Roles ===
+  { id: 'gc:TrainerRole', label: 'Trainer Role', type: 'role', group: 'role',
+    desc: 'Role of a person equipping others through training activities.',
+    uri: 'https://ontology.global.church/core#TrainerRole', radius: 18 },
+  { id: 'gc:TranslatorRole', label: 'Translator Role', type: 'role', group: 'role',
+    desc: 'Role of a person translating Scripture, media, or training materials.',
+    uri: 'https://ontology.global.church/core#TranslatorRole', radius: 18 },
+];
+
+const links = [
+  // === Subclass hierarchy ===
+  { source: 'gc:MissionResource', target: 'prov:Entity', type: 'subclass', label: 'rdfs:subClassOf' },
+  { source: 'gc:ResourceCollection', target: 'prov:Entity', type: 'subclass', label: 'rdfs:subClassOf' },
+
+  // === Activity subclass ===
+  { source: 'gc:TrainingActivity', target: 'gc:MinistryActivity', type: 'subclass', label: 'rdfs:subClassOf' },
+  { source: 'gc:LeadershipDevelopment', target: 'gc:MinistryActivity', type: 'subclass', label: 'rdfs:subClassOf' },
+  { source: 'gc:MediaDistribution', target: 'gc:MinistryActivity', type: 'subclass', label: 'rdfs:subClassOf' },
+
+  // === Activity→Resource link ===
+  { source: 'gc:MinistryActivity', target: 'gc:MissionResource', type: 'activity-resource', label: 'gc:usesResource' },
+
+  // === Resource → three orthogonal SKOS dimensions ===
+  { source: 'gc:MissionResource', target: 'gc:ResourceDomainScheme', type: 'property', label: 'gc:resourceDomain' },
+  { source: 'gc:MissionResource', target: 'gc:ResourceFormatScheme', type: 'property', label: 'gc:resourceFormat' },
+  { source: 'gc:MissionResource', target: 'gc:ResourceFunctionScheme', type: 'property', label: 'gc:resourceFunction' },
+  { source: 'gc:MissionResource', target: 'gc:ResourceStatusScheme', type: 'property', label: 'gc:resourceStatus' },
+
+  // === Resource → external targets ===
+  { source: 'gc:MissionResource', target: 'gc:PeopleGroup', type: 'property', label: 'gc:resourceForPeopleGroup' },
+  { source: 'gc:MissionResource', target: 'gc:Organization', type: 'property', label: 'gc:resourceProvider' },
+  { source: 'gc:MissionResource', target: 'skos:Concept(ROL)', type: 'property', label: 'gc:resourceLanguage' },
+  { source: 'gc:MissionResource', target: 'jp:EngagementAccelerator', type: 'property', label: 'gc:relatedAccelerator' },
+  { source: 'gc:MissionResource', target: 'gc:ResourceCollection', type: 'property', label: 'gc:partOfCollection' },
+
+  // === Domain hierarchy (skos:broader → topConceptOf) ===
+  { source: 'gc:DomainScripture', target: 'gc:ResourceDomainScheme', type: 'skos', label: 'topConceptOf' },
+  { source: 'gc:DomainEvangelism', target: 'gc:ResourceDomainScheme', type: 'skos', label: 'topConceptOf' },
+  { source: 'gc:DomainDiscipleship', target: 'gc:ResourceDomainScheme', type: 'skos', label: 'topConceptOf' },
+  { source: 'gc:DomainLeadership', target: 'gc:ResourceDomainScheme', type: 'skos', label: 'topConceptOf' },
+  { source: 'gc:DomainWorship', target: 'gc:ResourceDomainScheme', type: 'skos', label: 'topConceptOf' },
+  { source: 'gc:DomainCommunityDev', target: 'gc:ResourceDomainScheme', type: 'skos', label: 'topConceptOf' },
+
+  // Scripture narrower
+  { source: 'gc:DomainScriptureFullBible', target: 'gc:DomainScripture', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainScriptureNT', target: 'gc:DomainScripture', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainScripturePortions', target: 'gc:DomainScripture', type: 'subclass', label: 'skos:broader' },
+
+  // Evangelism narrower
+  { source: 'gc:DomainGospelPresentation', target: 'gc:DomainEvangelism', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainConversationGuide', target: 'gc:DomainEvangelism', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainDigitalOutreach', target: 'gc:DomainEvangelism', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainTestimony', target: 'gc:DomainEvangelism', type: 'subclass', label: 'skos:broader' },
+
+  // Discipleship narrower
+  { source: 'gc:DomainBibleStudy', target: 'gc:DomainDiscipleship', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainDevotional', target: 'gc:DomainDiscipleship', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainOralBibleStory', target: 'gc:DomainDiscipleship', type: 'subclass', label: 'skos:broader' },
+
+  // Leadership narrower
+  { source: 'gc:DomainChurchPlanting', target: 'gc:DomainLeadership', type: 'subclass', label: 'skos:broader' },
+  { source: 'gc:DomainMovementStrategy', target: 'gc:DomainLeadership', type: 'subclass', label: 'skos:broader' },
+
+  // === Format concepts → scheme ===
+  ...['gc:FormatText','gc:FormatAudio','gc:FormatVideo','gc:FormatApp','gc:FormatWeb','gc:FormatSignLanguage','gc:FormatPrint','gc:FormatPodcast']
+    .map(c => ({ source: c, target: 'gc:ResourceFormatScheme', type: 'skos', label: 'skos:inScheme' })),
+
+  // === Function concepts → scheme ===
+  ...['gc:FunctionCurriculum','gc:FunctionManual','gc:FunctionWorkshop','gc:FunctionOnlineCourse','gc:FunctionTool','gc:FunctionBroadcast','gc:FunctionTranslation','gc:FunctionReferenceText']
+    .map(c => ({ source: c, target: 'gc:ResourceFunctionScheme', type: 'skos', label: 'skos:inScheme' })),
+
+  // === Status concepts → scheme ===
+  ...['gc:ResourceNotStarted','gc:ResourcePlanned','gc:ResourceInProgress','gc:ResourceInReview','gc:ResourceAvailable']
+    .map(c => ({ source: c, target: 'gc:ResourceStatusScheme', type: 'skos', label: 'skos:inScheme' })),
+
+  // === Roles → Activities/Resources ===
+  { source: 'gc:TrainerRole', target: 'gc:TrainingActivity', type: 'activity-resource', label: 'role in' },
+  { source: 'gc:TranslatorRole', target: 'gc:MissionResource', type: 'activity-resource', label: 'translates' },
+];
+
+// ────────────────────────────────────────────────────────────────────────────
+//  D3 FORCE GRAPH
+// ────────────────────────────────────────────────────────────────────────────
+
+const width = window.innerWidth;
+const height = window.innerHeight;
+
+const svg = d3.select('#graph');
+const tooltip = d3.select('#tooltip');
+const detailPanel = d3.select('#detailPanel');
+
+// SVG defs — glow filters
+const defs = svg.append('defs');
+
+Object.entries(COLORS).forEach(([key, color]) => {
+  const filter = defs.append('filter').attr('id', `glow-${key}`)
+    .attr('x', '-50%').attr('y', '-50%').attr('width', '200%').attr('height', '200%');
+  filter.append('feGaussianBlur').attr('stdDeviation', '4').attr('result', 'blur');
+  filter.append('feFlood').attr('flood-color', color).attr('flood-opacity', '0.4').attr('result', 'color');
+  filter.append('feComposite').attr('in', 'color').attr('in2', 'blur').attr('operator', 'in').attr('result', 'glow');
+  const merge = filter.append('feMerge');
+  merge.append('feMergeNode').attr('in', 'glow');
+  merge.append('feMergeNode').attr('in', 'SourceGraphic');
+});
+
+// Arrowhead markers
+defs.append('marker').attr('id', 'arrow').attr('viewBox', '0 0 10 6')
+  .attr('refX', 10).attr('refY', 3).attr('markerWidth', 8).attr('markerHeight', 6)
+  .attr('orient', 'auto')
+  .append('path').attr('d', 'M0,0 L10,3 L0,6 Z').attr('fill', '#2e3344');
+
+['#6c8cff','#4ecb71','#f5c542','#ff4757'].forEach((c, i) => {
+  const names = ['property','subclass','activity-resource','skos'];
+  defs.append('marker').attr('id', `arrow-${names[i]}`).attr('viewBox', '0 0 10 6')
+    .attr('refX', 10).attr('refY', 3).attr('markerWidth', 8).attr('markerHeight', 6)
+    .attr('orient', 'auto')
+    .append('path').attr('d', 'M0,0 L10,3 L0,6 Z').attr('fill', c).attr('opacity', 0.7);
+});
+
+const container = svg.append('g').attr('id', 'container');
+
+// Zoom
+const zoom = d3.zoom()
+  .scaleExtent([0.15, 3])
+  .on('zoom', (e) => container.attr('transform', e.transform));
+svg.call(zoom);
+
+function getColor(node) {
+  if (node.type === 'role') return COLORS.role;
+  return COLORS[node.type] || COLORS.base;
+}
+
+function linkColor(link) {
+  if (link.type === 'subclass') return '#4ecb71';
+  if (link.type === 'activity-resource') return COLORS.activity;
+  if (link.type === 'skos') return COLORS.vocab;
+  return COLORS.base;
+}
+
+function linkDash(link) {
+  if (link.type === 'skos') return '4 3';
+  if (link.type === 'activity-resource') return '6 4';
+  return null;
+}
+
+// Build the simulation
+const simulation = d3.forceSimulation(nodes)
+  .force('link', d3.forceLink(links).id(d => d.id).distance(d => {
+    if (d.type === 'skos') return 60;
+    if (d.type === 'subclass') return 80;
+    return 140;
+  }).strength(d => {
+    if (d.type === 'skos') return 0.8;
+    if (d.type === 'subclass') return 0.6;
+    return 0.4;
+  }))
+  .force('charge', d3.forceManyBody().strength(d => {
+    if (d.type === 'concept') return -80;
+    if (d.radius > 30) return -600;
+    return -200;
+  }))
+  .force('center', d3.forceCenter(width / 2, height / 2).strength(0.06))
+  .force('collide', d3.forceCollide().radius(d => d.radius + 8))
+  .force('x', d3.forceX(width / 2).strength(0.02))
+  .force('y', d3.forceY(height / 2).strength(0.02));
+
+// Links
+const linkGroup = container.append('g').attr('class', 'links');
+const link = linkGroup.selectAll('line').data(links).join('line')
+  .attr('stroke', d => linkColor(d))
+  .attr('stroke-width', d => d.type === 'activity-resource' ? 2 : 1.5)
+  .attr('stroke-opacity', d => d.type === 'skos' ? 0.3 : 0.5)
+  .attr('stroke-dasharray', d => linkDash(d))
+  .attr('marker-end', d => `url(#arrow-${d.type})`)
+  .classed('link-activity-resource', d => d.type === 'activity-resource');
+
+// Link labels
+const linkLabelGroup = container.append('g').attr('class', 'link-labels');
+const linkLabel = linkLabelGroup.selectAll('text').data(links.filter(d => d.type !== 'skos')).join('text')
+  .text(d => d.label)
+  .attr('font-size', '8px')
+  .attr('fill', d => linkColor(d))
+  .attr('fill-opacity', 0.6)
+  .attr('text-anchor', 'middle')
+  .attr('dominant-baseline', 'central')
+  .attr('font-family', 'Inter, sans-serif');
+
+// Node groups
+const nodeGroup = container.append('g').attr('class', 'nodes');
+const node = nodeGroup.selectAll('g').data(nodes).join('g')
+  .attr('cursor', 'pointer')
+  .call(d3.drag()
+    .on('start', (e, d) => { if (!e.active) simulation.alphaTarget(0.3).restart(); d.fx = d.x; d.fy = d.y; })
+    .on('drag', (e, d) => { d.fx = e.x; d.fy = e.y; })
+    .on('end', (e, d) => { if (!e.active) simulation.alphaTarget(0); d.fx = null; d.fy = null; })
+  );
+
+// Draw shapes based on type
+node.each(function(d) {
+  const g = d3.select(this);
+  const color = getColor(d);
+  const glowType = d.type === 'role' ? 'role' : d.type;
+  const filterId = `url(#glow-${glowType})`;
+
+  if (d.type === 'concept') {
+    const s = d.radius;
+    g.append('polygon')
+      .attr('points', `0,${-s} ${s},0 0,${s} ${-s},0`)
+      .attr('fill', color + '15')
+      .attr('stroke', color)
+      .attr('stroke-width', 1.5)
+      .attr('stroke-opacity', 0.7)
+      .attr('filter', filterId);
+    g.append('polygon')
+      .attr('points', `0,${-s*0.6} ${s*0.6},0 0,${s*0.6} ${-s*0.6},0`)
+      .attr('fill', color + '30');
+  } else if (d.type === 'external') {
+    const w = d.radius * 2;
+    const h = d.radius * 1.2;
+    g.append('rect')
+      .attr('x', -w/2).attr('y', -h/2)
+      .attr('width', w).attr('height', h)
+      .attr('rx', 6).attr('ry', 6)
+      .attr('fill', color + '15')
+      .attr('stroke', color)
+      .attr('stroke-width', 2)
+      .attr('stroke-opacity', 0.7)
+      .attr('filter', filterId);
+    g.append('rect')
+      .attr('x', -w*0.35).attr('y', -h*0.35)
+      .attr('width', w*0.7).attr('height', h*0.7)
+      .attr('rx', 4).attr('ry', 4)
+      .attr('fill', color + '30');
+  } else {
+    g.append('circle')
+      .attr('r', d.radius)
+      .attr('fill', color + '15')
+      .attr('stroke', color)
+      .attr('stroke-width', 2)
+      .attr('stroke-opacity', 0.7)
+      .attr('filter', filterId);
+    g.append('circle')
+      .attr('r', d.radius * 0.65)
+      .attr('fill', color + '30');
+  }
+
+  const labelY = d.type === 'concept' ? d.radius + 12 :
+                 d.type === 'external' ? d.radius * 0.6 + 14 :
+                 d.radius + 14;
+  g.append('text')
+    .text(d.label)
+    .attr('text-anchor', 'middle')
+    .attr('dy', labelY)
+    .attr('fill', '#e4e6ed')
+    .attr('font-size', d.type === 'concept' ? '9px' : '10px')
+    .attr('font-weight', d.radius > 28 ? '600' : '500')
+    .attr('font-family', 'Inter, sans-serif');
+
+  if (d.notation) {
+    g.append('text')
+      .text(d.notation)
+      .attr('text-anchor', 'middle')
+      .attr('dominant-baseline', 'central')
+      .attr('fill', color)
+      .attr('font-size', '8px')
+      .attr('font-weight', '700')
+      .attr('font-family', 'Inter, sans-serif');
+  }
+});
+
+// Hover interactions
+node.on('mouseover', function(e, d) {
+  const connectedIds = new Set();
+  connectedIds.add(d.id);
+  links.forEach(l => {
+    const sid = typeof l.source === 'object' ? l.source.id : l.source;
+    const tid = typeof l.target === 'object' ? l.target.id : l.target;
+    if (sid === d.id) connectedIds.add(tid);
+    if (tid === d.id) connectedIds.add(sid);
+  });
+
+  node.style('opacity', n => connectedIds.has(n.id) ? 1 : 0.15);
+  link.style('stroke-opacity', l => {
+    const sid = typeof l.source === 'object' ? l.source.id : l.source;
+    const tid = typeof l.target === 'object' ? l.target.id : l.target;
+    return (sid === d.id || tid === d.id) ? 0.9 : 0.05;
+  });
+  linkLabel.style('fill-opacity', l => {
+    const sid = typeof l.source === 'object' ? l.source.id : l.source;
+    const tid = typeof l.target === 'object' ? l.target.id : l.target;
+    return (sid === d.id || tid === d.id) ? 1 : 0;
+  });
+
+  const typeLabels = {
+    base: 'Base Class', activity: 'Activity',
+    vocab: 'SKOS Scheme', concept: 'SKOS Concept', external: 'External', role: 'Role'
+  };
+  const color = getColor(d);
+  tooltip.html(`
+    <div class="tt-label">
+      <span class="tt-type" style="background:${color}20;color:${color};">${typeLabels[d.type]}</span>
+      ${d.label}
+    </div>
+    <div class="tt-desc">${d.desc}</div>
+    ${d.uri ? `<div class="tt-uri">${d.uri}</div>` : ''}
+  `).classed('show', true);
+})
+.on('mousemove', function(e) {
+  tooltip.style('left', (e.clientX + 14) + 'px').style('top', (e.clientY - 14) + 'px');
+})
+.on('mouseout', function() {
+  node.style('opacity', 1);
+  link.style('stroke-opacity', d => d.type === 'skos' ? 0.3 : 0.5);
+  linkLabel.style('fill-opacity', 0.6);
+  tooltip.classed('show', false);
+});
+
+// Click → detail panel
+node.on('click', function(e, d) {
+  e.stopPropagation();
+  showDetailPanel(d);
+});
+
+svg.on('click', () => detailPanel.classed('open', false));
+
+function showDetailPanel(d) {
+  const color = getColor(d);
+  const typeLabels = {
+    base: 'Base Class', activity: 'Activity Class',
+    vocab: 'SKOS Concept Scheme', concept: 'SKOS Concept', external: 'External Entity', role: 'Ministry Role'
+  };
+
+  const outgoing = links.filter(l => (typeof l.source === 'object' ? l.source.id : l.source) === d.id);
+  const incoming = links.filter(l => (typeof l.target === 'object' ? l.target.id : l.target) === d.id);
+
+  const datatypeProps = {
+    'gc:MissionResource': [
+      { name: 'gc:resourceName', range: 'xsd:string' },
+      { name: 'gc:resourceUrl', range: 'xsd:anyURI' },
+      { name: 'gc:resourceDatePublished', range: 'xsd:date' },
+      { name: 'gc:completionPercentage', range: 'xsd:decimal (0-1)' },
+      { name: 'gc:estimatedCompletionDate', range: 'xsd:date' },
+    ],
+  };
+
+  let html = `
+    <h2>${d.label}</h2>
+    <div class="dp-type" style="background:${color}20;color:${color};">${typeLabels[d.type]}</div>
+    ${d.uri ? `<div class="dp-uri">${d.uri}</div>` : ''}
+    <div class="dp-desc">${d.desc}</div>
+  `;
+
+  if (datatypeProps[d.id]) {
+    html += `<div class="dp-section"><h3>Datatype Properties</h3>`;
+    datatypeProps[d.id].forEach(p => {
+      html += `<div class="dp-prop"><span class="prop-name">${p.name}</span><span class="prop-range">${p.range}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (outgoing.length > 0) {
+    html += `<div class="dp-section"><h3>Outgoing (${outgoing.length})</h3>`;
+    outgoing.forEach(l => {
+      const t = typeof l.target === 'object' ? l.target : nodes.find(n => n.id === l.target);
+      const tc = t ? getColor(t) : '#8b90a0';
+      html += `<div class="dp-conn" data-id="${t.id}">
+        <div class="conn-dot" style="background:${tc};"></div>
+        <span style="color:#8b90a0;font-size:10px;">${l.label}</span> &rarr; <strong>${t.label}</strong>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  if (incoming.length > 0) {
+    html += `<div class="dp-section"><h3>Incoming (${incoming.length})</h3>`;
+    incoming.forEach(l => {
+      const s = typeof l.source === 'object' ? l.source : nodes.find(n => n.id === l.source);
+      const sc = s ? getColor(s) : '#8b90a0';
+      html += `<div class="dp-conn" data-id="${s.id}">
+        <div class="conn-dot" style="background:${sc};"></div>
+        <strong>${s.label}</strong> &rarr; <span style="color:#8b90a0;font-size:10px;">${l.label}</span>
+      </div>`;
+    });
+    html += `</div>`;
+  }
+
+  document.getElementById('panelContent').innerHTML = html;
+  detailPanel.classed('open', true);
+
+  document.querySelectorAll('.dp-conn').forEach(el => {
+    el.addEventListener('click', () => {
+      const targetNode = nodes.find(n => n.id === el.dataset.id);
+      if (targetNode) showDetailPanel(targetNode);
+    });
+  });
+}
+
+document.getElementById('closePanel').addEventListener('click', () => {
+  detailPanel.classed('open', false);
+});
+
+// Simulation tick
+simulation.on('tick', () => {
+  link
+    .attr('x1', d => d.source.x)
+    .attr('y1', d => d.source.y)
+    .attr('x2', d => {
+      const dx = d.target.x - d.source.x;
+      const dy = d.target.y - d.source.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const r = d.target.radius || 12;
+      return dist > 0 ? d.target.x - (dx/dist) * (r + 6) : d.target.x;
+    })
+    .attr('y2', d => {
+      const dx = d.target.x - d.source.x;
+      const dy = d.target.y - d.source.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      const r = d.target.radius || 12;
+      return dist > 0 ? d.target.y - (dy/dist) * (r + 6) : d.target.y;
+    });
+
+  linkLabel
+    .attr('x', d => (d.source.x + d.target.x) / 2)
+    .attr('y', d => (d.source.y + d.target.y) / 2 - 6);
+
+  node.attr('transform', d => `translate(${d.x},${d.y})`);
+});
+
+// ── View filtering ─────────────────────────────────────────
+const viewButtons = document.querySelectorAll('.controls button[data-view]');
+viewButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    viewButtons.forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyView(btn.dataset.view);
+  });
+});
+
+function applyView(view) {
+  const showNode = (d) => {
+    if (view === 'full') return true;
+    if (view === 'dimensions') return d.id === 'gc:MissionResource' || d.type === 'vocab' ||
+      (d.type === 'concept' && !d.id.startsWith('gc:Resource')) || d.id === 'prov:Entity';
+    if (view === 'domain') return d.id === 'gc:MissionResource' || d.group === 'vocab-domain' ||
+      d.id === 'gc:ResourceDomainScheme' || d.id === 'prov:Entity' || d.id === 'jp:EngagementAccelerator';
+    if (view === 'activities') return d.type === 'activity' || d.id === 'gc:MissionResource' || d.type === 'role' || d.id === 'prov:Entity';
+    return true;
+  };
+
+  const visibleIds = new Set(nodes.filter(showNode).map(n => n.id));
+
+  node.transition().duration(400).style('opacity', d => visibleIds.has(d.id) ? 1 : 0.06);
+  link.transition().duration(400).style('stroke-opacity', d => {
+    const sid = typeof d.source === 'object' ? d.source.id : d.source;
+    const tid = typeof d.target === 'object' ? d.target.id : d.target;
+    if (visibleIds.has(sid) && visibleIds.has(tid)) return d.type === 'skos' ? 0.3 : 0.5;
+    return 0.03;
+  });
+  linkLabel.transition().duration(400).style('fill-opacity', d => {
+    const sid = typeof d.source === 'object' ? d.source.id : d.source;
+    const tid = typeof d.target === 'object' ? d.target.id : d.target;
+    return (visibleIds.has(sid) && visibleIds.has(tid)) ? 0.6 : 0;
+  });
+}
+
+// Reset zoom
+document.getElementById('resetBtn').addEventListener('click', () => {
+  svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+});
+
+// Initial zoom to fit
+setTimeout(() => {
+  svg.transition().duration(800).call(
+    zoom.transform,
+    d3.zoomIdentity.translate(width * 0.08, height * 0.1).scale(0.85)
+  );
+}, 1500);
+</script>
+</body>
+</html>
