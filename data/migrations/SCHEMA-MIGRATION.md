@@ -486,7 +486,7 @@ Joshua Project's 3D Insight engagement model was originally minted under the `gc
 
 | Layer | Files | Changes |
 |-------|-------|---------|
-| Ontology | `ontology/gc-core.ttl` | Added jp: prefix, moved all 3D Insight definitions to jp: namespace |
+| Ontology | `ontology/core.ttl` | Added jp: prefix, moved all 3D Insight definitions to jp: namespace |
 | SHACL | `ontology/gc-core.shacl.ttl` | Updated sh:targetClass, sh:path, sh:class for all engagement shapes |
 | SPARQL queries (12) | `packages/gc-sparql/src/queries/*.rq` | Added PREFIX jp:, updated all engagement property references |
 | Seed data | `data/seed/denver-churches.ttl` | Added jp: prefix, migrated all engagement instances |
