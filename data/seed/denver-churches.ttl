@@ -80,7 +80,7 @@
 
 
 ##############################################################################
-#  LANGUAGES — now ROL SKOS concepts in his-rol-seed.ttl
+#  LANGUAGES — now ROL SKOS concepts loaded via gc-rol-bridge
 #  (gc:Language class removed in v0.5.0 — languages are reference data
 #   owned by HIS ROL / ISO 639-3, modeled as SKOS ConceptScheme)
 #
@@ -91,7 +91,7 @@
 
 ##############################################################################
 #  RELIGIONS — now ROR SKOS concepts in <https://data.global.church/his-registries/>
-#  See data/seed/his-ror-seed.ttl. Use gc:hasReligionClassification to link.
+#  See data/seed/his-ror.ttl. Use gc:hasReligionClassification to link.
 ##############################################################################
 
 

@@ -1,5 +1,8 @@
 ##############################################################################
-# HIS Registry of Religions (ROR) — Seed Data
+# HIS Registry of Religions (ROR)
+#
+# Production reference data — no bridge exists; this file is the canonical
+# source for ROR in GraphDB.
 #
 # IMB's religion classification system with 3-level hierarchy:
 #   ROR3 (10 families) → ROR4 (36 sub-traditions) → ROR (42 total codes)
