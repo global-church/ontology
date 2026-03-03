@@ -29,13 +29,13 @@ This is the single most common design question, and DOLCE gives you a clean way 
 
 **Make it a property** if it only makes sense *in relation to* something else. It describes, measures, or classifies — it doesn't stand on its own.
 
-DOLCE formalizes this distinction through **dependence**: a quality (like a color, a weight, or an engagement score) is *specifically dependent* on its host — it can't exist without the thing it inheres in. An endurant (like a church or an organization) is *independent* — it carries its own identity criteria. If the thing you're modeling couldn't exist without some other specific thing, it's a quality or a role, not an independent entity.
+DOLCE formalizes this distinction through **dependence**: a quality (like a color, a weight, or an engagement score) is *specifically dependent* on its host — it can't exist without the thing it inheres in. An endurant (like an organization or a people group) is *independent* — it carries its own identity criteria. If the thing you're modeling couldn't exist without some other specific thing, it's a quality or a role, not an independent entity.
 
 GC-Core examples:
 
-- `gc:Church` — clearly a class. A church has identity, persists over time, and has properties that change (pastor, location, membership count).
-- `gc:churchName` — clearly a property. A name doesn't exist independently of the church it names.
-- `gc:Endorsement` — this is the interesting case. You *could* model "BGEA endorses First Baptist" as a simple boolean property on Church. But an endorsement has its own attributes (date granted, expiration, type, the endorsing body). Once a "fact about a thing" starts accumulating its own facts, promote it to a class. This is called **reification** — turning a relationship into a first-class entity.
+- `gc:Organization` — clearly a class. An organization has identity, persists over time, and has properties that change (leadership, location, membership count).
+- `gc:orgName` — clearly a property. A name doesn't exist independently of the organization it names.
+- `gc:Endorsement` — this is the interesting case. You *could* model "BGEA endorses First Baptist" as a simple boolean property on Organization. But an endorsement has its own attributes (date granted, expiration, type, the endorsing body). Once a "fact about a thing" starts accumulating its own facts, promote it to a class. This is called **reification** — turning a relationship into a first-class entity.
 
 **The rule of thumb:** If you need more than one property to describe the relationship between two things, reify it into a class.
 
@@ -47,14 +47,14 @@ DOLCE's top-level taxonomy gives you four buckets. Every concept in GC-Core shou
 
 | DOLCE Category | What it is | GC-Core examples |
 |---|---|---|
-| **Endurant** | Things that persist through time — you can observe the whole thing at any instant | Church, Organization, Person, PeopleGroup |
-| **Perdurant** | Things that unfold over time — you can only observe a temporal part at any instant | MinistryActivity, DataRecording, ExchangePayload transfer |
+| **Endurant** | Things that persist through time — you can observe the whole thing at any instant | Organization, PeopleGroup, MissionResource |
+| **Perdurant** | Things that unfold over time — you can only observe a temporal part at any instant | MinistryActivity, Assessment |
 | **Quality** | Properties that inhere in something — they depend on a host entity for existence | engagementStrength, evangelicalPercentage, population |
 | **Abstract** | Things outside of space and time — classification systems, sets, regions | Language codes (ROL), Religion codes, ROP3 concepts, SKOS schemes |
 
 **Why this matters for GC-Core:** Your current task list includes several decisions this resolves directly:
 
-- **Language, Religion → Abstract.** They're classification reference data, not things with provenance histories. This is why removing `prov:Entity` from them is correct — DOLCE would never put a classification code in the same bucket as a church or a ministry activity.
+- **Language, Religion → Abstract.** They're classification reference data, not things with provenance histories. This is why removing `prov:Entity` from them is correct — DOLCE would never put a classification code in the same bucket as an organization or a ministry activity.
 - **EngagementState → Quality.** An engagement state is a measurement that inheres in a people group at a point in time. It doesn't float around independently. DOLCE would model it as a quality, which aligns with your current pattern of reifying it as a class (because it has multiple dimensions — phase, strength, evangelical %) while keeping it attached to a people group via `gc:hasEngagementState`.
 - **EngagementAssessment → Perdurant.** The *act* of assessing engagement is an event that happens at a time, carried out by an agent. Distinct from the state it measures.
 
@@ -79,11 +79,10 @@ Endurant
 
 **GC-Core mapping:**
 
-- `gc:Church`, `gc:Organization` → **Agentive Social Object (ASO)**. A church is not a physical building — it's a socially constituted entity that can act, decide, and bear responsibility. It's "agentive" because it has collective intentionality (it can commit to serving a people group, endorse another church, make strategic decisions). This aligns with our PROV-O mapping to `prov:Agent`.
-- `gc:Person` → **Agentive Physical Object (APO)**. A person is a physical being with individual intentionality.
+- `gc:Organization` → **Agentive Social Object (ASO)**. An organization is not a physical building — it's a socially constituted entity that can act, decide, and bear responsibility. It's "agentive" because it has collective intentionality (it can commit to serving a people group, endorse another organization, make strategic decisions). This aligns with our PROV-O mapping to `prov:Agent`.
 - `gc:PeopleGroup` → **Social Object (SOB)**, arguably non-agentive. A people group is a socially recognized grouping — it doesn't have collective intentionality the way an organization does. It can't "decide" anything. It's constituted by shared ethnolinguistic and cultural characteristics, which are themselves social constructs. This is why people groups sit in the reference/classification tier more naturally than in the agentive tier, even though GC-Core currently maps them to `prov:Agent` — a known tension worth revisiting.
-- `gc:DataSet`, `gc:ExchangePayload` → **Non-Agentive Social Object (NASO)**. These are information artifacts — constituted by social agreement about what their symbols mean, but not capable of agency.
-- `gc:Location` → **Physical Endurant (PED)**, or arguably a GeoSPARQL `geo:Feature`. A geographic location is a physical region, not a social construct. This is another reason PROV-O parentage feels forced for Location — a mountain or set of coordinates doesn't have a provenance story in the same way a church record does.
+- `gc:AssessmentResult`, `gc:EngagementClaim` → **Non-Agentive Social Object (NASO)**. These are information artifacts — constituted by social agreement about what their symbols mean, but not capable of agency.
+- `gc:Location` → **Physical Endurant (PED)**, or arguably a GeoSPARQL `geo:Feature`. A geographic location is a physical region, not a social construct. This is another reason PROV-O parentage feels forced for Location — a mountain or set of coordinates doesn't have a provenance story in the same way an organization record does.
 
 **Why this matters:** The agentive vs. non-agentive distinction directly tells you which things can meaningfully be `prov:Agent`. If something can't intentionally act, it shouldn't be an agent. This is a useful cross-check when deciding PROV-O parentage.
 
@@ -104,15 +103,14 @@ Perdurant
 **GC-Core mapping:**
 
 - `gc:MinistryActivity` → typically an **Accomplishment** (has temporal extent and a completion point) or a **Process** (ongoing, no inherent endpoint). The distinction matters if you ever need to model "is this activity completed or ongoing?" — that's a stative vs. eventive question.
-- `gc:DataRecording` → **Achievement or Accomplishment.** The act of recording data is an event with a definite structure (start, capture, end).
-- `gc:EngagementAssessment` → **Achievement.** An assessment is a judgment made at a point in time. It produces an `EngagementState` (a quality), but the assessment act itself is an instantaneous-ish event.
+- `gc:Assessment` → **Achievement or Accomplishment.** An assessment is a judgment made at a point in time. It produces an `AssessmentResult` (a quality), but the assessment act itself is an instantaneous-ish event.
 - An engagement commitment being fulfilled → **Accomplishment.** It has a beginning, duration, and a definable completion.
 
 **Practical value:** When you find yourself unsure whether to model something as "a thing that happened" (perdurant) vs. "a condition that holds" (quality/state), DOLCE's stative/eventive split helps. If it's stative and depends on a host entity, it's probably a quality. If it has internal temporal structure (phases, participants at different times), it's a perdurant.
 
 ### 2c. Qualities and Quality Spaces — Values vs. Measurements
 
-DOLCE draws a critical distinction that GC-Core benefits from: a **quality** is an individual property that inheres in a specific entity (this church's engagement strength), while a **quality space** (or **region**) is the abstract dimension where that quality's value lives (the 1–5 scale itself).
+DOLCE draws a critical distinction that GC-Core benefits from: a **quality** is an individual property that inheres in a specific entity (this organization's engagement strength), while a **quality space** (or **region**) is the abstract dimension where that quality's value lives (the 1–5 scale itself).
 
 ```
 Quality (individual)                    Region / Quality Space (abstract)
@@ -138,17 +136,17 @@ DOLCE formalizes the relationship between things-that-persist (endurants) and th
 
 **GC-Core mapping:**
 
-- An `gc:Organization` (endurant) *participates in* a `gc:MinistryActivity` (perdurant). This is exactly what `gc:MinistryParticipation` models — and the fact that we reified it into a class (rather than a simple property) is justified because participation has its own attributes (role, time period, contribution type).
-- A `gc:Person` (endurant) *participates in* a `gc:DataRecording` (perdurant) as the assessor.
-- A `gc:Church` (endurant) *participates in* an endorsement relationship — though here the endorsement is modeled as an entity rather than an activity, because the emphasis is on the persistent social agreement rather than the event of endorsing.
+- A `gc:Organization` (endurant) *participates in* a `gc:MinistryActivity` (perdurant). This is exactly what `gc:MinistryParticipation` models — and the fact that we reified it into a class (rather than a simple property) is justified because participation has its own attributes (role, time period, contribution type).
+- A `gc:Organization` (endurant) *participates in* an `gc:Assessment` (perdurant) as the assessing body.
+- A `gc:Organization` (endurant) *participates in* an endorsement relationship — though here the endorsement is modeled as an entity rather than an activity, because the emphasis is on the persistent social agreement rather than the event of endorsing.
 
 **The DOLCE constraint to remember:** Participation is always temporally qualified. An organization participates in an activity *during a time interval*. If you're modeling a relationship between an endurant and a perdurant and you can't meaningfully attach a time interval, reconsider whether it's truly participation — it might be classification, constitution, or some other relation.
 
 ### 2e. Constitution — When One Thing Makes Up Another
 
-DOLCE distinguishes **constitution** from identity. A physical church building *constitutes* the church (social object) but is not identical to it — the church could move buildings and remain the same church. Constitution is a non-identity relation between co-located entities at different ontological levels.
+DOLCE distinguishes **constitution** from identity. A physical building *constitutes* the organization (social object) but is not identical to it — the organization could move buildings and remain the same organization. Constitution is a non-identity relation between co-located entities at different ontological levels.
 
-**GC-Core relevance:** This matters when modeling the relationship between physical and social aspects of churches. The building at 123 Main St is not the same thing as First Baptist Church — First Baptist is a social object constituted (at a given time) by a particular congregation, meeting in a particular building. If the church splits, relocates, or merges, the social entity's identity story is independent of the physical location's story. This is why `gc:hasLocation` is a relationship to a `gc:Location`, not an inherent property — the location can change while the church's identity persists.
+**GC-Core relevance:** This matters when modeling the relationship between physical and social aspects of organizations. The building at 123 Main St is not the same thing as First Baptist Church (a `gc:Organization` with type "church") — First Baptist is a social object constituted (at a given time) by a particular congregation, meeting in a particular building. If the organization splits, relocates, or merges, the social entity's identity story is independent of the physical location's story. This is why `gc:hasLocation` is a relationship to a `gc:Location`, not an inherent property — the location can change while the organization's identity persists.
 
 ---
 
@@ -164,10 +162,10 @@ This produces a clean two-tier architecture:
 
 ```
 PROV-O tier (domain data — has provenance)
-├── gc:Church          → prov:Agent    — "CIL submitted this record on 2024-03-15"
-├── gc:MinistryActivity → prov:Activity — "recorded by Denver org, March 2024"
-├── gc:DataRecording   → prov:Activity — "generated this engagement assessment"
-└── gc:EngagementAssessment → prov:Entity — "derived from JP data, assessed by agent X"
+├── gc:Organization     → prov:Agent    — "CIL submitted this record on 2024-03-15"
+├── gc:MinistryActivity → prov:Activity — "recorded by org, March 2024"
+├── gc:Assessment       → prov:Activity — "generated this assessment result"
+└── gc:AssessmentResult → prov:Entity   — "derived from JP data, assessed by agent X"
 
 Reference tier (classification data — no provenance)
 ├── skos:ConceptScheme (ROP3, ROL, religion codes)
@@ -207,7 +205,7 @@ Ontology engineering's version of "don't reinvent the wheel." Before minting a n
 If a concept was designed and is maintained by an external organization, it should live in their namespace, not yours.
 
 **GC-Core (`gc:`) should own:**
-- Domain concepts specific to the Global.Church coordination use case (Church, MinistryParticipation, EngagementClaim, DataSet)
+- Domain concepts specific to the Global.Church coordination use case (Organization, MinistryParticipation, EngagementClaim, Endorsement)
 - Relationships that connect external vocabularies in ways unique to your architecture (hasPeopleClassification, servesPeopleGroup)
 
 **External namespaces should own:**
@@ -227,7 +225,7 @@ This catches people coming from relational databases. In SQL, if a column is emp
 
 - **You can't query for "people groups with no engagement."** You can only find people groups where no `gc:hasEngagementState` triple exists — which could mean unengaged *or* unreported. This is why your gap analysis queries need to be framed carefully: "no *known* engagement" rather than "no engagement."
 - **Don't model absence as presence.** Avoid patterns like `gc:isEngaged false`. Instead, let the absence of an engagement triple speak for itself, and use SPARQL `FILTER NOT EXISTS` to find gaps.
-- **SHACL bridges the gap.** Your SHACL shapes enforce closed-world constraints at *data validation time* (e.g., "every Church MUST have a name"). The ontology stays open-world, but the shapes say "if you're submitting data to us, these fields are required." This two-layer pattern — open ontology, constrained shapes — is exactly right for a multi-org ecosystem.
+- **SHACL bridges the gap.** Your SHACL shapes enforce closed-world constraints at *data validation time* (e.g., "every Organization MUST have a name"). The ontology stays open-world, but the shapes say "if you're submitting data to us, these fields are required." This two-layer pattern — open ontology, constrained shapes — is exactly right for a multi-org ecosystem.
 
 ---
 

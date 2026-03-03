@@ -2,13 +2,14 @@
 # Global.Church Core Ontology (GC-Core)
 #
 # A W3C PROV-O grounded ontology for the Global.Church data ecosystem.
-# Maps entities from the Global.Church Schema and GAPPSRVC activity
-# taxonomy into the PROV-O framework (Entity, Activity, Agent).
+# Maps entities from the Global.Church Schema, GCData Protocol, and
+# GAPPSRVC activity taxonomy into the PROV-O framework (Entity, Activity,
+# Agent) with alignment hooks to the Agentic Trust Layer ontology.
 #
 # Namespace:  https://ontology.global.church/core#
-# Version:    0.16.0
+# Version:    0.15.1
 # License:    CC BY-SA 4.0
-# Date:       2026-03-03
+# Date:       2026-02-24
 ##############################################################################
 
 @base          <https://ontology.global.church/core#> .
@@ -22,6 +23,7 @@
 @prefix dct:   <http://purl.org/dc/terms/> .
 @prefix skos:  <http://www.w3.org/2004/02/skos/core#> .
 @prefix geo:   <http://www.opengis.net/ont/geosparql#> .
+@prefix at:    <https://agentictrust.io/ontology/core#> .
 @prefix jp:    <https://ontology.global.church/joshuaproject#> .
 @prefix his:   <https://data.global.church/his/> .
 @prefix rop1:  <https://data.global.church/his/rop1/> .
@@ -39,7 +41,7 @@
 
 <https://ontology.global.church/core> a owl:Ontology ;
   rdfs:label "Global.Church Core Ontology"@en ;
-  rdfs:comment "PROV-O grounded ontology for the Global.Church data ecosystem. Models ministry activities, organizations, people groups, and unified multi-org assessment (gc:Assessment/gc:AssessmentResult)."@en ;
+  rdfs:comment "PROV-O grounded ontology for the Global.Church data ecosystem. Models ministry activities, church entities, people groups, unified multi-org assessment (gc:Assessment/gc:AssessmentResult), and data exchange provenance."@en ;
   owl:versionInfo "0.16.0" ;
   dct:creator "Global Church Alliance" ;
   dct:license <https://creativecommons.org/licenses/by-sa/4.0/> ;
@@ -54,6 +56,64 @@
 #  systems that record, exchange, or act upon ministry data.
 ##############################################################################
 
+# ── Human Agents ──────────────────────────────────────────────────────────
+
+gc:Person a owl:Class ;
+  rdfs:label "Person"@en ;
+  rdfs:comment "A human individual participating in ministry activities. Corresponds to the User class in the Global.Church schema and to field personnel in GCData. A person may play different roles (field worker, leader, trainer) in different activity contexts."@en ;
+  rdfs:subClassOf prov:Agent .
+
+# ── Ministry Roles ────────────────────────────────────────────────────────
+#  Roles are context-dependent: the same person can be a field worker in
+#  one activity and a leader in another.  Modeled following PROV-O
+#  qualified association and ChurchCore's relational pattern.
+
+gc:MinistryRole a owl:Class ;
+  rdfs:label "Ministry Role"@en ;
+  rdfs:comment "A role that a person plays in the context of a ministry activity. Not a type of person, but a function performed within a specific context. Aligns with prov:Role and the Agentic Trust Layer's Role class."@en ;
+  rdfs:subClassOf prov:Role .
+
+# Standard role instances
+gc:FieldWorkerRole a gc:MinistryRole ;
+  rdfs:label "Field Worker"@en ;
+  rdfs:comment "Role of a person actively engaged in field operations such as gospel conversations, prayer walks, discipleship, and church planting."@en .
+
+gc:LeaderRole a gc:MinistryRole ;
+  rdfs:label "Leader"@en ;
+  rdfs:comment "Role of a person with oversight responsibility for a group, team, region, or church."@en .
+
+gc:TrainerRole a gc:MinistryRole ;
+  rdfs:label "Trainer"@en ;
+  rdfs:comment "Role of a person equipping others through training activities."@en .
+
+gc:RecorderRole a gc:MinistryRole ;
+  rdfs:label "Recorder"@en ;
+  rdfs:comment "Role of a person who records ministry activity data into a system."@en .
+
+gc:ChurchPlanterRole a gc:MinistryRole ;
+  rdfs:label "Church Planter"@en ;
+  rdfs:comment "Role of a person planting churches among a people group."@en .
+
+gc:TranslatorRole a gc:MinistryRole ;
+  rdfs:label "Translator"@en ;
+  rdfs:comment "Role of a person translating Scripture, media, or training materials."@en .
+
+gc:StrategyCoordinatorRole a gc:MinistryRole ;
+  rdfs:label "Strategy Coordinator"@en ;
+  rdfs:comment "Role of a person coordinating strategy for engagement of a people group or region."@en .
+
+# Qualified association pattern: links agent + role + activity
+gc:MinistryParticipation a owl:Class ;
+  rdfs:label "Ministry Participation"@en ;
+  rdfs:comment "Reified link between a person, a ministry activity, and the role played. Used via prov:qualifiedAssociation on the activity."@en ;
+  rdfs:subClassOf prov:Association .
+
+gc:participationRole a owl:ObjectProperty ;
+  rdfs:label "participation role"@en ;
+  rdfs:comment "The ministry role played in this participation."@en ;
+  rdfs:subPropertyOf prov:hadRole ;
+  rdfs:domain gc:MinistryParticipation ;
+  rdfs:range gc:MinistryRole .
 
 # ── Organizational Agents ─────────────────────────────────────────────────
 
@@ -163,14 +223,104 @@ gc:Team a owl:Class ;
   rdfs:comment "A working group of persons collaborating on field activities within or across organizations."@en ;
   rdfs:subClassOf gc:Organization .
 
+# ── Software Agents ───────────────────────────────────────────────────────
+
+gc:DataSource a owl:Class ;
+  rdfs:label "Data Source"@en ;
+  rdfs:comment "A software system or tool that produces, manages, or transmits GCData-formatted records (e.g., 'MissionToolX'). The 'source' field in EEP/SEP payloads."@en ;
+  rdfs:subClassOf prov:SoftwareAgent .
+
+gc:GCBridge a owl:Class ;
+  rdfs:label "GCData Bridge"@en ;
+  rdfs:comment "The Great Commission Data Bridge service that routes GCData payloads between systems and handles federated authentication via KeyCloak."@en ;
+  rdfs:subClassOf prov:SoftwareAgent .
+
+# ── Agent Properties ──────────────────────────────────────────────────────
+
+gc:userId a owl:DatatypeProperty ;
+  rdfs:label "user ID"@en ;
+  rdfs:comment "Unique identifier for a person within the originating system (maps to EntityEPBase.userId)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:groupId a owl:DatatypeProperty ;
+  rdfs:label "group ID"@en ;
+  rdfs:comment "Unique identifier for the team or group tied to an activity (maps to EntityEPBase.groupId)."@en ;
+  rdfs:domain gc:Team ;
+  rdfs:range xsd:string .
+
+gc:personName a owl:DatatypeProperty ;
+  rdfs:label "person name"@en ;
+  rdfs:comment "Display name of a person (subset: pii)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:personEmail a owl:DatatypeProperty ;
+  rdfs:label "person email"@en ;
+  rdfs:comment "Email address of a person (subset: pii)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:personPhone a owl:DatatypeProperty ;
+  rdfs:label "person phone"@en ;
+  rdfs:comment "Phone number in E.164 format (subset: pii)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:string .
+
+gc:memberOf a owl:ObjectProperty ;
+  rdfs:label "member of"@en ;
+  rdfs:comment "Links a person to the organization or team they belong to."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range gc:Organization .
+
+gc:sendingOrganization a owl:ObjectProperty ;
+  rdfs:label "sending organization"@en ;
+  rdfs:comment "The organization that sent/deployed this worker to the field. Distinct from gc:memberOf (organizational membership) — a worker can be a member of one organization but sent by another."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range gc:Organization .
+
+gc:deploymentStatus a owl:ObjectProperty ;
+  rdfs:label "deployment status"@en ;
+  rdfs:comment "Links a person to their current deployment status. Values are SKOS concepts from gc:DeploymentStatusScheme (Active, Furlough, In Training, Retired)."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range skos:Concept .
+
+gc:isCrossCultural a owl:DatatypeProperty ;
+  rdfs:label "is cross-cultural worker"@en ;
+  rdfs:comment "Whether this worker is cross-cultural to their field of service."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:boolean .
+
+gc:fieldEntryDate a owl:DatatypeProperty ;
+  rdfs:label "field entry date"@en ;
+  rdfs:comment "Date when the worker entered their current field of service."@en ;
+  rdfs:domain gc:Person ;
+  rdfs:range xsd:date .
+
+gc:hasSource a owl:ObjectProperty ;
+  rdfs:label "has source"@en ;
+  rdfs:comment "Associates any entity or activity with the software system that originated the data."@en ;
+  rdfs:subPropertyOf prov:wasAttributedTo ;
+  rdfs:range gc:DataSource .
+
 
 ##############################################################################
 #  II.  ENTITIES  (prov:Entity hierarchy)
 #
 #  Entities are things with provenance: people groups, locations,
-#  resources, and reference metadata.
+#  data records, exchange payloads, and reference metadata.
+#  Note: gc:Church is a deprecated backward-compat alias for gc:Organization.
+#  All org types (churches, agencies, networks, denominations) are now
+#  gc:Organization instances classified via gc:hasOrganizationType SKOS.
 ##############################################################################
 
+# ── Church (deprecated — use gc:Organization with gc:hasOrganizationType) ──
+
+gc:Church a owl:Class ;
+  rdfs:label "Church"@en ;
+  rdfs:comment "DEPRECATED — use gc:Organization with gc:hasOrganizationType instead. Retained as owl:equivalentClass gc:Organization for backward compatibility during migration. Previously a subclass of gc:Organization representing a gathering of believers. Now all org types (churches, agencies, networks, denominations) are gc:Organization instances classified via gc:hasOrganizationType → OrganizationTypeScheme SKOS concepts."@en ;
+  owl:equivalentClass gc:Organization ;
+  owl:deprecated true .
 
 # Church core properties
 gc:isActive a owl:DatatypeProperty ;
@@ -349,6 +499,29 @@ gc:servesPeopleGroup a owl:ObjectProperty ;
   rdfs:comment "Links an organization to a people group it primarily serves or ministers to. Multi-valued: an organization can serve multiple people groups. Distinct from gc:targetsPeopleGroup (geographic association on Overture records) — this property represents intentional ministry focus declared by the organization."@en ;
   rdfs:range gc:PeopleGroup .
 
+# ── Church Website Text ───────────────────────────────────────────────────
+
+gc:ChurchWebsiteText a owl:Class ;
+  rdfs:label "Church Website Text"@en ;
+  rdfs:comment "Textual content extracted from a church's website, used for enrichment and analysis. An information entity in the Global.Church schema."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:websiteUrl a owl:DatatypeProperty ;
+  rdfs:label "website URL"@en ;
+  rdfs:comment "The URL from which the website text was scraped."@en ;
+  rdfs:domain gc:ChurchWebsiteText ;
+  rdfs:range xsd:anyURI .
+
+gc:websiteTextContent a owl:DatatypeProperty ;
+  rdfs:label "website text content"@en ;
+  rdfs:comment "The extracted textual content of the church website."@en ;
+  rdfs:domain gc:ChurchWebsiteText ;
+  rdfs:range xsd:string .
+
+gc:hasWebsiteText a owl:ObjectProperty ;
+  rdfs:label "has website text"@en ;
+  rdfs:comment "Links an organization to its extracted website text entity."@en ;
+  rdfs:range gc:ChurchWebsiteText .
 
 # ── Overture (Geospatial Data Source) ─────────────────────────────────────
 #
@@ -377,6 +550,29 @@ gc:overtureCategory a owl:DatatypeProperty ;
   rdfs:domain gc:Overture ;
   rdfs:range xsd:string .
 
+gc:overtureConfidence a owl:DatatypeProperty ;
+  rdfs:label "Overture confidence"@en ;
+  rdfs:comment "The confidence score (0.0-1.0) of the Overture Maps place record."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range xsd:double .
+
+gc:overtureSourceDataset a owl:DatatypeProperty ;
+  rdfs:label "Overture source dataset"@en ;
+  rdfs:comment "The Overture Maps source dataset contributing this record (e.g., 'meta', 'msft', 'osm')."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range xsd:string .
+
+gc:matchedOrganization a owl:ObjectProperty ;
+  rdfs:label "matched organization"@en ;
+  rdfs:comment "Links an Overture place record to an Organization entity it has been matched to via geocoding or identity resolution."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range gc:Organization .
+
+gc:overtureLocation a owl:ObjectProperty ;
+  rdfs:label "Overture location"@en ;
+  rdfs:comment "Links an Overture place record to its geographic Location."@en ;
+  rdfs:domain gc:Overture ;
+  rdfs:range gc:Location .
 
 gc:targetsPeopleGroup a owl:ObjectProperty ;
   rdfs:label "targets people group"@en ;
@@ -773,7 +969,97 @@ gc:languageOfConversation a owl:DatatypeProperty ;
 
 
 ##############################################################################
-#  IV.  ASSESSMENT & ENGAGEMENT MODEL
+#  IV.  DATA RECORDING & EXCHANGE PROVENANCE
+#
+#  Models the act of recording ministry data, packaging it into GCData
+#  payloads, and exchanging it between systems. This is the provenance
+#  backbone connecting field activities to data platform consumption.
+##############################################################################
+
+# ── Data Recording ────────────────────────────────────────────────────────
+
+gc:DataRecordingActivity a owl:Class ;
+  rdfs:label "Data Recording Activity"@en ;
+  rdfs:comment "The act of a person recording a ministry activity into a data system. Produces an EngagementRecord. This is the PROV bridge: the field activity (prov:Activity) is observed, and a DataRecordingActivity generates a record (prov:Entity) attributed to the recorder."@en ;
+  rdfs:subClassOf prov:Activity .
+
+gc:recordDateTime a owl:DatatypeProperty ;
+  rdfs:label "record date-time"@en ;
+  rdfs:comment "Timestamp when the record was created (maps to EntityEPBase.recordDateTime)."@en ;
+  rdfs:domain gc:DataRecordingActivity ;
+  rdfs:range xsd:dateTime .
+
+gc:recordsActivity a owl:ObjectProperty ;
+  rdfs:label "records activity"@en ;
+  rdfs:comment "Links a data recording activity to the ministry activity it documents."@en ;
+  rdfs:subPropertyOf prov:used ;
+  rdfs:domain gc:DataRecordingActivity ;
+  rdfs:range gc:MinistryActivity .
+
+# ── Engagement Record ─────────────────────────────────────────────────────
+
+gc:EngagementRecord a owl:Class ;
+  rdfs:label "Engagement Record"@en ;
+  rdfs:comment "A data record documenting a ministry activity, generated by a DataRecordingActivity. Corresponds to a single record in an EEP payload. Carries the entityType discriminator."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:entityType a owl:DatatypeProperty ;
+  rdfs:label "entity type"@en ;
+  rdfs:comment "The EEP entity type discriminator (Church, GospelConversation, PrayerWalk, Discipleship)."@en ;
+  rdfs:domain gc:EngagementRecord ;
+  rdfs:range xsd:string .
+
+gc:documentsOrganization a owl:ObjectProperty ;
+  rdfs:label "documents organization"@en ;
+  rdfs:comment "Links an engagement record to the Organization entity it describes."@en ;
+  rdfs:domain gc:EngagementRecord ;
+  rdfs:range gc:Organization .
+
+# ── Exchange Payloads ─────────────────────────────────────────────────────
+
+gc:ExchangePayload a owl:Class ;
+  rdfs:label "Exchange Payload"@en ;
+  rdfs:comment "A GCData-formatted payload document containing one or more records. Modeled as prov:Collection."@en ;
+  rdfs:subClassOf prov:Collection .
+
+gc:EntityExchangePayload a owl:Class ;
+  rdfs:label "Entity Exchange Payload"@en ;
+  rdfs:comment "A GCData EEP (Entity Exchange Protocol) payload containing engagement records. Format field = 'EEP'."@en ;
+  rdfs:subClassOf gc:ExchangePayload .
+
+gc:ScaleExchangePayload a owl:Class ;
+  rdfs:label "Scale Exchange Payload"@en ;
+  rdfs:comment "A GCData SEP (Scale Exchange Protocol) payload containing scale-based aggregate data. Format field = 'SEP'."@en ;
+  rdfs:subClassOf gc:ExchangePayload .
+
+gc:payloadFormat a owl:DatatypeProperty ;
+  rdfs:label "payload format"@en ;
+  rdfs:comment "The format identifier of the payload ('EEP' or 'SEP')."@en ;
+  rdfs:domain gc:ExchangePayload ;
+  rdfs:range xsd:string .
+
+gc:payloadVersion a owl:DatatypeProperty ;
+  rdfs:label "payload version"@en ;
+  rdfs:comment "The version of the payload format (e.g., '1.0')."@en ;
+  rdfs:domain gc:ExchangePayload ;
+  rdfs:range xsd:string .
+
+gc:payloadPermissions a owl:DatatypeProperty ;
+  rdfs:label "payload permissions"@en ;
+  rdfs:comment "Access level for the payload: read-only, read-cache, or read-write."@en ;
+  rdfs:domain gc:ExchangePayload ;
+  rdfs:range xsd:string .
+
+# ── Data Exchange Activity ────────────────────────────────────────────────
+
+gc:DataExchangeActivity a owl:Class ;
+  rdfs:label "Data Exchange Activity"@en ;
+  rdfs:comment "The act of transmitting a GCData payload between systems, potentially routed through GCBridge. Models the provenance of inter-system data sharing."@en ;
+  rdfs:subClassOf prov:Activity .
+
+
+##############################################################################
+#  V.  ASSESSMENT & ENGAGEMENT MODEL
 #
 #  Unified multi-org assessment infrastructure (v0.13.0).
 #
@@ -788,10 +1074,44 @@ gc:languageOfConversation a owl:DatatypeProperty ;
 #
 #  Supporting vocabulary:
 #    - gc:AssessmentMethodologyScheme (SKOS) — assessment frameworks
+#    - gc:DataSet — named data collection with geographic scope
 #
 #  Migration note (v0.13.0): Four legacy JP assessment classes removed.
 #    Their functions are now served by gc:Assessment/gc:AssessmentResult.
 ##############################################################################
+
+# ── DataSet ───────────────────────────────────────────────────────────────
+
+gc:DataSet a owl:Class ;
+  rdfs:label "Data Set"@en ;
+  rdfs:comment "A named collection of engagement data with geographic scope. Corresponds to a ScaleEP record with dataSetId, dataSetName, area, and source."@en ;
+  rdfs:subClassOf prov:Collection .
+
+gc:dataSetId a owl:DatatypeProperty ;
+  rdfs:label "data set ID"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:string .
+
+gc:dataSetName a owl:DatatypeProperty ;
+  rdfs:label "data set name"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:string .
+
+gc:dataSetAltName a owl:DatatypeProperty ;
+  rdfs:label "data set alternate name"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:string .
+
+gc:lastUpdatedDate a owl:DatatypeProperty ;
+  rdfs:label "last updated date"@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range xsd:dateTime .
+
+gc:coversArea a owl:ObjectProperty ;
+  rdfs:label "covers area"@en ;
+  rdfs:comment "Links a data set to the geographic area it covers."@en ;
+  rdfs:domain gc:DataSet ;
+  rdfs:range gc:Location .
 
 # ── Unified Assessment Infrastructure ──────────────────────────────────────
 #
@@ -908,6 +1228,11 @@ jp:jpScaleGlobal a owl:DatatypeProperty ;
 # jp:phaseValue — Removed (v0.14.0). GCA 0-7 engagement phase, never populated.
 # jp:phaseSubIndicator — Removed (v0.14.0). Staleness flag for phaseValue.
 
+jp:stateForDataSet a owl:ObjectProperty ;
+  rdfs:label "state for data set"@en ;
+  rdfs:comment "Links an AssessmentResult to the DataSet context in which it was assessed."@en ;
+  rdfs:domain gc:AssessmentResult ;
+  rdfs:range gc:DataSet .
 
 # ── JP PeopleGroup Identity & Descriptive Metadata ────────────────────────
 #
@@ -1082,7 +1407,161 @@ jp:securityLevel a owl:DatatypeProperty ;
 
 
 ##############################################################################
-#  V.  ORGANIZATION ENDORSEMENTS
+#  VI.  PEOPLE GROUP ENGAGEMENT COUNTS
+#
+#  Reified participation counts linking people groups to activities,
+#  churches, or datasets with numeric measures.
+##############################################################################
+
+gc:PeopleGroupEngagement a owl:Class ;
+  rdfs:label "People Group Engagement"@en ;
+  rdfs:comment "A reified count of engagement with a specific people group in the context of an activity, church, or dataset. Corresponds to PGItem / EntityPeopleGroup / ChurchEntityPeopleGroup in GCData."@en ;
+  rdfs:subClassOf prov:Entity .
+
+gc:engagementPeopleGroup a owl:ObjectProperty ;
+  rdfs:label "engagement people group"@en ;
+  rdfs:domain gc:PeopleGroupEngagement ;
+  rdfs:range gc:PeopleGroup .
+
+gc:engagementCount a owl:DatatypeProperty ;
+  rdfs:label "engagement count"@en ;
+  rdfs:comment "The total number of people engaged within this people group."@en ;
+  rdfs:domain gc:PeopleGroupEngagement ;
+  rdfs:range xsd:nonNegativeInteger .
+
+gc:hasPeopleGroupEngagement a owl:ObjectProperty ;
+  rdfs:label "has people group engagement"@en ;
+  rdfs:comment "Links a church, activity, or record to a people group engagement count."@en ;
+  rdfs:range gc:PeopleGroupEngagement .
+
+
+##############################################################################
+#  VII.  PROV-O RELATIONSHIP PATTERNS
+#
+#  Canonical provenance chains connecting agents, activities, and entities.
+#  These patterns encode how field work flows into data records.
+##############################################################################
+
+# Pattern 1: Ministry Activity with Qualified Roles
+#   gc:MinistryActivity  -- prov:wasAssociatedWith -->  gc:Person
+#   gc:MinistryActivity  -- prov:qualifiedAssociation -->  gc:MinistryParticipation
+#   gc:MinistryParticipation  -- prov:agent -->  gc:Person
+#   gc:MinistryParticipation  -- gc:participationRole -->  gc:FieldWorkerRole
+#   gc:MinistryActivity  -- gc:atLocation -->  gc:Location
+#   gc:MinistryActivity  -- gc:engagesPeopleGroup -->  gc:PeopleGroup
+#
+# Pattern 2: Church Formation Provenance
+#   gc:ChurchFormation  -- prov:generated -->  gc:Organization
+#   gc:Organization  -- prov:wasGeneratedBy -->  gc:ChurchFormation
+#   gc:Organization  -- prov:wasAttributedTo -->  gc:Person
+#
+# Pattern 3: Organization Practice (Practice as Activity)
+#   gc:Organization  -- gc:hasPractice -->  gc:Practice
+#   gc:Practice  -- gc:practiceType -->  gc:BaptismPractice  (PracticeType)
+#   gc:Practice  -- gc:isPerformedInternally -->  true/false
+#   gc:Practice  -- prov:wasAssociatedWith -->  gc:Person
+#   gc:Practice  -- gc:practiceIsActive -->  true/false
+#
+# Pattern 4: Data Recording Provenance
+#   gc:DataRecordingActivity  -- prov:wasAssociatedWith -->  gc:Person
+#   gc:DataRecordingActivity  -- gc:recordsActivity -->  gc:MinistryActivity
+#   gc:DataRecordingActivity  -- prov:generated -->  gc:EngagementRecord
+#   gc:EngagementRecord  -- prov:wasGeneratedBy -->  gc:DataRecordingActivity
+#   gc:EngagementRecord  -- prov:wasAttributedTo -->  gc:DataSource
+#
+# Pattern 5: Data Exchange Provenance
+#   gc:DataExchangeActivity  -- prov:used -->  gc:ExchangePayload
+#   gc:DataExchangeActivity  -- prov:wasAssociatedWith -->  gc:GCBridge
+#   gc:ExchangePayload  -- prov:hadMember -->  gc:EngagementRecord
+#
+# Pattern 6: Multi-Org Assessment (unified gc: pattern, v0.13.0)
+#   gc:Assessment  -- prov:wasAssociatedWith -->  gc:Person / gc:DataSource
+#   gc:Assessment  -- gc:assessesPeopleGroup -->  gc:PeopleGroup
+#   gc:Assessment  -- gc:assessedBy -->  gc:Organization
+#   gc:Assessment  -- gc:assessmentDate -->  xsd:dateTime
+#   gc:Assessment  -- gc:assessmentMethodology -->  gc:MethodologyJPProgressScale (etc.)
+#   gc:Assessment  -- prov:generated -->  gc:AssessmentResult
+#   gc:AssessmentResult  -- prov:wasGeneratedBy -->  gc:Assessment
+#   gc:AssessmentResult  -- gc:resultForPeopleGroup -->  gc:PeopleGroup
+#   gc:AssessmentResult  -- gc:resultDate -->  xsd:dateTime
+#   gc:AssessmentResult  -- jp:jpScale -->  2  (JP-specific)
+#   gc:AssessmentResult  -- imb:gsecLevel -->  imb:GSEC1  (IMB-specific)
+#
+# Pattern 7: Organization Endorsement (Endorsement as Entity)
+#   gc:Endorsement  -- gc:endorsingOrganization -->  gc:Organization
+#   gc:Endorsement  -- gc:endorsedOrganization -->  gc:Organization
+#   gc:Endorsement  -- gc:endorsedDate -->  xsd:date
+#   gc:Endorsement  -- gc:endorsementStatus -->  gc:EndorsementActive  (etc.)
+#   gc:Endorsement  -- gc:endorsementType -->  gc:CertificationEndorsement  (etc.)
+#   gc:Endorsement  -- prov:wasAttributedTo -->  gc:Organization
+#   gc:Organization  -- gc:hasEndorsement -->  gc:Endorsement
+
+
+##############################################################################
+#  VIII.  DATA PRIVACY SUBSETS
+#
+#  Annotation properties to tag properties and entities with their
+#  Global.Church schema privacy/visibility subsets.
+##############################################################################
+
+gc:dataSubset a owl:AnnotationProperty ;
+  rdfs:label "data subset"@en ;
+  rdfs:comment "Tags a property or class with its Global.Church schema privacy subset (public, private, pii, internal, church_core, user_core, enrichment)."@en .
+
+# Subset instances as annotation values
+gc:SubsetPublic a owl:NamedIndividual ;
+  rdfs:label "public" .
+gc:SubsetPrivate a owl:NamedIndividual ;
+  rdfs:label "private" .
+gc:SubsetPII a owl:NamedIndividual ;
+  rdfs:label "pii" .
+gc:SubsetInternal a owl:NamedIndividual ;
+  rdfs:label "internal" .
+gc:SubsetChurchCore a owl:NamedIndividual ;
+  rdfs:label "church_core" .
+gc:SubsetUserCore a owl:NamedIndividual ;
+  rdfs:label "user_core" .
+gc:SubsetEnrichment a owl:NamedIndividual ;
+  rdfs:label "enrichment" .
+
+# Apply subset annotations to key properties
+gc:isActive gc:dataSubset gc:SubsetChurchCore .
+gc:dateStarted gc:dataSubset gc:SubsetChurchCore .
+gc:identifiesAsChurch gc:dataSubset gc:SubsetChurchCore .
+gc:hasAppointedLeaders gc:dataSubset gc:SubsetChurchCore .
+gc:hasPractice gc:dataSubset gc:SubsetChurchCore .
+gc:personName gc:dataSubset gc:SubsetPII .
+gc:personEmail gc:dataSubset gc:SubsetPII .
+gc:personPhone gc:dataSubset gc:SubsetPII .
+gc:userId gc:dataSubset gc:SubsetUserCore .
+
+
+##############################################################################
+#  IX.  ALIGNMENT TO AGENTIC TRUST LAYER
+#
+#  Hooks for interoperability with the agent-explorer ontology.
+#  DataSource systems can be discovered as AIAgents; exchange payloads
+#  can be attested via the trust assertion framework.
+##############################################################################
+
+gc:DataSource rdfs:subClassOf at:Agent .
+
+gc:DataExchangeAttestation a owl:Class ;
+  rdfs:label "Data Exchange Attestation"@en ;
+  rdfs:comment "An attestation (in the Agentic Trust sense) that a data exchange payload is authentic and unmodified. Enables trust-layer integration for GCBridge-mediated exchanges."@en ;
+  rdfs:subClassOf at:Attestation .
+
+gc:attestsPayload a owl:ObjectProperty ;
+  rdfs:label "attests payload"@en ;
+  rdfs:comment "Links an attestation to the exchange payload it certifies."@en ;
+  rdfs:subPropertyOf prov:used ;
+  rdfs:domain gc:DataExchangeAttestation ;
+  rdfs:range gc:ExchangePayload .
+
+
+
+##############################################################################
+#  XI.  ORGANIZATION ENDORSEMENTS
 #
 #  Organizational endorsements — certifications, partnerships, affiliations,
 #  and accreditations from recognized bodies (e.g., BGEA, denominations,
@@ -1216,10 +1695,12 @@ gc:AccreditationEndorsement a gc:EndorsementType ;
   skos:definition "A formal accreditation by a recognized accrediting body."@en ;
   skos:inScheme gc:EndorsementTypeScheme .
 
+# Apply subset annotations — endorsements are public trust signals
+gc:hasEndorsement gc:dataSubset gc:SubsetPublic .
 
 
 ##############################################################################
-#  VI.  RESOURCE & SCRIPTURE TRACKING
+#  XII.  RESOURCE & SCRIPTURE TRACKING
 #
 #  First-class resource entities so the platform can connect groups that
 #  need resources with organizations that provide them.  A single
@@ -1248,7 +1729,7 @@ gc:AccreditationEndorsement a gc:EndorsementType ;
 #    gc:MinistryActivity -- gc:usesResource -->  gc:MissionResource
 ##############################################################################
 
-# --- 6.1 Resource Classes ---
+# --- 12.1 Resource Classes ---
 
 gc:MissionResource a owl:Class ;
   rdfs:subClassOf prov:Entity ;
@@ -1260,7 +1741,7 @@ gc:ResourceCollection a owl:Class ;
   rdfs:label "Resource Collection"@en ;
   rdfs:comment "A curated set of resources forming a coherent series, curriculum, or toolkit (e.g., a teaching series, a numbered paper collection, a multi-lesson curriculum)."@en .
 
-# --- 6.2 Base Resource Properties ---
+# --- 12.2 Base Resource Properties ---
 # Multi-valued properties (no sh:maxCount in SHACL):
 #   - gc:resourceForPeopleGroup — an Arabic Bible serves multiple Arabic-speaking groups
 #   - gc:resourceLanguage — GodTools is in 80+ languages; the JESUS Film is in 1,600+
@@ -1346,7 +1827,7 @@ gc:estimatedCompletionDate a owl:DatatypeProperty ;
   rdfs:label "estimated completion date"@en ;
   rdfs:comment "Target completion date for in-progress resources."@en .
 
-# --- 6.3 Activity-Resource Linkage ---
+# --- 12.3 Activity-Resource Linkage ---
 
 gc:usesResource a owl:ObjectProperty ;
   rdfs:domain gc:MinistryActivity ;
@@ -1354,7 +1835,7 @@ gc:usesResource a owl:ObjectProperty ;
   rdfs:label "uses resource"@en ;
   rdfs:comment "Links a ministry activity to a resource used during that activity. Enables tracking which resources are actually being deployed."@en .
 
-# --- 6.4 Resource Collection Properties ---
+# --- 12.4 Resource Collection Properties ---
 
 gc:partOfCollection a owl:ObjectProperty ;
   rdfs:domain gc:MissionResource ;
@@ -1368,7 +1849,7 @@ gc:collectionName a owl:DatatypeProperty ;
   rdfs:label "collection name"@en ;
   rdfs:comment "Human-readable name of the resource collection or series."@en .
 
-# --- 6.5 Resource Status Vocabulary ---
+# --- 12.5 Resource Status Vocabulary ---
 
 gc:ResourceStatusValue a owl:Class ;
   rdfs:subClassOf skos:Concept ;
@@ -1409,7 +1890,7 @@ gc:ResourceAvailable a gc:ResourceStatusValue ;
   skos:notation "AVL" ;
   skos:inScheme gc:ResourceStatusScheme .
 
-# --- 6.6 Resource Format Vocabulary ---
+# --- 12.6 Resource Format Vocabulary ---
 # Format is orthogonal to content domain and function.
 
 gc:ResourceFormatValue a owl:Class ;
@@ -1469,7 +1950,7 @@ gc:FormatPodcast a gc:ResourceFormatValue ;
   skos:notation "POD" ;
   skos:inScheme gc:ResourceFormatScheme .
 
-# --- 6.7 Resource Domain Vocabulary ---
+# --- 12.7 Resource Domain Vocabulary ---
 # Content domain classification — what the resource is ABOUT.
 # Multi-valued: a resource can span multiple domains.
 # Hierarchical: top concepts are broad domains, narrower concepts are specializations.
@@ -1577,7 +2058,7 @@ gc:DomainCommunityDev a skos:Concept ;
   skos:definition "Holistic community development, compassion ministries, and transformational development."@en ;
   skos:topConceptOf gc:ResourceDomainScheme .
 
-# --- 6.8 Resource Function Vocabulary ---
+# --- 12.8 Resource Function Vocabulary ---
 # Pedagogical function — how the resource is USED.
 # Inspired by IEEE LOM's LearningResourceType.
 
@@ -1625,10 +2106,14 @@ gc:FunctionReferenceText a skos:Concept ;
   skos:definition "Source text for reading, study, or lookup."@en ;
   skos:inScheme gc:ResourceFunctionScheme .
 
+# Apply subset annotations — resources are public
+gc:resourceName gc:dataSubset gc:SubsetPublic .
+gc:resourceForPeopleGroup gc:dataSubset gc:SubsetPublic .
+gc:resourceStatus gc:dataSubset gc:SubsetPublic .
 
 
 ##############################################################################
-#  VII.  ENGAGEMENT CLAIMS
+#  XIII.  ENGAGEMENT CLAIMS
 #
 #  Self-reported assertions by organizations about their current or recent
 #  engagement with people groups.  A claim is what an organization says it
@@ -1652,13 +2137,13 @@ gc:FunctionReferenceText a skos:Concept ;
 #    gc:EngagementClaim  -- gc:claimDate              -->  xsd:date
 #    gc:EngagementClaim  -- gc:claimStatus            -->  gc:ClaimStatusValue
 #    gc:EngagementClaim  -- gc:claimDescription       -->  xsd:string
-#    gc:EngagementClaim  -- prov:wasAttributedTo      -->  gc:Organization (who registered it)
+#    gc:EngagementClaim  -- prov:wasAttributedTo      -->  gc:Person      (who registered it)
 #    gc:Organization     -- gc:hasEngagementClaim     -->  gc:EngagementClaim
 ##############################################################################
 
 gc:EngagementClaim a owl:Class ;
   rdfs:label "Engagement Claim"@en ;
-  rdfs:comment "A self-reported assertion by an organization about its current or recent engagement with one or more people groups. Collected through the onboarding flow when ministry leaders declare what types of engagement work their organization is doing (e.g., church planting, Bible translation, prayer). Provenance: use prov:wasAttributedTo to link the claim to the agent who registered it."@en ;
+  rdfs:comment "A self-reported assertion by an organization about its current or recent engagement with one or more people groups. Collected through the onboarding flow when ministry leaders declare what types of engagement work their organization is doing (e.g., church planting, Bible translation, prayer). Provenance: use prov:wasAttributedTo to link the claim to the gc:Person who registered it."@en ;
   rdfs:subClassOf prov:Entity .
 
 gc:claimingOrganization a owl:ObjectProperty ;
@@ -1825,6 +2310,8 @@ gc:ClaimStatusWithdrawn a gc:ClaimStatusValue ;
   skos:definition "The engagement claim has been withdrawn by the organization."@en ;
   skos:inScheme gc:ClaimStatusScheme .
 
+# Apply subset annotations — engagement claims are public coordination data
+gc:hasEngagementClaim gc:dataSubset gc:SubsetPublic .
 
 
 ##############################################################################

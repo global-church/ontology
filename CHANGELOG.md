@@ -1,5 +1,50 @@
 # GC-Core Ontology Changelog
 
+## v0.16.0 — 2026-03-03
+
+### Changed: Ontology cleanup — remove ~58 unused concepts
+
+Removed concepts that had no data in production GraphDB and no near-term implementation plans. Simplifies the ontology from ~1,397 triples to ~1,216 triples. Renamed `gc-core.shacl.ttl` to `core.shacl.ttl`. Migrated production vocabularies from Denver named graph to `<https://data.global.church/vocabs/>`.
+
+**Removed classes (9):**
+- `gc:Person` + 9 properties (userId, personName, personEmail, personPhone, memberOf, sendingOrganization, deploymentStatus, isCrossCultural, fieldEntryDate)
+- `gc:DataRecordingActivity` + 2 properties (recordDateTime, recordsActivity)
+- `gc:DataExchangeActivity` + 4 properties (exchangeSource, exchangeTarget, exchangeTimestamp, exchangeProtocol)
+- `gc:ExchangePayload` + 2 properties (attestsPayload, exchangeProtocol) + 2 subclasses (gc:DataSource, gc:GCBridge)
+- `gc:DataSet` + 6 properties (dataSetName, dataSetDescription, dataSetTemporalCoverage, dataSetSpatialCoverage, dataSetUpdateFrequency, dataSetAccessPolicy) + `jp:stateForDataSet`
+- `gc:PeopleGroupEngagement` + 3 properties (engagedPeopleGroup, engagingOrganization, engagementIntensity)
+- `gc:ChurchWebsiteText` + 3 properties (websiteUrl, websiteTextContent, hasWebsiteText)
+- Deprecated `gc:Church` (was already `owl:equivalentClass gc:Organization`) — class declaration removed
+- `gc:MinistryParticipation` + `gc:participationRole` + 7 MinistryRole individuals — removed. `gc:MinistryRole` SKOS concept retained for future.
+
+**Removed sections:**
+- Data Recording & Exchange (Section IV)
+- Agentic Trust Protocol (`at:` prefix, `at:DataExchangeAttestation`, `at:attestsPayload`)
+- Data Privacy Subsets (`gc:dataSubset` + 7 Subset individuals + annotation triples)
+- 3 unused Overture properties (overtureStatus, overtureDescription, overturePublicSummary)
+
+**Deleted files:**
+- `data/seed/denver-churches.ttl` — Denver seed data (archived to `archive/v0.15.1/`)
+- `data/seed/worker-deployment-vocab-seed.ttl` — Deployment/methodology SKOS (archived)
+
+**Renamed:** `gc-core.shacl.ttl` → `core.shacl.ttl`
+
+**SHACL changes:** Removed PersonShape, MinistryParticipationShape, ExchangePayloadShape, DataRecordingActivityShape, PeopleGroupEngagementShape, DataSetShape, hasWebsiteText property block from ChurchOrganizationShape. 1,082 → 946 triples.
+
+**Intentionally kept:** MinistryActivity types, Gospel Conversation outcomes, church-specific Organization properties (servicesInfo, isMultiCampus, campusName), gc:Team, Endorsement model, EngagementClaim model.
+
+**GraphDB:** Denver named graph cleared. Vocabs migrated to `<https://data.global.church/vocabs/>` (162 triples). Old concept triples deleted from default graph. 3,217,801 total triples.
+
+**Files changed:**
+| File | Change |
+|---|---|
+| `core.ttl` | Removed ~58 concepts, renumbered sections, bumped to v0.16.0 |
+| `core.shacl.ttl` | Renamed from `gc-core.shacl.ttl`, removed 6 shapes + hasWebsiteText |
+| `data/seed/denver-churches.ttl` | Deleted (archived) |
+| `data/seed/worker-deployment-vocab-seed.ttl` | Deleted (archived) |
+| `docs/ontology-design-principles.md` | Updated examples (gc:Church→gc:Organization, removed gc:Person) |
+| `CLAUDE.md` | Updated version, file layout, seed description |
+
 ## v0.11.1 — 2026-02-23
 
 ### Changed: Remove prov:Entity from gc:Location
