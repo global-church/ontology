@@ -25,7 +25,7 @@
 **Files changed:**
 | File | Change |
 |---|---|
-| `ontology/gc-core.ttl` | Removed `rdfs:subClassOf prov:Entity` from `gc:Location`, version bump to 0.11.1 |
+| `ontology/core.ttl` | Removed `rdfs:subClassOf prov:Entity` from `gc:Location`, version bump to 0.11.1 |
 | `ontology/diagrams/01-class-hierarchy.mermaid` | Location no longer inherits from `prov:Entity` |
 
 ## v0.11.0 — 2026-02-23
@@ -77,7 +77,7 @@ Extends the worker model with deployment tracking and ministry methodology class
 **Files changed:**
 | File | Change |
 |---|---|
-| `ontology/gc-core.ttl` | 3 new roles, 5 new properties, version bump to 0.11.0 |
+| `ontology/core.ttl` | 3 new roles, 5 new properties, version bump to 0.11.0 |
 | `ontology/gc-core.shacl.ttl` | PersonShape extended, new MinistryActivityMethodologyShape |
 | `data/seed/worker-deployment-vocab-seed.ttl` | **New** — DeploymentStatus + Methodology SKOS schemes |
 | `data/seed/denver-churches.ttl` | Workers + activities annotated with deployment/methodology data |
@@ -117,7 +117,7 @@ All Church instances are now inferred as Organizations and (via `prov:Organizati
 **Files changed:**
 | File | Change |
 |---|---|
-| `ontology/gc-core.ttl` | `gc:Church rdfs:subClassOf prov:Entity` → `gc:Church rdfs:subClassOf gc:Organization`, updated comment |
+| `ontology/core.ttl` | `gc:Church rdfs:subClassOf prov:Entity` → `gc:Church rdfs:subClassOf gc:Organization`, updated comment |
 | `packages/gc-sparql/src/queries/verify-church-subclass.rq` | New — 7 verification queries |
 
 ## v0.4.2 — 2026-02-17

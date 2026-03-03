@@ -20,7 +20,7 @@ Additional namespaces defined in the ontology:
 
 ```
 ontology/
-├── gc-core.ttl                  OWL 2 ontology (classes, properties, individuals)
+├── core.ttl                     OWL 2 ontology (classes, properties, individuals)
 ├── gc-core.shacl.ttl            SHACL constraint shapes
 ├── diagrams/                    Mermaid class hierarchy and pattern diagrams
 ├── data/
@@ -54,8 +54,8 @@ Git tags on this repo serve as ontology releases (e.g., `v0.15.1`). Consumers pi
 ## How to Make Changes
 
 1. Read `docs/ontology-design-principles.md` — the design rubric
-2. Edit `gc-core.ttl` and/or `gc-core.shacl.ttl`
-3. Bump the `owl:versionInfo` in `gc-core.ttl`
+2. Edit `core.ttl` and/or `gc-core.shacl.ttl`
+3. Bump the `owl:versionInfo` in `core.ttl`
 4. Update `CHANGELOG.md`
 5. Tag the release: `git tag v0.X.Y && git push --tags`
 
