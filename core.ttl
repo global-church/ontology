@@ -2193,6 +2193,84 @@ gc:hasEngagementClaim a owl:ObjectProperty ;
   rdfs:comment "Links an organization to an engagement claim it has made. Convenience navigation property (inverse direction of gc:claimingOrganization)."@en ;
   rdfs:range gc:EngagementClaim .
 
+# ── Engagement Type Vocabulary (SKOS) ───────────────────────────────────
+
+gc:EngagementTypeScheme a skos:ConceptScheme ;
+  rdfs:label "Engagement Type Scheme"@en ;
+  rdfs:comment "SKOS concept scheme for classifying self-reported engagement claims by type of ministry work."@en ;
+  skos:hasTopConcept gc:EngTypeChurchPlanting ,
+                     gc:EngTypeDiscipleship ,
+                     gc:EngTypeBibleTranslation ,
+                     gc:EngTypePrayer ,
+                     gc:EngTypeEvangelism ,
+                     gc:EngTypeMediaMinistry ,
+                     gc:EngTypeHumanitarianAid ,
+                     gc:EngTypeTraining ,
+                     gc:EngTypeFunding .
+
+gc:EngTypeChurchPlanting a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Church Planting"@en ;
+  skos:notation "CP" ;
+  skos:definition "Planting new churches or faith communities among a people group."@en .
+
+gc:EngTypeDiscipleship a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Discipleship"@en ;
+  skos:notation "DISC" ;
+  skos:definition "Intentional discipleship — mentoring believers, running discovery groups, or facilitating spiritual growth among a people group."@en .
+
+gc:EngTypeBibleTranslation a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Bible Translation"@en ;
+  skos:notation "BT" ;
+  skos:definition "Translating Scripture (full Bible, New Testament, or portions) into the language of a people group."@en .
+
+gc:EngTypePrayer a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Prayer"@en ;
+  skos:notation "PR" ;
+  skos:definition "Organized prayer initiatives targeting a people group — prayer teams, prayer walks, or ongoing intercession."@en .
+
+gc:EngTypeEvangelism a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Evangelism"@en ;
+  skos:notation "EVG" ;
+  skos:definition "Direct evangelism and gospel sharing — personal outreach, evangelistic events, or gospel conversations among a people group."@en .
+
+gc:EngTypeMediaMinistry a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Media Ministry"@en ;
+  skos:notation "MED" ;
+  skos:definition "Producing or distributing media content (film, radio, audio, digital) for a people group."@en .
+
+gc:EngTypeHumanitarianAid a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Humanitarian Aid"@en ;
+  skos:notation "HA" ;
+  skos:definition "Humanitarian assistance, relief, community development, or compassion ministries targeting a people group."@en .
+
+gc:EngTypeTraining a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Training / Equipping"@en ;
+  skos:notation "TR" ;
+  skos:definition "Training and equipping local leaders, pastors, or workers among a people group."@en .
+
+gc:EngTypeFunding a skos:Concept ;
+  skos:inScheme gc:EngagementTypeScheme ;
+  skos:topConceptOf gc:EngagementTypeScheme ;
+  skos:prefLabel "Funding / Resourcing"@en ;
+  skos:notation "FN" ;
+  skos:definition "Financial partnership or resourcing targeting a people group — grants, sponsorship, or funding of ministry activities carried out by others."@en .
+
 # ── Claim Status Vocabulary (SKOS) ──────────────────────────────────────
 
 gc:ClaimStatusValue a owl:Class ;
