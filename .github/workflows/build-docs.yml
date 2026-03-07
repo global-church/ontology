@@ -13,10 +13,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - run: pip install pyshacl
       - name: Validate ontology parses correctly
         run: |
-          pip install rdflib
+          pip install "rdflib>=7.0,<8.0"
           python3 -c "
           from rdflib import Graph
           g = Graph()
@@ -46,10 +45,11 @@ jobs:
           node-version: '20'
 
       - name: Install Python dependencies
-        run: pip install "pylode>=3.0,<4.0" "rdflib>=7.0,<8.0"
+        run: pip install "pylode==3.2.3" "rdflib>=7.0,<8.0"
 
       - name: Pull Widoco Docker image
         run: docker pull ghcr.io/dgarijo/widoco:latest
+        continue-on-error: true
 
       - name: Build documentation
         run: bash scripts/build-docs.sh --version ${{ github.ref_name }}
@@ -64,6 +64,7 @@ jobs:
         run: npm install -g vercel
 
       - name: Deploy to Vercel
+        if: ${{ secrets.VERCEL_TOKEN != '' }}
         run: |
           vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
           vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
