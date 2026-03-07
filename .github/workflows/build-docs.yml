@@ -4,6 +4,11 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g., v0.16.2)'
+        required: true
 
 jobs:
   validate:
@@ -52,7 +57,7 @@ jobs:
         continue-on-error: true
 
       - name: Build documentation
-        run: bash scripts/build-docs.sh --version ${{ github.ref_name }}
+        run: bash scripts/build-docs.sh --version ${{ inputs.version || github.ref_name }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
