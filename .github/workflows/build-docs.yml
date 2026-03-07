@@ -15,7 +15,17 @@ jobs:
           python-version: '3.11'
       - run: pip install pyshacl
       - name: Validate ontology against SHACL shapes
-        run: pyshacl -s core.shacl.ttl -d core.ttl
+        run: |
+          pip install rdflib
+          python3 -c "
+          from rdflib import Graph
+          g = Graph()
+          g.parse('core.ttl', format='turtle')
+          for f in __import__('pathlib').Path('data/seed').glob('*.ttl'):
+              g.parse(str(f), format='turtle')
+          g.serialize('/tmp/combined.ttl', format='turtle')
+          "
+          pyshacl -s core.shacl.ttl -d /tmp/combined.ttl
 
   build-and-deploy:
     needs: validate
