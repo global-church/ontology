@@ -28,11 +28,18 @@ ontology/
 │   └── migrations/              Schema migration docs
 ├── docs/
 │   ├── ontology-design-principles.md   Design rubric (DOLCE, PROV-O, namespace, minimalism)
-│   ├── gc-core-reference.html          Auto-generated ontology reference
-│   └── gc-core-resources-ontology.html Resource ontology reference
-├── his-registry-buildout.md     HIS Registry integration log
-├── CHANGELOG.md                 Version history
-└── CLAUDE.md                    This file
+│   ├── gc-core-reference.html          Auto-generated ontology reference (legacy, replaced by doc site)
+│   └── site/                           Generated doc site output (gitignored)
+├── scripts/
+│   ├── build-docs.sh                   Orchestrates Widoco + pyLODE + Mermaid + JSON-LD
+│   ├── widoco-config.properties        Widoco metadata
+│   ├── generate-vocabs-index.py        SKOS vocabulary browser index generator
+│   └── generate-diagrams-index.py      SVG diagram gallery generator
+├── .github/workflows/build-docs.yml    CI: validate + build + deploy on v* tags
+├── vercel.json                         Static deploy config for ontology.global.church
+├── his-registry-buildout.md            HIS Registry integration log
+├── CHANGELOG.md                        Version history
+└── CLAUDE.md                           This file
 ```
 
 ## Core Type System
@@ -74,9 +81,31 @@ Use the Claude skills for guided workflows:
 | `apps/platform/` | Indirect — consumes data shaped by the ontology via API |
 | `infra/api-gateway/` | Routes SPARQL queries that reference ontology terms |
 
-## Publishing (Future)
+## Documentation Site
 
-The ontology will be published at `https://ontology.global.church/` so the namespace URI is dereferenceable. Options: static hosting with content negotiation, GitHub Pages, or W3C-style PURL.
+Published at `https://ontology.global.church/` (password-protected during development).
+
+**Local build:**
+```bash
+# Full build (requires Docker for Widoco + WebVOWL)
+bash scripts/build-docs.sh
+
+# Without Docker (pyLODE fallback, no WebVOWL)
+bash scripts/build-docs.sh --skip-widoco
+```
+
+**Prerequisites:** Docker (for Widoco), Python 3.11+ with pylode + rdflib, Node.js 20+
+
+**How it deploys:** GitHub Action on tagged release (`v*`) → SHACL validation → build → Vercel static deploy
+
+**URL structure:**
+- `/` — OWL class/property tables + WebVOWL interactive graph
+- `/vocabs/` — SKOS vocabulary browser (13 schemes)
+- `/diagrams/` — Rendered Mermaid architecture diagrams (7 SVGs)
+- `/core.ttl` — Raw Turtle (content negotiation)
+- `/core.jsonld` — JSON-LD serialization
+
+**Output:** `docs/site/` (gitignored — generated fresh on each tagged release)
 
 ## Owner
 
