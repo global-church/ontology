@@ -3,3 +3,12 @@
 *.swo
 *~
 .env
+
+# Generated documentation site
+docs/site/
+
+# Node.js
+node_modules/
+
+# Python
+__pycache__/
